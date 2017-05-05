@@ -12,7 +12,7 @@ namespace Lunar_Project_Models
         // Variables
         public double m_CO2GivenIn24Hrs { get; set; }
         public double m_H2OProduced24Hrs { get; set; }
-        public double m_powerRequired24Hrs { get; set; }
+        public double m_powerRequired { get; set; }
         public double m_heatGenerated { get; set; }
 
         #endregion

@@ -28,7 +28,7 @@ namespace Lunar_Project_Models
         // Urine produced per day in [kg]
         public double m_urineProducedPerDay { get; }
         // 
-
+        public double m_urineFlushPerDay { get; }
 
         // 
 
@@ -62,7 +62,10 @@ namespace Lunar_Project_Models
         // Height in cm, Weight in kg
         public Human(double heightGiven, double weightGiven)
         {
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("     ..Constructing Human..");
+            Console.ForegroundColor = ConsoleColor.White;
+
             this.m_height = heightGiven;
             this.m_weight = weightGiven;
 
@@ -78,6 +81,7 @@ namespace Lunar_Project_Models
             // "spacefligth life support and biospherics"
             m_hygieneH2ORequiredPerDay = 9;         // [kg/day]
             m_urineProducedPerDay = 2.27;           // [kg/day]
+            m_urineFlushPerDay = 0.5;               // [kg/day]
 
 
 

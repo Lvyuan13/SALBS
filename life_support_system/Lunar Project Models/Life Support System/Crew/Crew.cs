@@ -26,6 +26,8 @@ namespace Lunar_Project_Models
         public double m_crewHygieneH2ORequiredPerDay { get; }
         // Urine produced per day in [kg]
         public double m_crewUrineProducedPerDay { get; }
+        // Urinal flush water used per day in [kg]
+        public double m_crewUrineFlushPerDay;
 
         // Constants
 
@@ -39,7 +41,10 @@ namespace Lunar_Project_Models
 
         public Crew(int numberOfCrewMembers)
         {
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("\n..Constructing Crew..");
+            Console.ForegroundColor = ConsoleColor.White;
+
             this.m_crewSize = numberOfCrewMembers;
             //create a list of the human crew members
             crewList = new List<Human>();
@@ -55,8 +60,9 @@ namespace Lunar_Project_Models
             this.m_crewPotableH2ORequiredPerDay = 0;
             this.m_crewHygieneH2ORequiredPerDay = 0;
             this.m_crewUrineProducedPerDay = 0;
-            
+            this.m_crewUrineFlushPerDay = 0;
 
+            // sum all the individual human variables for totals
             for (int i = 0; i < numberOfCrewMembers; i++)
             {
                 m_crewO2ConsumptionPerDay = m_crewO2ConsumptionPerDay + crewList.ElementAt(i).m_O2ConsumptionPerDay;
@@ -65,6 +71,7 @@ namespace Lunar_Project_Models
                 m_crewHygieneH2ORequiredPerDay = m_crewHygieneH2ORequiredPerDay + crewList.ElementAt(i).m_hygieneH2ORequiredPerDay;
                 m_crewUrineProducedPerDay = m_crewUrineProducedPerDay + crewList.ElementAt(i).m_urineProducedPerDay;
                 m_crewHeatGeneration = m_crewHeatGeneration + crewList.ElementAt(i).m_heatGeneration;
+                m_crewUrineFlushPerDay = m_crewUrineFlushPerDay + crewList.ElementAt(i).m_urineFlushPerDay;
             }
             
         }

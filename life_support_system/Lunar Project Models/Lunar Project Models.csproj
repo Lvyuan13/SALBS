@@ -42,16 +42,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BoschCO2Recycler.cs" />
-    <Compile Include="CO2Recycler.cs" />
-    <Compile Include="Crew.cs" />
-    <Compile Include="H2ORecycler.cs" />
-    <Compile Include="Human.cs" />
-    <Compile Include="LifeSupportSystem.cs" />
-    <Compile Include="O2Generator.cs" />
+    <Compile Include="Life Support System\CO2 Recycling\BoschCO2Recycler.cs" />
+    <Compile Include="Life Support System\CO2 Recycling\CO2Recycler.cs" />
+    <Compile Include="Life Support System\Crew\Crew.cs" />
+    <Compile Include="Life Support System\H2O Management\H2OManager.cs" />
+    <Compile Include="Life Support System\Crew\Human.cs" />
+    <Compile Include="Life Support System\LifeSupportSystem.cs" />
+    <Compile Include="Life Support System\H2O Management\MFBWaterProcessor.cs" />
+    <Compile Include="Life Support System\O2 Generation\O2Generator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SabatierCO2Recycler.cs" />
+    <Compile Include="Life Support System\CO2 Recycling\SabatierCO2Recycler.cs" />
+    <Compile Include="Life Support System\H2O Management\UrineProcessor.cs" />
+    <Compile Include="Life Support System\H2O Management\VCDUrineProcessor.cs" />
+    <Compile Include="Life Support System\H2O Management\WaterProcessor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -6,36 +6,29 @@ using System.Threading.Tasks;
 
 namespace Lunar_Project_Models
 {
-    class H2ORecycler
+    class H2OManager
     {
         // Variables
-        private double m_urineInput24Hrs;
-        private double m_wetSolidInput24Hrs;
 
         // Functions
 
-        public H2ORecycler(Crew crewGiven)
+        public H2OManager(Crew crewGiven)
         {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("     ..Constructing H20 Manager..");
+            Console.ForegroundColor = ConsoleColor.White;
+
             // Water that requires recycling comes in 3 forms:
             // Solid human waste
             // Liquid human waste
             // Human condensate
-            Console.WriteLine("     ..Constructing H2O Recycler..");
-            
+
+            VCDUrineProcessor UPA = new VCDUrineProcessor (crewGiven);
             
             // TODO implement constructor for H2O recycler
 
 
 
-        }
-
-        private double recoverLiquidH20(double urineIn)
-        {
-            return 0;
-        }
-        private double recoverSolidH20(double solidIn)
-        {
-            return 0;
         }
 
     }

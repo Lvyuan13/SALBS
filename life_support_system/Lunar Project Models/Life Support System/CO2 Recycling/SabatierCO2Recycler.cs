@@ -44,7 +44,9 @@ namespace Lunar_Project_Models
 
         public SabatierCO2Recycler(Crew crewGiven)
         {
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("     ..Constructing Sabatier CO2 Recycler..");
+            Console.ForegroundColor = ConsoleColor.White;
             // set member variable to CO2 in from crew
             this.m_CO2GivenIn24Hrs = crewGiven.m_crewCO2ProductionPerDay;
 
@@ -53,26 +55,25 @@ namespace Lunar_Project_Models
 
             // scale all member variables to match CO2 input
             this.m_H2OProduced24Hrs = scaleFactor * sabatierH2OOut;
-            this.m_powerRequired24Hrs = scaleFactor * sabatierPower;
+            this.m_powerRequired = scaleFactor * sabatierPower;
             this.m_hyrdogenRequired24Hrs = scaleFactor * sabatierH2In;
             this.m_methaneProduced24Hrs = scaleFactor * sabatierCH4Out;
             this.m_heatGenerated = scaleFactor * sabatierHeatGeneration;
 
             // Include the power required to extract CO2 from the atmosphere
             double powerForCO2Extraction = powerReqToExtractCO2Per24Hrs(crewGiven);
-            m_powerRequired24Hrs = m_powerRequired24Hrs + powerForCO2Extraction;
+            m_powerRequired = m_powerRequired + powerForCO2Extraction;
 
             // print output
-            Console.WriteLine("\nSABATIER CO2 RECYCLER SYSTEM:");
             Console.WriteLine("Inputs: ");
             Console.WriteLine("CO2 input = " + Math.Round(m_CO2GivenIn24Hrs, 2) + " kg/24hrs");
             Console.WriteLine("Hydrogen input = " + Math.Round(m_hyrdogenRequired24Hrs, 2) + " kg/24hrs\n");
 
-            Console.WriteLine("It would produce ");
+            Console.WriteLine("Outputs: ");
             Console.WriteLine("H2O: " + Math.Round(m_H2OProduced24Hrs, 2) + " kg/24hrs");
             Console.WriteLine("CH4: " + Math.Round(m_methaneProduced24Hrs,2) + " kg/24hrs )");
-            Console.WriteLine("Heat: " + Math.Round(m_heatGenerated, 2) + " kW");
-            Console.WriteLine("It would use " + Math.Round(m_powerRequired24Hrs, 2) + " kW of power per day ( " + Math.Round(powerForCO2Extraction, 2) + " kW for CO2 extraction )");
+            Console.WriteLine("Heat: " + Math.Round(m_heatGenerated, 2) + " kW\n");
+            Console.WriteLine("It would use " + Math.Round(m_powerRequired, 2) + " kW of power ( " + Math.Round(powerForCO2Extraction, 2) + " kW for CO2 extraction )");
 
             // sanity check (mass in = mass out)
             double inputSum = m_CO2GivenIn24Hrs +  m_hyrdogenRequired24Hrs;

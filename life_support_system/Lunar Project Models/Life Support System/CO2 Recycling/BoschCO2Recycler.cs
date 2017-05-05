@@ -60,14 +60,14 @@ namespace Lunar_Project_Models
             this.m_H2OProduced24Hrs = scaleFactor * boschH2OOut;
             this.m_nitrogenProduced24Hrs = scaleFactor * boschN2Out;
             this.m_carbonProduced24Hrs = scaleFactor * boschCout;
-            this.m_powerRequired24Hrs = scaleFactor * boschPower;
+            this.m_powerRequired = scaleFactor * boschPower;
             this.m_hyrdogenRequired24Hrs = scaleFactor * boschHIn;
             this.m_nitrogenRequired24Hrs = scaleFactor * boschN2In;
             this.m_heatGenerated = scaleFactor * boschHeatGeneration;
 
 
             Console.WriteLine("\nBOSCH RECYCLER:");
-            Console.WriteLine("It would use " + Math.Round(m_powerRequired24Hrs,2) + " kW of power per day");
+            Console.WriteLine("It would use " + Math.Round(m_powerRequired,2) + " kW of power per day");
             Console.WriteLine("CO2 input = " + Math.Round(m_CO2GivenIn24Hrs, 2) + " kg/24hrs");
             Console.WriteLine("Nitrogen Required = " + Math.Round(m_nitrogenRequired24Hrs, 2) + " kg/24hrs");
             Console.WriteLine("Hydrogen required = " + Math.Round(m_hyrdogenRequired24Hrs, 2) + " kg/24hrs\n");
