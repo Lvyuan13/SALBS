@@ -24,7 +24,7 @@ namespace Lunar_Project_Models
         // Drinking Water required in [kg] per 24hrs
         public double m_potableH2ORequiredPerDay{ get; }
         // Washing Water required in [kg] per 24hrs
-        public double m_hygieneH2ORequiredPerDay { get; }
+        public double m_hygieneH2OUsedPerDay { get; }
         // Urine produced per day in [kg]
         public double m_urineProducedPerDay { get; }
         // 
@@ -79,7 +79,7 @@ namespace Lunar_Project_Models
             m_potableH2ORequiredPerDay = 3.6;        // [kg/day]
             // values for hygiene water required and urine produced (maximum) are taken from Eckart:
             // "spacefligth life support and biospherics"
-            m_hygieneH2ORequiredPerDay = 9;         // [kg/day]
+            m_hygieneH2OUsedPerDay = 9;         // [kg/day]
             m_urineProducedPerDay = 2.27;           // [kg/day]
             m_urineFlushPerDay = 0.5;               // [kg/day]
 

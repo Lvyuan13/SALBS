@@ -25,13 +25,13 @@ namespace Lunar_Project_Models
             Console.WriteLine("         ..Constructing Urine Processor..\n");
             Console.ForegroundColor = ConsoleColor.White;
             // Get the amount of urine produced by crew.
-            Console.WriteLine("Crew urine: " + crewGiven.m_crewUrineProducedPerDay);
-            Console.WriteLine("Crew flushwater: " + crewGiven.m_crewUrineFlushPerDay);
+            Console.WriteLine("Crew urine: " + crewGiven.m_crewUrineProducedPerDay + " kg/day");
+            Console.WriteLine("Crew flushwater: " + crewGiven.m_crewUrineFlushPerDay + " kg/day");
 
-            double givenInFlow = crewGiven.m_crewUrineProducedPerDay + crewGiven.m_crewUrineFlushPerDay;
-            double scaleFactor = givenInFlow / m_designLiquidInFlow;
+            m_urineProcessedPerDay = crewGiven.m_crewUrineProducedPerDay + crewGiven.m_crewUrineFlushPerDay;
+            double scaleFactor = m_urineProcessedPerDay / m_designLiquidInFlow;
 
-            Console.WriteLine("Total Crew Liquid Given: " + Math.Round(givenInFlow,2));
+            Console.WriteLine("Total Crew Liquid Given: " + Math.Round(m_urineProcessedPerDay, 2) + " kg/day");
             Console.WriteLine("Scale Factor: " + Math.Round(scaleFactor,2));
 
             m_powerRequired = scaleFactor * m_designPowerRequired;

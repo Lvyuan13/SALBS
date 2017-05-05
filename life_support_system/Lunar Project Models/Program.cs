@@ -10,10 +10,15 @@ namespace Lunar_Project_Models
     {
         static void Main(string[] args)
         {
+            Console.BackgroundColor = ConsoleColor.Gray;
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
             Console.WriteLine("How many crew members?");
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
             int crewSize = Convert.ToInt32(Console.ReadLine());
 
-            Crew crew = new Crew(crewSize);            
+            Crew crew = new Crew(crewSize);
+
             LifeSupportSystem lifeSupport = new LifeSupportSystem(crew);
             
 

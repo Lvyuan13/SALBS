@@ -23,7 +23,7 @@ namespace Lunar_Project_Models
         // Water required in [kg] per 24hrs
         public double m_crewPotableH2ORequiredPerDay { get; }
         // Washing Water required in [kg] per 24hrs
-        public double m_crewHygieneH2ORequiredPerDay { get; }
+        public double m_crewHygieneH2OUsedPerDay { get; }
         // Urine produced per day in [kg]
         public double m_crewUrineProducedPerDay { get; }
         // Urinal flush water used per day in [kg]
@@ -42,7 +42,7 @@ namespace Lunar_Project_Models
         public Crew(int numberOfCrewMembers)
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("\n..Constructing Crew..");
+            Console.WriteLine("\n..Constructing (" + numberOfCrewMembers + ") Crew..");
             Console.ForegroundColor = ConsoleColor.White;
 
             this.m_crewSize = numberOfCrewMembers;
@@ -58,7 +58,7 @@ namespace Lunar_Project_Models
             this.m_crewCO2ProductionPerDay = 0;
             this.m_crewHeatGeneration = 0;
             this.m_crewPotableH2ORequiredPerDay = 0;
-            this.m_crewHygieneH2ORequiredPerDay = 0;
+            this.m_crewHygieneH2OUsedPerDay = 0;
             this.m_crewUrineProducedPerDay = 0;
             this.m_crewUrineFlushPerDay = 0;
 
@@ -68,7 +68,7 @@ namespace Lunar_Project_Models
                 m_crewO2ConsumptionPerDay = m_crewO2ConsumptionPerDay + crewList.ElementAt(i).m_O2ConsumptionPerDay;
                 m_crewCO2ProductionPerDay = m_crewCO2ProductionPerDay + crewList.ElementAt(i).m_CO2ProductionPerDay;
                 m_crewPotableH2ORequiredPerDay = m_crewPotableH2ORequiredPerDay + crewList.ElementAt(i).m_potableH2ORequiredPerDay;
-                m_crewHygieneH2ORequiredPerDay = m_crewHygieneH2ORequiredPerDay + crewList.ElementAt(i).m_hygieneH2ORequiredPerDay;
+                m_crewHygieneH2OUsedPerDay = m_crewHygieneH2OUsedPerDay + crewList.ElementAt(i).m_hygieneH2OUsedPerDay;
                 m_crewUrineProducedPerDay = m_crewUrineProducedPerDay + crewList.ElementAt(i).m_urineProducedPerDay;
                 m_crewHeatGeneration = m_crewHeatGeneration + crewList.ElementAt(i).m_heatGeneration;
                 m_crewUrineFlushPerDay = m_crewUrineFlushPerDay + crewList.ElementAt(i).m_urineFlushPerDay;

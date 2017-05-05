@@ -31,7 +31,7 @@ namespace Lunar_Project_Models
         public O2Generator(Crew crewGiven, H2OManager H2ORecyclerGiven, CO2Recycler CO2RecyclerGiven)
         {
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("     ..Constructing O2 Generator..");
+            Console.WriteLine("     ..Constructing O2 Generator..\n");
             Console.ForegroundColor = ConsoleColor.White;
 
             Console.WriteLine("You gave me " + crewGiven.m_crewSize + " crew members" );

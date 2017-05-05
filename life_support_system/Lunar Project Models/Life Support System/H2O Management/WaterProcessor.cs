@@ -9,9 +9,7 @@ namespace Lunar_Project_Models
     abstract class WaterProcessor
     {
         // Variables
-        protected double m_powerRequired { get; }
-
-
+        protected double m_powerRequired { get; set; }
 
     } 
 }

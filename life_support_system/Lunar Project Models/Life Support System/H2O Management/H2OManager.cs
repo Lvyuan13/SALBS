@@ -23,8 +23,9 @@ namespace Lunar_Project_Models
             // Liquid human waste
             // Human condensate
 
-            VCDUrineProcessor UPA = new VCDUrineProcessor (crewGiven);
-            
+            VCDUrineProcessor UPA = new VCDUrineProcessor(crewGiven);
+            MFBWaterProcessor WPA = new MFBWaterProcessor(crewGiven, UPA);
+
             // TODO implement constructor for H2O recycler
 
 

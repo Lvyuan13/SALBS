@@ -11,6 +11,7 @@ namespace Lunar_Project_Models
     {
         // Variables
         protected double m_powerRequired;
+        public double m_urineProcessedPerDay { get; set; }
 
         // Constants
 

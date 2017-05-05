@@ -45,7 +45,7 @@ namespace Lunar_Project_Models
         public SabatierCO2Recycler(Crew crewGiven)
         {
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("     ..Constructing Sabatier CO2 Recycler..");
+            Console.WriteLine("     ..Constructing Sabatier CO2 Recycler..\n");
             Console.ForegroundColor = ConsoleColor.White;
             // set member variable to CO2 in from crew
             this.m_CO2GivenIn24Hrs = crewGiven.m_crewCO2ProductionPerDay;
