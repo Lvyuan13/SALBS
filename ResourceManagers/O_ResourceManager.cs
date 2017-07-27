@@ -1,19 +1,24 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
-public class O_ResourceManager : MonoBehaviour, IResourceManager<float> {
-	private float totalO; //[kg]
+namespace LunarParametricNumeric {
+	public class O_ResourceManager : IResourceManager<float> {
+		private float totalO; //[kg]
 
-	public void addResource(float resource) {
-		totalO += resource;
-	}
+		public O_ResourceManager(float initialValue){
+			totalO = initialValue;
+		}
 
-	public void consumeResource(float resource) {
-		totalO -= resource;
-	}
+		public void addResource(float resource) {
+			totalO += resource;
+		}
 
-	public float getLevel() {
-		return totalO;
+		public void consumeResource(float resource) {
+			totalO -= resource;
+		}
+
+		public float getLevel() {
+			return totalO;
+		}
 	}
 }
