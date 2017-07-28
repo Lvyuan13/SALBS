@@ -59,7 +59,7 @@ namespace LunarParametricNumeric {
             moduleCatalogue = new Dictionary<string, Type>();
             IEnumerable<Module> exporters = typeof(Module).GetTypeInfo().Assembly.DefinedTypes
                 .Where(t => t.IsSubclassOf(typeof(Module)) && !t.IsAbstract)
-                .Select(t => (Module)Activator.CreateInstance(t.GetType()));
+                .Select(t => (Module)Activator.CreateInstance(t.GetType(), this, 0));
             foreach(Module m in exporters){
                 moduleCatalogue.Add(m.getModuleName(), m.GetType());
             }
@@ -73,7 +73,7 @@ namespace LunarParametricNumeric {
         private void registerModule(string moduleName){
             Type moduleType;
             moduleCatalogue.TryGetValue(moduleName, out moduleType);
-            Module newModule = (Module)Activator.CreateInstance(moduleType);
+            Module newModule = (Module)Activator.CreateInstance(moduleType, this, loadedModules.Count+1);
             loadedModules.Add(newModule);
         }
 
