@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using System.Reflection;
+using LunarParametricNumeric.Modules;
 
 namespace LunarParametricNumeric {
     public class Simulation {
@@ -70,9 +71,21 @@ namespace LunarParametricNumeric {
             initiate();
         }
 
+        public void step(){
+            foreach(Module m in loadedModules){
+                m.tick();
+            }
+        }
+
         private void registerModule(string moduleName){
-            Type moduleType;
-            moduleCatalogue.TryGetValue(moduleName, out moduleType);
+            Type moduleType = null;
+
+            try {
+                moduleCatalogue.TryGetValue(moduleName, out moduleType);
+            } catch (Exception e){
+                throw e;
+            }
+
             Module newModule = (Module)Activator.CreateInstance(moduleType, this, loadedModules.Count+1);
             loadedModules.Add(newModule);
         }

@@ -12,7 +12,7 @@ namespace LunarParametricNumeric {
 
         // Keeps track of resources used by the module since last update
         private float[] resourceReceipts;
-        public Module(ref Simulation sim, int id){
+        public Module(Simulation sim, int id){
             Environment = sim;
             ModuleID = id;
 
@@ -26,7 +26,7 @@ namespace LunarParametricNumeric {
         }
 
         // Sets the module load. Anywhere from 0%-100%, how hard is the module working?
-        abstract protected void setLoad(float load);
+        abstract public void setLoad(float load);
 
         // Called every tick, describes the behaviour of the module.
         abstract protected void update();
