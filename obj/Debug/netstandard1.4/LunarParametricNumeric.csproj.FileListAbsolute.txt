@@ -1,2 +1,6 @@
 /home/harry/Workspace/LunarParametricNumeric/bin/Debug/netstandard1.4/LunarParametricNumeric.deps.json
 /home/harry/Workspace/LunarParametricNumeric/obj/Debug/netstandard1.4/LunarParametricNumeric.AssemblyInfo.cs
+/home/harry/Workspace/LunarParametricNumeric/bin/Debug/netstandard1.4/LunarParametricNumeric.dll
+/home/harry/Workspace/LunarParametricNumeric/bin/Debug/netstandard1.4/LunarParametricNumeric.pdb
+/home/harry/Workspace/LunarParametricNumeric/obj/Debug/netstandard1.4/LunarParametricNumeric.dll
+/home/harry/Workspace/LunarParametricNumeric/obj/Debug/netstandard1.4/LunarParametricNumeric.pdb

@@ -1,14 +1,118 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace LunarParametricNumeric {
     public abstract class Module {
-        
-        protected Simulation Environment;
-        public Module(ref Simulation sim){
-            Environment = sim;
-        }
-        abstract public void setLoad(float load);
-        abstract public void update();
+        // A link to the simulation environment, should not be directly accessed outside of this class (even by subclasses)
+        private Simulation Environment;
 
+        // An ID that is allocated to the module when the user loads it into the workspace
+        protected int ModuleID;
+
+        // Keeps track of resources used by the module since last update
+        private float[] resourceReceipts;
+        public Module(ref Simulation sim, int id){
+            Environment = sim;
+            ModuleID = id;
+
+            int resourceCount = Enum.GetNames(typeof(Resources)).Length;
+            resourceReceipts = new float[resourceCount];
+        }
+
+        // Returns the runtime ID of the module
+        public int getID(){
+            return ModuleID;
+        }
+
+        // Sets the module load. Anywhere from 0%-100%, how hard is the module working?
+        abstract protected void setLoad(float load);
+
+        // Called every tick, describes the behaviour of the module.
+        abstract protected void update();
+
+        // Resources used by the module must be provided by the function. Hardcoding a list is advised. Prevents bug from silly cross-resource mistakes
+        abstract public List<Resources> getResources();
+
+        // A hardcoded name for the module. How will we recognise a Hab module from a science module?
+        abstract public string getModuleName();
+
+        // A hardcoded friendly name for the module. This is for user presentation only
+        abstract public string getModuleFriendlyName();
+
+        // Internal function which is called by the simulator, this function will trigger an update
+        public void tick(){
+            for (int i = 0; i < resourceReceipts.Length; i++){
+                resourceReceipts[i] = 0;
+            }
+            update();
+        }
+
+        // Callable by the simulator to determine the resources used by the module in the last update
+        public float[] getResourceConsumption(){
+            return resourceReceipts;
+        }
+
+        // Not abstract, as the subclasses should access resources through this function
+        protected void consumeResource(Resources res, float quantity){
+            if (!getResources().Contains(res)){
+                throw new Exception("The module " + ModuleID + " has not declared access to this resource! ");
+            }
+            switch (res){
+                case Resources.CO2:
+                    Environment.CO2ResourceManager.consumeResource(quantity);
+                    break;
+                case Resources.CH4:
+                    Environment.CH4ResourceManager.consumeResource(quantity);
+                    break;
+                case Resources.Enthalpy:
+                    Environment.ThermalResourceManager.consumeResource(quantity);
+                    break;
+                case Resources.Food:
+                    Environment.FoodResourceManager.consumeResource(quantity);
+                    break;
+                case Resources.H:
+                    Environment.HResourceManager.consumeResource(quantity);
+                    break;
+                case Resources.H2O:
+                    Environment.H2OResourceManager.consumeResource(quantity);
+                    break;
+                case Resources.O:
+                    Environment.OResourceManager.consumeResource(quantity);
+                    break;
+            }
+            resourceReceipts[(int) res] -= quantity;
+        }
+
+        // Not abstract, as the subclasses should access resources through this function
+        protected void produceResource(Resources res, float quantity){
+            if (!getResources().Contains(res)){
+                throw new Exception("The module " + ModuleID + " has not declared access to this resource! ");
+            }
+            switch (res){
+                case Resources.CO2:
+                    Environment.CO2ResourceManager.addResource(quantity);
+                    break;
+                case Resources.CH4:
+                    Environment.CH4ResourceManager.addResource(quantity);
+                    break;
+                case Resources.Enthalpy:
+                    Environment.ThermalResourceManager.addResource(quantity);
+                    break;
+                case Resources.Food:
+                    Environment.FoodResourceManager.addResource(quantity);
+                    break;
+                case Resources.H:
+                    Environment.HResourceManager.addResource(quantity);
+                    break;
+                case Resources.H2O:
+                    Environment.H2OResourceManager.addResource(quantity);
+                    break;
+                case Resources.O:
+                    Environment.OResourceManager.addResource(quantity);
+                    break;
+            }
+            resourceReceipts[(int) res] += quantity;
+        }
     }
 }
