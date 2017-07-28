@@ -17,7 +17,6 @@ namespace LunarParametricNumeric {
 		public void consumeResource(float resource) {
 			totalCH4 -= resource;
 		}
-
 		public float getLevel() {
 			return totalCH4;
 		}
