@@ -8,6 +8,7 @@ namespace LunarParametricNumeric.Modules
         public Human(Simulation sim, int moduleid) : base(sim,moduleid){
             
         }
+        
         public override List<Resources> getResources(){
             return new List<Resources>() { 
                 Resources.CO2,
