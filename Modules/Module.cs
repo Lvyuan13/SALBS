@@ -29,7 +29,7 @@ namespace LunarParametricNumeric {
         abstract public void setLoad(float load);
 
         // Called every tick, describes the behaviour of the module.
-        abstract protected void update();
+        abstract protected void update(UInt64 clock);
 
         // Resources used by the module must be provided by the function. Hardcoding a list is advised. Prevents bug from silly cross-resource mistakes
         abstract public List<Resources> getResources();
@@ -41,11 +41,11 @@ namespace LunarParametricNumeric {
         abstract public string getModuleFriendlyName();
 
         // Internal function which is called by the simulator, this function will trigger an update
-        public void tick(){
+        public void tick(UInt64 clock){
             for (int i = 0; i < resourceReceipts.Length; i++){
                 resourceReceipts[i] = 0;
             }
-            update();
+            update(clock);
         }
 
         // Callable by the simulator to determine the resources used by the module in the last update
