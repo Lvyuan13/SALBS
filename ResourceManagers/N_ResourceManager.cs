@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 
 namespace LunarParametricNumeric {
 
@@ -20,5 +21,10 @@ namespace LunarParametricNumeric {
 		public float getLevel() {
 			return totalN;
 		}
+
+		public static float LitresToKG(float litres){
+			double result = litres * (10^(-3)) * 1.165;
+            return Convert.ToSingle(result);
+        }
 	}
 }

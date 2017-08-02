@@ -6,6 +6,8 @@ namespace LunarParametricNumeric.Modules
     public class Human: Module
     {
 
+        Random rand = new Random();
+
         public Human(Simulation sim, int moduleid) : base(sim,moduleid){
             
         }
@@ -54,8 +56,21 @@ namespace LunarParametricNumeric.Modules
                 produceResource(Resources.CO2, Convert.ToSingle(co2Produced));
             }
 
-            double heatRelease = 118; // Humans release heat at 118W
+            double heatRelease = 118 * 10^-3; // Humans release heat at 118W, converting to kJ
             produceResource(Resources.Enthalpy, Convert.ToSingle(heatRelease)); 
+            
+            if (rand.Next(10800) == 1) // There is an 8 in 86400 chance that flatulence will occur, since average person has flatulence 8 times per day
+                flatulence();
+
+            
+        }
+
+        protected void flatulence(){
+            produceResource(Resources.N, N_ResourceManager.LitresToKG(0.0531F)); // See Harry's notebook for details of these numbers
+            produceResource(Resources.H, H_ResourceManager.LitresToKG(0.0189F));
+            produceResource(Resources.CO2, CO2_ResourceManager.LitresToKG(0.0081F));
+            produceResource(Resources.CH4, CH4_ResourceManager.LitresToKG(0.0063F));
+            produceResource(Resources.O, O_ResourceManager.LitresToKG(0.0036F));
         }
         
     }

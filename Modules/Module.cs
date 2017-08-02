@@ -80,6 +80,9 @@ namespace LunarParametricNumeric {
                 case Resources.O:
                     Environment.OResourceManager.consumeResource(quantity);
                     break;
+                case Resources.N:
+                    Environment.NResourceManager.consumeResource(quantity);
+                    break;
             }
             resourceReceipts[(int) res] -= quantity;
         }
@@ -110,6 +113,9 @@ namespace LunarParametricNumeric {
                     break;
                 case Resources.O:
                     Environment.OResourceManager.addResource(quantity);
+                    break;
+                case Resources.N:
+                    Environment.NResourceManager.addResource(quantity);
                     break;
             }
             resourceReceipts[(int) res] += quantity;

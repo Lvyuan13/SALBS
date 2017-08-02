@@ -20,5 +20,10 @@ namespace LunarParametricNumeric {
 		public float getLevel() {
 			return totalH2O;
 		}
+
+		public static float LitresToKG(float litres){
+			double result = litres * (10^(-3)) * 1000;
+            return Convert.ToSingle(result);
+        }
 	}
 }
