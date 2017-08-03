@@ -9,12 +9,15 @@ namespace LunarParametricNumeric.Modules
 			will be recharged whenever it is back at the base.
 		 */
 		private float batterySize; //[Ah]
+		private float batteryCharge; //[Ah]
 
 		/*	Figure out a way to model when the rover is driving,
 			possibly could be done using a probablity method, or
 			by simpling seeing what time of day it is.
 		 */
 		private boolean isDriving;
+
+		private boolean isCharged;
 
 		/*	Need to change this value into something meaningful. It's
 			meant to be the amount of Oxygen per second that a person
@@ -52,20 +55,33 @@ namespace LunarParametricNumeric.Modules
         	if (isDriving) {
         		consumeResource(Resources.O, Convert.ToSingle(humanOxygenIntake));
         		produceResource(Resources.Enthalpy, Convert.ToSingle(enthalpyProduced));
-        	} else {
-        		/*	Do we need to put code in here to simulate the
-        			charging of the battery in the LRV. Something like
-        			if(batteryIsFlat) {
-						chargeBattery ()
-        			}
-        			?
+        		
+        		/*	Need to change this value. This is assuming that every
+        			second the car is driving the charge in the battery drops
+        			0.01 Ah. Don't even know if that makes sense.
         		 */
+        		if (batteryCharge >= 0) {
+        			batteryCharge -= 0.01;
+        		} else {
+        			isCharged = false;
+        		}
+        	}
+
+        	else if(!isCharged) {
+        		if (batteryCharge >= batterySize) {
+        			isCharged = true;
+        			batteryCharge = batterySize;
+        		} else {
+        			batteryCharge += 0.01;
+        		}
         	}
         }
 
         // Set the size of the battery in ampere hours
 		public void setBatterySize(float size) {
 			batterySize = size;
+			batteryCharge = batterySize;
+			isCharged = true;
 		}
 	}
 }
