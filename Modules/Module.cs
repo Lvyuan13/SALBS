@@ -32,7 +32,7 @@ namespace LunarParametricNumeric {
         abstract protected void update(UInt64 clock);
 
         // Resources used by the module must be provided by the function. Hardcoding a list is advised. Prevents bug from silly cross-resource mistakes
-        abstract public List<Resources> getResources();
+        abstract public List<Resources> getRegisteredResources();
 
         // A hardcoded name for the module. How will we recognise a Hab module from a science module?
         abstract public string getModuleName();
@@ -55,7 +55,7 @@ namespace LunarParametricNumeric {
 
         // Not abstract, as the subclasses should access resources through this function
         protected void consumeResource(Resources res, float quantity){
-            if (!getResources().Contains(res)){
+            if (!getRegisteredResources().Contains(res)){
                 throw new Exception("The module " + ModuleID + " has not declared access to this resource! ");
             }
             switch (res){
@@ -89,7 +89,7 @@ namespace LunarParametricNumeric {
 
         // Not abstract, as the subclasses should access resources through this function
         protected void produceResource(Resources res, float quantity){
-            if (!getResources().Contains(res)){
+            if (!getRegisteredResources().Contains(res)){
                 throw new Exception("The module " + ModuleID + " has not declared access to this resource! ");
             }
             switch (res){
@@ -119,6 +119,31 @@ namespace LunarParametricNumeric {
                     break;
             }
             resourceReceipts[(int) res] += quantity;
+        }
+
+        protected float getResourceLevel(Resources res){
+            if (!getRegisteredResources().Contains(res)){
+                throw new Exception("The module " + ModuleID + " has not declared access to this resource! ");
+            }
+            switch (res){
+                case Resources.CO2:
+                    return Environment.CO2ResourceManager.getLevel();
+                case Resources.CH4:
+                    return Environment.CH4ResourceManager.getLevel();
+                case Resources.Enthalpy:
+                    return Environment.ThermalResourceManager.getLevel();
+                case Resources.Food:
+                    return Environment.FoodResourceManager.getLevel();
+                case Resources.H:
+                    return Environment.HResourceManager.getLevel();
+                case Resources.H2O:
+                    return Environment.H2OResourceManager.getLevel();
+                case Resources.O:
+                    return Environment.OResourceManager.getLevel();
+                case Resources.N:
+                    return Environment.NResourceManager.getLevel();
+            }
+            return 0F;
         }
     }
 }

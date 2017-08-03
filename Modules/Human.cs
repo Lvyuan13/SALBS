@@ -62,7 +62,9 @@ namespace LunarParametricNumeric.Modules
             if (rand.Next(10800) == 1) // There is an 8 in 86400 chance that flatulence will occur, since average person has flatulence 8 times per day
                 flatulence();
 
-            
+            if (rand.Next(21600) == 1) // There is an 4 in 86400 chance that eating will occur, since a person has 4 meals in a day
+                eat();
+
         }
 
         protected void flatulence(){
@@ -71,6 +73,10 @@ namespace LunarParametricNumeric.Modules
             produceResource(Resources.CO2, CO2_ResourceManager.LitresToKG(0.0081F));
             produceResource(Resources.CH4, CH4_ResourceManager.LitresToKG(0.0063F));
             produceResource(Resources.O, O_ResourceManager.LitresToKG(0.0036F));
+        }
+
+        protected void eat(){
+            consumeResource(Resources.Food, 0.5F);
         }
         
     }
