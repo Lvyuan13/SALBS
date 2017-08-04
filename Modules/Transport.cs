@@ -52,6 +52,12 @@ namespace LunarParametricNumeric.Modules
         public override void setLoad(float value) {}
 
         protected override void update(UInt64 clock) {
+        	
+        	/*	Need to insert code here to essentialy decide when
+        		the rover is driving based off of the clock.
+        	 */
+
+
         	if (isDriving) {
         		consumeResource(Resources.O, Convert.ToSingle(humanOxygenIntake));
         		produceResource(Resources.Enthalpy, Convert.ToSingle(enthalpyProduced));
