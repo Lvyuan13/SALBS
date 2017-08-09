@@ -5,5 +5,6 @@ namespace LunarNumericSimulator {
 		public abstract void addResource(T resource);
 		public abstract void consumeResource(T resource);
 		public abstract T getLevel();
-	}
+        abstract public Resources managedResource { get; }
+    }
 }

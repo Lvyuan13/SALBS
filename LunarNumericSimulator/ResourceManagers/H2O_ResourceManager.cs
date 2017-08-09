@@ -6,7 +6,16 @@ namespace LunarNumericSimulator {
 	public class H2O_ResourceManager : ResourceManager<float> {
 		private float totalH2O; //[kg]
 
-		public H2O_ResourceManager(float initialValue){
+        public override Resources managedResource
+        {
+            get
+            {
+                return Resources.H2O;
+            }
+        }
+
+
+        public H2O_ResourceManager(float initialValue){
 			totalH2O = initialValue;
 		}
 

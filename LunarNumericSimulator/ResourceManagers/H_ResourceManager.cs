@@ -12,6 +12,14 @@ namespace LunarNumericSimulator.ResourceManagers {
 
         protected float totalResource;
 
+        public override Resources managedResource
+        {
+            get
+            {
+                return Resources.Food;
+            }
+        }
+
         public H_ResourceManager(float initialValue){
             totalResource = initialValue;
 

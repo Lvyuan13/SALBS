@@ -8,36 +8,19 @@ namespace LunarNumericSimulator.ResourceManagers
 {
     public abstract class AtmosphericResourceManager : ResourceManager<float>
     {
-
-        protected ThermoEntry[] thermoTable;
-        RBF2D_Double tempPressureRBF;
-        RBF2D_Double volumeEnthalpyRBF;
         protected float enthalpyPerUnitMass;
         protected float specificVolume;
         protected float pressure;
         protected float temperature;
         protected float totalResource;
-        abstract public string thermoFile { get; }
+        abstract public string fluidName { get; }
+        abstract override public Resources managedResource { get; }
+        public float molarWeight { get; protected set; }
 
-        public AtmosphericResourceManager(float initialValue){
-            totalResource = initialValue;
+        public AtmosphericResourceManager(){
+            double MW = CoolProp.PropsSI("M", "", 0, "", 0, fluidName);
+            molarWeight = Convert.ToSingle(MW);
 
-            // Load the thermodynamic tables for the compound
-            StreamReader reader = new StreamReader(new FileStream(thermoFile, FileMode.Open));
-            CsvReader csvReader = new CsvReader(reader);
-            thermoTable = csvReader.GetRecords<ThermoEntry>().ToArray();
-
-            // Select the required data from the table. NOTE: order is important
-            var data = (from element in thermoTable
-                        select new float[] { element.Temperature, element.Pressure, element.Enthalpy, element.SpecificVolume }).ToArray();
-
-            // Fit an interpolated surface to the data
-            tempPressureRBF = new RBF2D_Double(data);
-
-            data = (from element in thermoTable
-                    select new float[] { element.Enthalpy, element.SpecificVolume, element.Temperature, element.Pressure }).ToArray();
-
-            volumeEnthalpyRBF = new RBF2D_Double(data);
         }
 
         public abstract override void addResource(float resource);
@@ -77,14 +60,16 @@ namespace LunarNumericSimulator.ResourceManagers
         public abstract float LitresToKG(float litres);
 
 		public EnthalpyAndSpecVolume getEnthalpyAndSpecVolumeAtPoint(float temp, float pressure){
-            var result = tempPressureRBF.queryPoint(temp, pressure);
-            return new EnthalpyAndSpecVolume(result[0], result[1]);
+            var enth = CoolProp.PropsSI("H", "T", temp+273.15F, "P", pressure*0.001, fluidName);
+            var specvol = 1 / CoolProp.PropsSI("D", "T",temp + 273.15F, "P", pressure * 0.001, fluidName);
+            return new EnthalpyAndSpecVolume(enth, specvol);
         }
 
         public TempAndPressure getTempAndPressureAtPoint(float enthalpy, float specificVolume)
         {
-            var result = volumeEnthalpyRBF.queryPoint(enthalpy, specificVolume);
-            return new TempAndPressure(result[0], result[1]);
+            var temp = CoolProp.PropsSI("T", "H", enthalpy*0.001, "D", (1/specificVolume), fluidName);
+            var press = 1 / CoolProp.PropsSI("P", "H", enthalpy* 0.001, "D", (1 / specificVolume), fluidName);
+            return new TempAndPressure(temp, press);
         }
 
         public class TempAndPressure

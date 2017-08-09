@@ -31,7 +31,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="alglibnet2">
-      <HintPath>..\..\..\..\csharp\alglibnet2.dll</HintPath>
+      <HintPath>C:\Users\harry\Documents\csharp\alglibnet2.dll</HintPath>
+    </Reference>
+    <Reference Include="CoolProp">
+      <HintPath>C:\Users\harry\Documents\Visual Studio 2017\Projects\CoolProp\CoolProp\bin\Debug\CoolProp.dll</HintPath>
     </Reference>
     <Reference Include="CsvHelper, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
       <HintPath>..\packages\CsvHelper.2.16.3.0\lib\net45\CsvHelper.dll</HintPath>
@@ -58,7 +61,6 @@
     <Compile Include="ResourceManagers\H_ResourceManager.cs" />
     <Compile Include="ResourceManagers\N_ResourceManager.cs" />
     <Compile Include="ResourceManagers\O_ResourceManager.cs" />
-    <Compile Include="ResourceManagers\Pressure_ResourceManager.cs" />
     <Compile Include="ResourceManagers\ResourceManager.cs" />
     <Compile Include="ResourceManagers\ThermodynamicEngine.cs" />
     <Compile Include="Simulation.cs" />
@@ -68,21 +70,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <EmbeddedResource Include="ThermodynamicTables\CO2.csv">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ThermodynamicTables\Hydrogen.csv">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ThermodynamicTables\Methane.csv">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ThermodynamicTables\Nitrogen.csv">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ThermodynamicTables\Oxygen.csv">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

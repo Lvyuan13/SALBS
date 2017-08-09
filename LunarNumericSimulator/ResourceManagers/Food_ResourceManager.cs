@@ -5,7 +5,15 @@ namespace LunarNumericSimulator {
 	public class Food_ResourceManager : ResourceManager<float> {
 		private float totalFood; //[kg]
 
-		public Food_ResourceManager(float initialValue){
+        public override Resources managedResource
+        {
+            get
+            {
+                return Resources.Food;
+            }
+        }
+
+        public Food_ResourceManager(float initialValue){
 			totalFood = initialValue;
 		}
 

@@ -49,17 +49,12 @@ namespace LunarNumericSimulator {
 
         protected void setupResourceManagers()
         {
-            float startO, startH2O, startH, startN, startEnthalpy, startCO2, startFood, startPressure;
+            float startH2O, startH,startFood;
             try
             {
-                defaultConfig.TryGetValue("atmospheric_O_start", out startO);
                 defaultConfig.TryGetValue("starting_H2O", out startH2O);
                 defaultConfig.TryGetValue("starting_H", out startH);
-                defaultConfig.TryGetValue("starting_Enthalpy", out startEnthalpy);
-                defaultConfig.TryGetValue("atmospheric_CO2_start", out startCO2);
                 defaultConfig.TryGetValue("starting_Food", out startFood);
-                defaultConfig.TryGetValue("atmospheric_N_start", out startN);
-                defaultConfig.TryGetValue("starting_Pressure", out startPressure);
             }
             catch (Exception e)
             {
@@ -67,14 +62,13 @@ namespace LunarNumericSimulator {
             }
 
 
-            CH4ResourceManager = new CH4_ResourceManager(startO);
-            CO2ResourceManager = new CO2_ResourceManager(startCO2);
+            CH4ResourceManager = new CH4_ResourceManager();
+            CO2ResourceManager = new CO2_ResourceManager();
             FoodResourceManager = new Food_ResourceManager(startFood);
             HResourceManager = new H_ResourceManager(startH);
             H2OResourceManager = new H2O_ResourceManager(startH2O);
-            NResourceManager = new N_ResourceManager(startH2O);
-            OResourceManager = new O_ResourceManager(startO);
-            PressureResourceManager = new Pressure_ResourceManager(startPressure);
+            NResourceManager = new N_ResourceManager();
+            OResourceManager = new O_ResourceManager();
         }
 
         private void loadModuleCatalogue(){

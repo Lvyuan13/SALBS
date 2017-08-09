@@ -10,7 +10,7 @@ namespace LunarNumericSimulator.ResourceManagers {
 
 	public class CH4_ResourceManager : AtmosphericResourceManager {
 
-        public override string thermoFile
+        public override string fluidName
         {
             get
             {
@@ -18,7 +18,16 @@ namespace LunarNumericSimulator.ResourceManagers {
             }
         }
 
-        public CH4_ResourceManager(float initialValue): base(initialValue){
+        public override Resources managedResource
+        {
+            get
+            {
+                return Resources.CH4;
+            }
+        }
+
+
+        public CH4_ResourceManager(): base(){
 
 		}
 		public override void addResource(float resource) {
