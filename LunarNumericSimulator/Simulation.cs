@@ -17,6 +17,7 @@ namespace LunarNumericSimulator {
                 {"atmospheric_CO2_start", 0.004F},
                 {"atmospheric_O_start", 0.216F},
                 {"atmospheric_N_start", 0.78F},
+                {"atmospheric_CH4_start", 0F},
                 {"starting_Pressure", 101.4F},
                 {"starting_Temperature", 25}
             };
@@ -29,7 +30,6 @@ namespace LunarNumericSimulator {
         public H2O_ResourceManager H2OResourceManager;
         public N_ResourceManager NResourceManager;
         public O_ResourceManager OResourceManager;
-        public Pressure_ResourceManager PressureResourceManager;
         private List<Module> loadedModules;
         private Dictionary<string,Type> moduleCatalogue;
         

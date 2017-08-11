@@ -10,13 +10,6 @@ namespace LunarNumericSimulator.ResourceManagers {
 
 	public class N_ResourceManager : AtmosphericResourceManager {
 
-        public override string fluidName
-        {
-            get
-            {
-                return "Nitrogen.csv";
-            }
-        }
 
         public override Resources managedResource
         {

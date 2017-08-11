@@ -19,7 +19,7 @@ namespace LunarNumericSimulator.Modules
                 Resources.CO2,
                 Resources.CH4,
                 Resources.H2O,
-                Resources.Enthalpy,
+                Resources.Heat,
                 Resources.O,
                 Resources.Food
             };
@@ -63,7 +63,7 @@ namespace LunarNumericSimulator.Modules
             }
 
             double heatRelease = 118 * 10^-3; // Humans release heat at 118W, converting to kJ
-            produceResource(Resources.Enthalpy, Convert.ToSingle(heatRelease)); 
+            produceResource(Resources.Heat, Convert.ToSingle(heatRelease)); 
             
             if (rand.Next(10800) == 1) // There is an 8 in 86400 chance that flatulence will occur, since average person has flatulence 8 times per day
                 flatulence();

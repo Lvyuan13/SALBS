@@ -10,13 +10,6 @@ namespace LunarNumericSimulator.ResourceManagers {
 
 	public class CH4_ResourceManager : AtmosphericResourceManager {
 
-        public override string fluidName
-        {
-            get
-            {
-                return "Methane.csv";
-            }
-        }
 
         public override Resources managedResource
         {

@@ -68,7 +68,7 @@ namespace LunarNumericSimulator {
                 case Resources.CH4:
                     Environment.CH4ResourceManager.consumeResource(quantity);
                     break;
-                case Resources.Enthalpy:
+                case Resources.Heat:
                     Environment.ThermalResourceManager.consumeResource(quantity);
                     break;
                 case Resources.Food:
@@ -102,7 +102,7 @@ namespace LunarNumericSimulator {
                 case Resources.CH4:
                     Environment.CH4ResourceManager.addResource(quantity);
                     break;
-                case Resources.Enthalpy:
+                case Resources.Heat:
                     Environment.ThermalResourceManager.addResource(quantity);
                     break;
                 case Resources.Food:
@@ -133,7 +133,7 @@ namespace LunarNumericSimulator {
                     return Environment.CO2ResourceManager.getLevel();
                 case Resources.CH4:
                     return Environment.CH4ResourceManager.getLevel();
-                case Resources.Enthalpy:
+                case Resources.Heat:
                     return Environment.ThermalResourceManager.getLevel();
                 case Resources.Food:
                     return Environment.FoodResourceManager.getLevel();

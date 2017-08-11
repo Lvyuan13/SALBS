@@ -5,6 +5,6 @@ public enum Resources {
     O = 3,
     Food = 4,
     CH4 = 5,
-    Enthalpy = 6,
+    Heat = 6,
     N = 7
 }
