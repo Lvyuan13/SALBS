@@ -18,8 +18,15 @@ namespace LunarNumericSimulator.ResourceManagers {
             }
         }
 
+        public override string fluidName
+        {
+            get { return "CarbonDioxide"; }
+        }
 
-        public CO2_ResourceManager(): base(){
+
+
+        public CO2_ResourceManager()
+        {
 
         }
 

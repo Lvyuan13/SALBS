@@ -19,16 +19,16 @@ namespace LunarNumericSimulator.ResourceManagers {
             }
         }
 
+        public override string fluidName
+        {
+            get { return "Methane"; }
+        }
 
-        public CH4_ResourceManager(): base(){
 
-		}
-		public override void addResource(float resource) {
-			totalResource += resource;
-		}
 
-		public override void consumeResource(float resource) {
-			totalResource -= resource;
+        public CH4_ResourceManager()
+        {
+
 		}
 		public override float getLevel() {
 			return totalResource;

@@ -21,7 +21,8 @@ namespace LunarNumericSimulator.Modules
                 Resources.H2O,
                 Resources.Heat,
                 Resources.O,
-                Resources.Food
+                Resources.Food,
+                Resources.N
             };
         } 
 
@@ -29,16 +30,13 @@ namespace LunarNumericSimulator.Modules
             return 0;
         }
 
-        public override string getModuleName(){
-            return "Human";
+        public override string moduleName {
+            get { return "Human"; }
         }
 
-        public override string getModuleFriendlyName(){
-            return "Human";
-        }
-
-        public override void setLoad(float value){
-
+        public override string moduleFriendlyName
+        {
+            get { return "Human"; }
         }
 
         protected override void update(UInt64 clock){
@@ -57,9 +55,9 @@ namespace LunarNumericSimulator.Modules
                 double nitrogenProduced = 0.78*airIntakeKG;
                 double oxygenProduced = 0.17*airIntakeKG;
                 double co2Produced = 0.05*airIntakeKG;
-                produceResource(Resources.N, Convert.ToSingle(nitrogenProduced));
-                produceResource(Resources.O, Convert.ToSingle(oxygenProduced));
-                produceResource(Resources.CO2, Convert.ToSingle(co2Produced));
+                consumeResource(Resources.N, Convert.ToSingle(nitrogenProduced));
+                consumeResource(Resources.O, Convert.ToSingle(oxygenProduced));
+                consumeResource(Resources.CO2, Convert.ToSingle(co2Produced));
             }
 
             double heatRelease = 118 * 10^-3; // Humans release heat at 118W, converting to kJ
@@ -74,11 +72,11 @@ namespace LunarNumericSimulator.Modules
         }
 
         protected void flatulence(){
-            produceResource(Resources.N, N_ResourceManager.LitresToKG(0.0531F)); // See Harry's notebook for details of these numbers
-            produceResource(Resources.H, H_ResourceManager.LitresToKG(0.0189F));
-            produceResource(Resources.CO2, CO2_ResourceManager.LitresToKG(0.0081F));
-            produceResource(Resources.CH4, CH4_ResourceManager.LitresToKG(0.0063F));
-            produceResource(Resources.O, O_ResourceManager.LitresToKG(0.0036F));
+            //produceResource(Resources.N, N_ResourceManager.LitresToKG(0.0531F)); // See Harry's notebook for details of these numbers
+            //produceResource(Resources.H, H_ResourceManager.LitresToKG(0.0189F));
+           // produceResource(Resources.CO2, CO2_ResourceManager.LitresToKG(0.0081F));
+           // produceResource(Resources.CH4, CH4_ResourceManager.LitresToKG(0.0063F));
+           // produceResource(Resources.O, O_ResourceManager.LitresToKG(0.0036F));
         }
 
         protected void eat(){

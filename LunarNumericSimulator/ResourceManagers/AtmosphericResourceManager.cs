@@ -18,19 +18,28 @@ namespace LunarNumericSimulator.ResourceManagers
         abstract public string fluidName { get; }
         abstract override public Resources managedResource { get; }
         public float molarWeight { get; protected set; }
-        public Thermodynamic_ResourceManager thermodynamics;
+        public ThermodynamicEngine thermodynamics;
 
-        public AtmosphericResourceManager(ref Thermodynamic_ResourceManager thermoMan){
+        public AtmosphericResourceManager(){
             molarWeight = getMolarWeight(managedResource);
-            thermodynamics = thermoMan;
+        }
+
+        public void setThermoManager(ref ThermodynamicEngine ThermoMan)
+        {
+            thermodynamics = ThermoMan;
         }
 
         public override void addResource(float resource)
         {
-
+            totalResource += resource;
+            thermodynamics.updateAtmosphere();
         }
 
-        public override void consumeResource(float resource);
+        public override void consumeResource(float resource)
+        {
+            totalResource -= resource;
+            thermodynamics.updateAtmosphere();
+        }
 
         public abstract override float getLevel();
 
@@ -102,7 +111,7 @@ namespace LunarNumericSimulator.ResourceManagers
 
         public ThermoState getStateFromInternDensity(float internalenergy, float dens)
         {
-            var enth = CoolProp.PropsSI("H", "U", internalenergy* 1000, "D", dens, fluidName);
+            var enth = CoolProp.PropsSI("H", "U", internalenergy * 1000, "DMASS", dens, fluidName);
             var temp = CoolProp.PropsSI("T", "U", internalenergy * 1000, "D", dens, fluidName);
             var entropy = CoolProp.PropsSI("S", "U", internalenergy * 1000, "D", dens, fluidName);
             var density = CoolProp.PropsSI("D", "U", internalenergy * 1000, "D", dens, fluidName);
@@ -120,10 +129,10 @@ namespace LunarNumericSimulator.ResourceManagers
 
         public ThermoState getStateFromTempDensity(float temp, float dens)
         {
-            var enth = CoolProp.PropsSI("H", "T", temp - 273.15F, "D", dens, fluidName);
-            var press = 1 / CoolProp.PropsSI("P", "T", temp - 273.15F, "D", dens, fluidName);
-            var entr = CoolProp.PropsSI("S", "T", temp - 273.15F, "D", dens, fluidName);
-            var intenergy = CoolProp.PropsSI("U", "T", temp - 273.15F, "D", dens, fluidName);
+            var enth = CoolProp.PropsSI("H", "T", temp + 273.15F, "D", dens, fluidName);
+            var press = 1 / CoolProp.PropsSI("P", "T", temp + 273.15F, "D", dens, fluidName);
+            var entr = CoolProp.PropsSI("S", "T", temp + 273.15F, "D", dens, fluidName);
+            var intenergy = CoolProp.PropsSI("U", "T", temp + 273.15F, "D", dens, fluidName);
             return new ThermoState(temp, pressure * 0.001, enth * 0.001, entr * 0.001, dens, intenergy * 0.001);
         }
 

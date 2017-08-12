@@ -8,7 +8,11 @@ namespace LunarNumericSimulator {
         private Simulation Environment;
 
         // An ID that is allocated to the module when the user loads it into the workspace
-        protected int ModuleID;
+        public int ModuleID
+        {
+            get;
+            protected set;
+        }
 
         // Keeps track of resources used by the module since last update
         private float[] resourceReceipts;
@@ -20,11 +24,6 @@ namespace LunarNumericSimulator {
             resourceReceipts = new float[resourceCount];
         }
 
-        // Returns the runtime ID of the module
-        public int getID(){
-            return ModuleID;
-        }
-
         // Called every tick, describes the behaviour of the module.
         abstract protected void update(UInt64 clock);
 
@@ -32,10 +31,10 @@ namespace LunarNumericSimulator {
         abstract public List<Resources> getRegisteredResources();
 
         // A hardcoded name for the module. How will we recognise a Hab module from a science module?
-        abstract public string getModuleName();
+        abstract public string moduleName { get; }
 
         // A hardcoded friendly name for the module. This is for user presentation only
-        abstract public string getModuleFriendlyName();
+        abstract public string moduleFriendlyName { get; }
 
         // Return the volume of the module in m3
         abstract public float getModuleVolume();

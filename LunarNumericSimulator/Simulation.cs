@@ -14,12 +14,13 @@ namespace LunarNumericSimulator {
             {
                 {"starting_H2O", 1000},
                 {"starting_Food", 200},
+                {"starting_H", 1000 },
                 {"atmospheric_CO2_start", 0.004F},
                 {"atmospheric_O_start", 0.216F},
                 {"atmospheric_N_start", 0.78F},
                 {"atmospheric_CH4_start", 0F},
                 {"starting_Pressure", 101.4F},
-                {"starting_Temperature", 25}
+                {"starting_Temp", 25}
             };
         
         private UInt64 clock = 0;
@@ -31,7 +32,7 @@ namespace LunarNumericSimulator {
         protected N_ResourceManager NResourceManager;
         protected O_ResourceManager OResourceManager;
         protected ElectricalEnergy_ResourceManager EEResourceManager;
-        protected ThermodynamicEngine ThermoEngine;
+        public ThermodynamicEngine ThermoEngine;
         protected List<Module> loadedModules;
         protected Dictionary<string,Type> moduleCatalogue;
         
@@ -74,23 +75,35 @@ namespace LunarNumericSimulator {
             EEResourceManager = new ElectricalEnergy_ResourceManager(0);
         }
 
+        protected void assignThermoControllerToResourceManagers()
+        {
+            CH4ResourceManager.setThermoManager(ref ThermoEngine);
+            CO2ResourceManager.setThermoManager(ref ThermoEngine);
+            NResourceManager.setThermoManager(ref ThermoEngine);
+            OResourceManager.setThermoManager(ref ThermoEngine);
+        }
+
         private void loadModuleCatalogue(){
             moduleCatalogue = new Dictionary<string, Type>();
-            IEnumerable<Module> exporters = typeof(Module).GetTypeInfo().Assembly.DefinedTypes
-                .Where(t => t.IsSubclassOf(typeof(Module)) && !t.IsAbstract)
-                .Select(t => (Module)Activator.CreateInstance(t.GetType(), this, 0));
-            foreach(Module m in exporters){
-                moduleCatalogue.Add(m.getModuleName(), m.GetType());
+            var exporters = (from element in Assembly.GetExecutingAssembly().GetTypes()
+                                            where element.IsSubclassOf(typeof(Module)) && !element.IsAbstract
+                                            select element).ToList();
+            
+            foreach(var t in exporters){
+                var m = (Module)Activator.CreateInstance(t, this, 0);
+                moduleCatalogue.Add(m.moduleName, t);
             }
         }
 
         public void step(){
             if (clock == 0)
             {
-                ThermoEngine = new ThermodynamicEngine(CH4ResourceManager, CO2ResourceManager, OResourceManager, NResourceManager, defaultConfig, getSystemVolume());
+                ThermoEngine = new ThermodynamicEngine(ref CH4ResourceManager, ref CO2ResourceManager, ref OResourceManager, ref NResourceManager, defaultConfig, getSystemVolume());
+                assignThermoControllerToResourceManagers();
             }
             clock++;
-            foreach(Module m in loadedModules){
+            foreach (Module m in loadedModules)
+            {
                 m.tick(clock);
             }
         }
@@ -113,6 +126,7 @@ namespace LunarNumericSimulator {
         public EnvironmentState getResourceStatus()
         {
             var state = new EnvironmentState();
+            state.Atmospheric = new EnvironmentState.Atmosphere();
             state.Atmospheric.TotalPressure = ThermoEngine.getSystemPressure();
             state.Atmospheric.Temperature = ThermoEngine.getSystemTemperature();
             state.Atmospheric.TotalMass = ThermoEngine.getSystemMass();
@@ -124,6 +138,7 @@ namespace LunarNumericSimulator {
             foreach (var rm in atmos_rms)
                 state.Atmospheric.Add(new EnvironmentState.Gas((AtmosphericResourceManager)rm));
 
+            state.Stored = new EnvironmentState.Storage();
             var stored_rms = from element in getAllResourceManagers()
                             where (element.GetType() != typeof(AtmosphericResourceManager) && element.GetType() != typeof(ThermodynamicEngine))
                             select element;
@@ -136,9 +151,20 @@ namespace LunarNumericSimulator {
         public ModuleResourceLevels getModuleResourceStatus(int moduleid)
         {
             var module = (from element in loadedModules
-                         where element.getID() == moduleid
+                         where element.ModuleID == moduleid
                          select element).FirstOrDefault();
             return new ModuleResourceLevels(module.getResourceConsumption());
+        }
+
+        public SimulationProgressReport getSimulationState()
+        {
+            SimulationProgressReport report = new SimulationProgressReport();
+            report.GlobalState = getResourceStatus();
+            var modules = (from element in loadedModules
+                            select getModuleResourceStatus(element.ModuleID)).ToList();
+            report.ModuleStates = modules;
+            return report;
+
         }
 
         protected float getSystemVolume()
@@ -147,7 +173,7 @@ namespace LunarNumericSimulator {
                     select element.getModuleVolume()).Sum();
         }
 
-        private bool registerModule(string moduleName){
+        public bool registerModule(string moduleName){
             if (clock > 0)
                 throw new Exception("All Modules must be registered before the simulation starts!");
             Type moduleType = null;
@@ -158,16 +184,19 @@ namespace LunarNumericSimulator {
                 return false;
             }
 
+            if (moduleType == null)
+                return false;
+
             Module newModule = (Module)Activator.CreateInstance(moduleType, this, loadedModules.Count+1);
             loadedModules.Add(newModule);
             return true;
         }
 
-        private bool deregisterModule(int moduleid){
+        public bool deregisterModule(int moduleid){
             if (clock > 0)
                 throw new Exception("Cannot deregister a Module during simulation!");
             foreach (Module m in loadedModules)
-                if (m.getID() == moduleid){
+                if (m.ModuleID == moduleid){
                     loadedModules.Remove(m);
                     return true;
                 }

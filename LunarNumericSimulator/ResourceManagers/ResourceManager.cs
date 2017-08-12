@@ -13,7 +13,7 @@ namespace LunarNumericSimulator {
             switch (res)
             {
                 case Resources.CO2:
-                    MW = CoolProp.PropsSI("M", "", 0, "", 0, "CarbonDioxide");
+                    MW = CoolProp.PropsSI("M", "", 0, "", 0, "CO2");
                     return Convert.ToSingle(MW);
                 case Resources.O:
                     MW = CoolProp.PropsSI("M", "", 0, "", 0, "Oxygen");
@@ -23,6 +23,7 @@ namespace LunarNumericSimulator {
                     return Convert.ToSingle(MW);
                 case Resources.CH4:
                     MW = CoolProp.PropsSI("M", "", 0, "", 0, "Methane");
+                    var thing = MW;
                     return Convert.ToSingle(MW);
                 default:
                     throw new Exception("Cannot get molar weight for unknown resource");

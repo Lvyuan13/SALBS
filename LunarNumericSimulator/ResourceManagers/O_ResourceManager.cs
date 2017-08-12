@@ -19,8 +19,12 @@ namespace LunarNumericSimulator.ResourceManagers {
             }
         }
 
+        public override string fluidName {
+            get { return "Oxygen"; }
+        }
 
-        public O_ResourceManager(): base(){
+        public O_ResourceManager()
+        {
 
 		}
 
