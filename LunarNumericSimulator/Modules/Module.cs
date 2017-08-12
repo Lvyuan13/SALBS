@@ -25,9 +25,6 @@ namespace LunarNumericSimulator {
             return ModuleID;
         }
 
-        // Sets the module load. Anywhere from 0%-100%, how hard is the module working?
-        abstract public void setLoad(float load);
-
         // Called every tick, describes the behaviour of the module.
         abstract protected void update(UInt64 clock);
 
@@ -61,32 +58,9 @@ namespace LunarNumericSimulator {
             if (!getRegisteredResources().Contains(res)){
                 throw new Exception("The module " + ModuleID + " has not declared access to this resource! ");
             }
-            switch (res){
-                case Resources.CO2:
-                    Environment.CO2ResourceManager.consumeResource(quantity);
-                    break;
-                case Resources.CH4:
-                    Environment.CH4ResourceManager.consumeResource(quantity);
-                    break;
-                case Resources.Heat:
-                    Environment.ThermalResourceManager.consumeResource(quantity);
-                    break;
-                case Resources.Food:
-                    Environment.FoodResourceManager.consumeResource(quantity);
-                    break;
-                case Resources.H:
-                    Environment.HResourceManager.consumeResource(quantity);
-                    break;
-                case Resources.H2O:
-                    Environment.H2OResourceManager.consumeResource(quantity);
-                    break;
-                case Resources.O:
-                    Environment.OResourceManager.consumeResource(quantity);
-                    break;
-                case Resources.N:
-                    Environment.NResourceManager.consumeResource(quantity);
-                    break;
-            }
+            foreach (ResourceManager<float> rm in Environment.getAllResourceManagers())
+                if (rm.managedResource == res)
+                    rm.consumeResource(quantity);
             resourceReceipts[(int) res] -= quantity;
         }
 
@@ -95,32 +69,9 @@ namespace LunarNumericSimulator {
             if (!getRegisteredResources().Contains(res)){
                 throw new Exception("The module " + ModuleID + " has not declared access to this resource! ");
             }
-            switch (res){
-                case Resources.CO2:
-                    Environment.CO2ResourceManager.addResource(quantity);
-                    break;
-                case Resources.CH4:
-                    Environment.CH4ResourceManager.addResource(quantity);
-                    break;
-                case Resources.Heat:
-                    Environment.ThermalResourceManager.addResource(quantity);
-                    break;
-                case Resources.Food:
-                    Environment.FoodResourceManager.addResource(quantity);
-                    break;
-                case Resources.H:
-                    Environment.HResourceManager.addResource(quantity);
-                    break;
-                case Resources.H2O:
-                    Environment.H2OResourceManager.addResource(quantity);
-                    break;
-                case Resources.O:
-                    Environment.OResourceManager.addResource(quantity);
-                    break;
-                case Resources.N:
-                    Environment.NResourceManager.addResource(quantity);
-                    break;
-            }
+            foreach (ResourceManager<float> rm in Environment.getAllResourceManagers())
+                if (rm.managedResource == res)
+                    rm.addResource(quantity);
             resourceReceipts[(int) res] += quantity;
         }
 
@@ -128,24 +79,9 @@ namespace LunarNumericSimulator {
             if (!getRegisteredResources().Contains(res)){
                 throw new Exception("The module " + ModuleID + " has not declared access to this resource! ");
             }
-            switch (res){
-                case Resources.CO2:
-                    return Environment.CO2ResourceManager.getLevel();
-                case Resources.CH4:
-                    return Environment.CH4ResourceManager.getLevel();
-                case Resources.Heat:
-                    return Environment.ThermalResourceManager.getLevel();
-                case Resources.Food:
-                    return Environment.FoodResourceManager.getLevel();
-                case Resources.H:
-                    return Environment.HResourceManager.getLevel();
-                case Resources.H2O:
-                    return Environment.H2OResourceManager.getLevel();
-                case Resources.O:
-                    return Environment.OResourceManager.getLevel();
-                case Resources.N:
-                    return Environment.NResourceManager.getLevel();
-            }
+            foreach (ResourceManager<float> rm in Environment.getAllResourceManagers())
+                if (rm.managedResource == res)
+                    return rm.getLevel();
             return 0F;
         }
     }

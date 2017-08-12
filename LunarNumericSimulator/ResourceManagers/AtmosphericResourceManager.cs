@@ -58,6 +58,11 @@ namespace LunarNumericSimulator.ResourceManagers
 			return enthalpyPerUnitMass;
 		}
 
+        public float getInternalEnergyPerUnitMass()
+        {
+            return internalEnergy;
+        }
+
         public float getDensity()
         {
             return density;
@@ -92,7 +97,7 @@ namespace LunarNumericSimulator.ResourceManagers
             var entropy = CoolProp.PropsSI("S", "T",temp + 273.15F, "P", pressure * 1000, fluidName);
             var density = CoolProp.PropsSI("D", "T", temp + 273.15F, "P", pressure * 1000, fluidName);
             var intenergy = CoolProp.PropsSI("U", "T", temp + 273.15F, "P", pressure * 1000, fluidName);
-            return new ThermoState(temp-273.15F, pressure * 0.001, enth*0.001, entropy * 0.001, density, intenergy * 0.001);
+            return new ThermoState(temp, pressure, enth*0.001, entropy * 0.001, density, intenergy * 0.001);
         }
 
         public ThermoState getStateFromInternDensity(float internalenergy, float dens)
@@ -101,7 +106,7 @@ namespace LunarNumericSimulator.ResourceManagers
             var temp = CoolProp.PropsSI("T", "U", internalenergy * 1000, "D", dens, fluidName);
             var entropy = CoolProp.PropsSI("S", "U", internalenergy * 1000, "D", dens, fluidName);
             var density = CoolProp.PropsSI("D", "U", internalenergy * 1000, "D", dens, fluidName);
-            return new ThermoState(temp - 273.15F, pressure * 0.001, enth * 0.001, entropy * 0.001, density, internalenergy * 0.001);
+            return new ThermoState(temp - 273.15F, pressure * 0.001, enth * 0.001, entropy * 0.001, density, internalenergy);
         }
 
         public ThermoState getStateFromEnthEntr(float enthalpy, float entropy)
@@ -110,7 +115,16 @@ namespace LunarNumericSimulator.ResourceManagers
             var press = 1 / CoolProp.PropsSI("P", "H", enthalpy* 1000, "S", entropy* 1000, fluidName);
             var density = CoolProp.PropsSI("D", "H", enthalpy * 1000, "S", entropy * 1000, fluidName);
             var intenergy = CoolProp.PropsSI("U", "H", enthalpy * 1000, "S", entropy * 1000, fluidName);
-            return new ThermoState(temp - 273.15F, pressure * 0.001, enthalpy * 0.001, entropy * 0.001, density, intenergy * 0.001);
+            return new ThermoState(temp - 273.15F, pressure * 0.001, enthalpy, entropy, density, intenergy * 0.001);
+        }
+
+        public ThermoState getStateFromTempDensity(float temp, float dens)
+        {
+            var enth = CoolProp.PropsSI("H", "T", temp - 273.15F, "D", dens, fluidName);
+            var press = 1 / CoolProp.PropsSI("P", "T", temp - 273.15F, "D", dens, fluidName);
+            var entr = CoolProp.PropsSI("S", "T", temp - 273.15F, "D", dens, fluidName);
+            var intenergy = CoolProp.PropsSI("U", "T", temp - 273.15F, "D", dens, fluidName);
+            return new ThermoState(temp, pressure * 0.001, enth * 0.001, entr * 0.001, dens, intenergy * 0.001);
         }
 
         public class ThermoState

@@ -5,13 +5,13 @@ using System.Linq;
 using System.Reflection;
 using LunarNumericSimulator.Modules;
 using LunarNumericSimulator.ResourceManagers;
+using LunarNumericSimulator.Reporting;
 
 namespace LunarNumericSimulator {
     public class Simulation {
 
         Dictionary<string, float> defaultConfig = new Dictionary<string, float>()
             {
-                {"number_of_Humans", 4},
                 {"starting_H2O", 1000},
                 {"starting_Food", 200},
                 {"atmospheric_CO2_start", 0.004F},
@@ -23,15 +23,17 @@ namespace LunarNumericSimulator {
             };
         
         private UInt64 clock = 0;
-        public CH4_ResourceManager CH4ResourceManager;
-        public CO2_ResourceManager CO2ResourceManager;
-        public Food_ResourceManager FoodResourceManager;
-        public H_ResourceManager HResourceManager;
-        public H2O_ResourceManager H2OResourceManager;
-        public N_ResourceManager NResourceManager;
-        public O_ResourceManager OResourceManager;
-        private List<Module> loadedModules;
-        private Dictionary<string,Type> moduleCatalogue;
+        protected CH4_ResourceManager CH4ResourceManager;
+        protected CO2_ResourceManager CO2ResourceManager;
+        protected Food_ResourceManager FoodResourceManager;
+        protected H_ResourceManager HResourceManager;
+        protected H2O_ResourceManager H2OResourceManager;
+        protected N_ResourceManager NResourceManager;
+        protected O_ResourceManager OResourceManager;
+        protected ElectricalEnergy_ResourceManager EEResourceManager;
+        protected ThermodynamicEngine ThermoEngine;
+        protected List<Module> loadedModules;
+        protected Dictionary<string,Type> moduleCatalogue;
         
         public void initiate(){
 
@@ -69,6 +71,7 @@ namespace LunarNumericSimulator {
             H2OResourceManager = new H2O_ResourceManager(startH2O);
             NResourceManager = new N_ResourceManager();
             OResourceManager = new O_ResourceManager();
+            EEResourceManager = new ElectricalEnergy_ResourceManager(0);
         }
 
         private void loadModuleCatalogue(){
@@ -82,14 +85,66 @@ namespace LunarNumericSimulator {
         }
 
         public void step(){
-            // TODO: Stop people from adding modules after step function is run. Force all mdules to be loadd before step
+            if (clock == 0)
+            {
+                ThermoEngine = new ThermodynamicEngine(CH4ResourceManager, CO2ResourceManager, OResourceManager, NResourceManager, defaultConfig, getSystemVolume());
+            }
             clock++;
-            float volume = 0;
             foreach(Module m in loadedModules){
-                volume += m.getModuleVolume();
                 m.tick(clock);
             }
-            // Calculate pressure
+        }
+
+        public ResourceManager<float>[] getAllResourceManagers()
+        {
+            return new ResourceManager<float>[]
+            {
+                CH4ResourceManager,
+                CO2ResourceManager,
+                FoodResourceManager,
+                HResourceManager,
+                H2OResourceManager,
+                NResourceManager,
+                OResourceManager,
+                ThermoEngine
+            };
+        }
+
+        public EnvironmentState getResourceStatus()
+        {
+            var state = new EnvironmentState();
+            state.Atmospheric.TotalPressure = ThermoEngine.getSystemPressure();
+            state.Atmospheric.Temperature = ThermoEngine.getSystemTemperature();
+            state.Atmospheric.TotalMass = ThermoEngine.getSystemMass();
+            state.Atmospheric.TotalEnthalpy = ThermoEngine.getSystemEnthalpy();
+
+            var atmos_rms = from element in getAllResourceManagers()
+                            where element.GetType() == typeof(AtmosphericResourceManager)
+                            select element;
+            foreach (var rm in atmos_rms)
+                state.Atmospheric.Add(new EnvironmentState.Gas((AtmosphericResourceManager)rm));
+
+            var stored_rms = from element in getAllResourceManagers()
+                            where (element.GetType() != typeof(AtmosphericResourceManager) && element.GetType() != typeof(ThermodynamicEngine))
+                            select element;
+            foreach (var rm in stored_rms)
+                state.Stored.Add(new EnvironmentState.StoredResource(rm));
+
+            return state;
+        }
+
+        public ModuleResourceLevels getModuleResourceStatus(int moduleid)
+        {
+            var module = (from element in loadedModules
+                         where element.getID() == moduleid
+                         select element).FirstOrDefault();
+            return new ModuleResourceLevels(module.getResourceConsumption());
+        }
+
+        protected float getSystemVolume()
+        {
+            return (from element in loadedModules
+                    select element.getModuleVolume()).Sum();
         }
 
         private bool registerModule(string moduleName){

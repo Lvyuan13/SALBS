@@ -6,5 +6,6 @@ public enum Resources {
     Food = 4,
     CH4 = 5,
     Heat = 6,
-    N = 7
+    N = 7,
+    ElecticalEnergy = 8
 }

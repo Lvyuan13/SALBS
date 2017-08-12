@@ -52,12 +52,15 @@
     <Compile Include="Modules\Human.cs" />
     <Compile Include="Modules\Module.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reporting\ModuleResourceLevels.cs" />
+    <Compile Include="Reporting\ResourceLevels.cs" />
     <Compile Include="ResourceEnum.cs" />
     <Compile Include="ResourceManagers\AtmosphericResourceManager.cs" />
     <Compile Include="ResourceManagers\CH4_ResourceManager.cs" />
     <Compile Include="ResourceManagers\CO2_ResourceManager.cs" />
     <Compile Include="ResourceManagers\Food_ResourceManager.cs" />
     <Compile Include="ResourceManagers\H2O_ResourceManager.cs" />
+    <Compile Include="ResourceManagers\ElectricalEnergy_ResourceManager.cs" />
     <Compile Include="ResourceManagers\H_ResourceManager.cs" />
     <Compile Include="ResourceManagers\N_ResourceManager.cs" />
     <Compile Include="ResourceManagers\O_ResourceManager.cs" />
