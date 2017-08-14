@@ -7,24 +7,23 @@ namespace LunarNumericSimulator {
 		public abstract void consumeResource(T resource);
 		public abstract T getLevel();
         abstract public Resources managedResource { get; }
-        public static float getMolarWeight(Resources res)
+        public static double getMolarWeight(Resources res)
         {
             double MW = 0;
             switch (res)
             {
                 case Resources.CO2:
                     MW = CoolProp.PropsSI("M", "", 0, "", 0, "CO2");
-                    return Convert.ToSingle(MW);
+                    return MW;
                 case Resources.O:
                     MW = CoolProp.PropsSI("M", "", 0, "", 0, "Oxygen");
-                    return Convert.ToSingle(MW);
+                    return MW;
                 case Resources.N:
                     MW = CoolProp.PropsSI("M", "", 0, "", 0, "Nitrogen");
-                    return Convert.ToSingle(MW);
+                    return MW;
                 case Resources.CH4:
                     MW = CoolProp.PropsSI("M", "", 0, "", 0, "Methane");
-                    var thing = MW;
-                    return Convert.ToSingle(MW);
+                    return MW;
                 default:
                     throw new Exception("Cannot get molar weight for unknown resource");
             }

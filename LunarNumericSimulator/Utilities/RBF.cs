@@ -27,10 +27,10 @@ namespace LunarNumericSimulator.Utilities
             alglib.rbfbuildmodel(rbf, out report);
         }
 
-        public float queryPoint(float temp, float pressure)
+        public double queryPoint(double temp, double pressure)
         {
             double result = alglib.rbfcalc2(rbf, temp, pressure);
-            return Convert.ToSingle(result);
+            return result;
         }
     }
 
@@ -56,7 +56,7 @@ namespace LunarNumericSimulator.Utilities
             alglib.rbfbuildmodel(rbf, out report);
         }
 
-        public double[] queryPoint(float x, float y)
+        public double[] queryPoint(double x, double y)
         {
             double[] result;
             alglib.rbfcalc(rbf ,new double[] { x, y }, out result);

@@ -2,19 +2,19 @@ namespace LunarNumericSimulator.Utilities
 {
     public class ThermoEntry
     {
-        public float Temperature;
-        public float Pressure;
-        public float Density;
-        public float SpecificVolume;
-        public float InternalEnergy;
-        public float Enthalpy;
-        public float Entropy;
-        public float Cv;
-        public float Cp;
-        public float SpeedSound;
-        public float JT;
-        public float Viscosity;
-        public float ThermalConductivity;
+        public double Temperature;
+        public double Pressure;
+        public double Density;
+        public double SpecificVolume;
+        public double InternalEnergy;
+        public double Enthalpy;
+        public double Entropy;
+        public double Cv;
+        public double Cp;
+        public double SpeedSound;
+        public double JT;
+        public double Viscosity;
+        public double ThermalConductivity;
 
     }
 }

@@ -28,20 +28,13 @@ namespace LunarNumericSimulator.ResourceManagers {
 
 		}
 
-		public override void addResource(float resource) {
-			totalResource += resource;
-		}
-
-		public override void consumeResource(float resource) {
-			totalResource -= resource;
-		}
-		public override float getLevel() {
+		public override double getLevel() {
 			return totalResource;
 		}
 
-		public override float LitresToKG(float litres){
+		public override double LitresToKG(double litres){
 			double result = litres * (10^(-3)) * 1.331;
-            return Convert.ToSingle(result);
+            return result;
         }
 	}
 }

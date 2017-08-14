@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System;
 
 namespace LunarNumericSimulator {
-	public class H2O_ResourceManager : ResourceManager<float> {
-		private float totalH2O; //[kg]
+	public class H2O_ResourceManager : ResourceManager<double> {
+		private double totalH2O; //[kg]
 
         public override Resources managedResource
         {
@@ -15,25 +15,25 @@ namespace LunarNumericSimulator {
         }
 
 
-        public H2O_ResourceManager(float initialValue){
+        public H2O_ResourceManager(double initialValue){
 			totalH2O = initialValue;
 		}
 
-		public override void addResource(float resource) {
+		public override void addResource(double resource) {
 			totalH2O += resource;
 		}
 
-		public override void consumeResource(float resource) {
+		public override void consumeResource(double resource) {
 			totalH2O -= resource;
 		}
 
-		public override float getLevel() {
+		public override double getLevel() {
 			return totalH2O;
 		}
 
-		public static float LitresToKG(float litres){
+		public static double LitresToKG(double litres){
 			double result = litres * (10^(-3)) * 1000;
-            return Convert.ToSingle(result);
+            return result;
         }
 	}
 }

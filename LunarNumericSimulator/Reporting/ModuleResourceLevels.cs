@@ -8,14 +8,14 @@ namespace LunarNumericSimulator.Reporting
 {
     public class ModuleResourceLevels
     {
-        float[] resourceReceipt;
+        double[] resourceReceipt;
 
-        public ModuleResourceLevels(float[] receipt)
+        public ModuleResourceLevels(double[] receipt)
         {
             resourceReceipt = receipt;
         }
 
-        public float getResourceLevel(Resources res)
+        public double getResourceLevel(Resources res)
         {
             return resourceReceipt[(int)res];
         }

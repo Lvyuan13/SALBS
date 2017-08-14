@@ -7,7 +7,7 @@ using static LunarNumericSimulator.ResourceManagers.AtmosphericResourceManager;
 
 namespace LunarNumericSimulator
 {
-    public partial class ThermodynamicEngine : ResourceManager<float>
+    public partial class ThermodynamicEngine : ResourceManager<double>
     {
 
         public CH4_ResourceManager ch4ResourceManager;
@@ -15,7 +15,7 @@ namespace LunarNumericSimulator
         public O_ResourceManager oResourceManager;
         public N_ResourceManager nResourceManager;
 
-        protected float systemVolume;
+        protected double systemVolume;
 
         public override Resources managedResource
         {
@@ -25,14 +25,14 @@ namespace LunarNumericSimulator
             }
         }
 
-        public ThermodynamicEngine(ref CH4_ResourceManager CH4RMS, ref CO2_ResourceManager CO2RMS, ref O_ResourceManager ORMS, ref N_ResourceManager NRMS, Dictionary<string, float> config, float totalVolume)
+        public ThermodynamicEngine(ref CH4_ResourceManager CH4RMS, ref CO2_ResourceManager CO2RMS, ref O_ResourceManager ORMS, ref N_ResourceManager NRMS, Dictionary<string, double> config, double totalVolume)
         {
             ch4ResourceManager = CH4RMS;
             co2ResourceManager = CO2RMS;
             oResourceManager = ORMS;
             nResourceManager = NRMS;
 
-            float startO, startN, startCO2, initialTemp, initialPressure, startCH4;
+            double startO, startN, startCO2, initialTemp, initialPressure, startCH4;
             try
             {
                 config.TryGetValue("starting_Temp", out initialTemp);
@@ -52,12 +52,12 @@ namespace LunarNumericSimulator
             setupEnvironment(startCO2, startO, startN, startCH4, initialPressure, initialTemp);
         }
 
-        protected void setupEnvironment(float startCO2, float startO, float startN, float startCH4, float startingPressure, float startingTemp)
+        protected void setupEnvironment(double startCO2, double startO, double startN, double startCH4, double startingPressure, double startingTemp)
         {
-            float partialPressure = 0;
+            double partialPressure = 0;
             ThermoState thermoStateVars;
 
-            float molarFraction = startCO2;
+            double molarFraction = startCO2;
             if (startCO2 != 0) {
                 partialPressure = molarFraction * startingPressure;
                 thermoStateVars = co2ResourceManager.getStateFromTempPres(startingTemp, partialPressure);
@@ -87,19 +87,19 @@ namespace LunarNumericSimulator
             }
         }
 
-        public override void addResource(float resource)
+        public override void addResource(double resource)
         {
             addHeat(resource);
         }
 
-        public override void consumeResource(float resource)
+        public override void consumeResource(double resource)
         {
             addHeat(-resource);
         }
 
-        public override float getLevel()
+        public override double getLevel()
         {
-            float totalEnthalpy = ch4ResourceManager.getTotalEnthalpy();
+            double totalEnthalpy = ch4ResourceManager.getTotalEnthalpy();
             totalEnthalpy += co2ResourceManager.getTotalEnthalpy();
             totalEnthalpy += oResourceManager.getTotalEnthalpy();
             totalEnthalpy += nResourceManager.getTotalEnthalpy();
@@ -109,7 +109,7 @@ namespace LunarNumericSimulator
         /*
          * Calculates system pressure by summation of gas partial pressures
          * */
-        public float getSystemPressure()
+        public double getSystemPressure()
         {
             var CO2 = co2ResourceManager.getPressure();
             var O = oResourceManager.getPressure();
@@ -121,20 +121,20 @@ namespace LunarNumericSimulator
         /*
          * Calculates system temperature by taking weighted average of the constituent gas temperatures
          * */
-        public float getSystemTemperature()
+        public double getSystemTemperature()
         {
-            float CO2, O, N, CH4, systemMass = getSystemMass();
+            double CO2, O, N, CH4, systemMass = getSystemMass();
             CO2 = co2ResourceManager.getLevel() / systemMass;
             O = oResourceManager.getLevel() / systemMass;
             N = nResourceManager.getLevel() / systemMass;
             CH4 = ch4ResourceManager.getLevel() / systemMass;
 
-            float averageMolarWeight = getSystemAverageMolarWeight();
+            double averageMolarWeight = getSystemAverageMolarWeight();
 
-            float molarFractionCO2 = CO2 * (averageMolarWeight / co2ResourceManager.molarWeight);
-            float molarFractionCH4 = CH4 * (averageMolarWeight / ch4ResourceManager.molarWeight);
-            float molarFractionO = O * (averageMolarWeight / oResourceManager.molarWeight);
-            float molarFractionN = N * (averageMolarWeight / nResourceManager.molarWeight);
+            double molarFractionCO2 = CO2 * (averageMolarWeight / co2ResourceManager.molarWeight);
+            double molarFractionCH4 = CH4 * (averageMolarWeight / ch4ResourceManager.molarWeight);
+            double molarFractionO = O * (averageMolarWeight / oResourceManager.molarWeight);
+            double molarFractionN = N * (averageMolarWeight / nResourceManager.molarWeight);
 
             var weightedAverageTemp = molarFractionCO2 * co2ResourceManager.getTemperature() +
                 molarFractionCH4 * ch4ResourceManager.getTemperature() +
@@ -144,16 +144,16 @@ namespace LunarNumericSimulator
             return weightedAverageTemp;
         }
 
-        public float getSystemMass()
+        public double getSystemMass()
         {
-            float totalMass = ch4ResourceManager.getLevel();
+            double totalMass = ch4ResourceManager.getLevel();
             totalMass += co2ResourceManager.getLevel();
             totalMass += oResourceManager.getLevel();
             totalMass += nResourceManager.getLevel();
             return totalMass;
         }
 
-        public float getSystemEnthalpy()
+        public double getSystemEnthalpy()
         {
             var CO2 = co2ResourceManager.getTotalEnthalpy();
             var O = oResourceManager.getTotalEnthalpy();
@@ -162,7 +162,7 @@ namespace LunarNumericSimulator
             return CO2 + O + N + CH4;
         }
 
-        public float getSystemInternalEnergy()
+        public double getSystemInternalEnergy()
         {
             var CO2 = co2ResourceManager.getTotalInternalEnergy();
             var O = oResourceManager.getTotalInternalEnergy();
@@ -178,40 +178,39 @@ namespace LunarNumericSimulator
         * */
         public void updateAtmosphere()
         {
-            float CO2, O, N, CH4;
+            double CO2, O, N, CH4;
             CO2 = co2ResourceManager.getLevel() / systemVolume;
             O = oResourceManager.getLevel() / systemVolume;
             N = nResourceManager.getLevel() / systemVolume;
             CH4 = ch4ResourceManager.getLevel() / systemVolume;
 
-            float internalener = 0;
-            float temp = 0;
+            double temp = 0;
             ThermoState thermoStateVars;
 
             if (CO2 != 0)
             {
                 temp = co2ResourceManager.getTemperature(); // This is an isothermal density adjustment
-                thermoStateVars = co2ResourceManager.getStateFromTempDensity(internalener, CO2);
+                thermoStateVars = co2ResourceManager.getStateFromTempDensity(temp, CO2);
                 co2ResourceManager.setState(thermoStateVars, systemVolume);
             }
 
             if (CH4 != 0)
             {
                 temp = ch4ResourceManager.getTemperature(); // This is an isothermal density adjustment
-                thermoStateVars = ch4ResourceManager.getStateFromTempDensity(internalener, CH4);
+                thermoStateVars = ch4ResourceManager.getStateFromTempDensity(temp, CH4);
                 ch4ResourceManager.setState(thermoStateVars, systemVolume);
             }
             if (O != 0)
             {
                 temp = oResourceManager.getTemperature(); // This is an isothermal density adjustment
-                thermoStateVars = oResourceManager.getStateFromTempDensity(internalener, O);
+                thermoStateVars = oResourceManager.getStateFromTempDensity(temp, O);
                 oResourceManager.setState(thermoStateVars, systemVolume);
             }
 
             if (N != 0)
             {
                 temp = nResourceManager.getTemperature(); // This is an isothermal density adjustment
-                thermoStateVars = nResourceManager.getStateFromTempDensity(internalener, N);
+                thermoStateVars = nResourceManager.getStateFromTempDensity(temp, N);
                 nResourceManager.setState(thermoStateVars, systemVolume);
             }
 
@@ -224,64 +223,75 @@ namespace LunarNumericSimulator
          * 
          * For example, if Nitrogen constitutes 71% of the atmosphere, it will absorb 71% of the incoming heat.
          * */
-        public void addHeat(float quantity)
+        public void addHeat(double quantity)
         {
-            float totalInternalEnergyInSystem = getSystemInternalEnergy();
-            float CO2, O, N, CH4, systemMass = getSystemMass();
+            double totalInternalEnergyInSystem = getSystemInternalEnergy();
+            double CO2, O, N, CH4, systemMass = getSystemMass();
             CO2 = co2ResourceManager.getLevel() / systemMass;
             O = oResourceManager.getLevel() / systemMass;
             N = nResourceManager.getLevel() / systemMass;
             CH4 = ch4ResourceManager.getLevel() / systemMass;
 
-            float averageMolarWeight = getSystemAverageMolarWeight();
+            double averageMolarWeight = getSystemAverageMolarWeight();
 
-            float molarFraction = 0;
-            float internalener = 0;
-            float density = 0;
+            double molarFraction = 0;
+            double internalenergy = 0;
+            double density = 0;
             ThermoState thermoStateVars;
 
-            density = co2ResourceManager.getDensity(); // This is an isochoric heat addition (density is constant)
-            molarFraction = CO2 * (averageMolarWeight / co2ResourceManager.molarWeight);
-            internalener = molarFraction * (totalInternalEnergyInSystem + quantity);
-            thermoStateVars = co2ResourceManager.getStateFromInternDensity(internalener, density);
-            co2ResourceManager.setState(thermoStateVars, systemVolume);
+            if (CO2 != 0)
+            {
+                density = co2ResourceManager.getDensity(); // This is an isochoric heat addition (density is constant)
+                molarFraction = CO2 * (averageMolarWeight / co2ResourceManager.molarWeight);
+                internalenergy = (molarFraction * (quantity) / co2ResourceManager.getLevel()) + co2ResourceManager.getInternalEnergyPerUnitMass();
+                thermoStateVars = co2ResourceManager.getStateFromInternDensity(internalenergy, density);
+                co2ResourceManager.setState(thermoStateVars, systemVolume);
+            }
 
-            density = ch4ResourceManager.getDensity(); // This is an isochoric heat addition (density is constant)
-            molarFraction = CH4 * (averageMolarWeight / ch4ResourceManager.molarWeight);
-            internalener = molarFraction * (totalInternalEnergyInSystem + quantity);
-            thermoStateVars = ch4ResourceManager.getStateFromInternDensity(internalener, density);
-            ch4ResourceManager.setState(thermoStateVars, systemVolume);
+            if (CH4 != 0)
+            {
+                density = ch4ResourceManager.getDensity(); // This is an isochoric heat addition (density is constant)
+                molarFraction = CH4 * (averageMolarWeight / ch4ResourceManager.molarWeight);
+                internalenergy = (molarFraction * (quantity) / ch4ResourceManager.getLevel()) + ch4ResourceManager.getInternalEnergyPerUnitMass();
+                thermoStateVars = ch4ResourceManager.getStateFromInternDensity(internalenergy, density);
+                ch4ResourceManager.setState(thermoStateVars, systemVolume);
+            }
+            if (O != 0)
+            {
+                density = oResourceManager.getDensity(); // This is an isochoric heat addition (density is constant)
+                molarFraction = O * (averageMolarWeight / oResourceManager.molarWeight);
+                internalenergy = (molarFraction * (quantity) / oResourceManager.getLevel()) + oResourceManager.getInternalEnergyPerUnitMass();
+                thermoStateVars = oResourceManager.getStateFromInternDensity(internalenergy, density);
+                oResourceManager.setState(thermoStateVars, systemVolume);
+            }
 
-            density = oResourceManager.getDensity(); // This is an isochoric heat addition (density is constant)
-            molarFraction = O * (averageMolarWeight / oResourceManager.molarWeight);
-            internalener = molarFraction * (totalInternalEnergyInSystem + quantity);
-            thermoStateVars = oResourceManager.getStateFromInternDensity(internalener, density);
-            oResourceManager.setState(thermoStateVars, systemVolume);
-
-            density = nResourceManager.getDensity(); // This is an isochoric heat addition (density is constant)
-            molarFraction = N * (averageMolarWeight / nResourceManager.molarWeight);
-            internalener = molarFraction * (totalInternalEnergyInSystem + quantity);
-            thermoStateVars = nResourceManager.getStateFromInternDensity(internalener, density);
-            nResourceManager.setState(thermoStateVars, systemVolume);
+            if (N != 0)
+            {
+                density = nResourceManager.getDensity(); // This is an isochoric heat addition (density is constant)
+                molarFraction = N * (averageMolarWeight / nResourceManager.molarWeight);
+                internalenergy = (molarFraction * (quantity) / nResourceManager.getLevel()) + nResourceManager.getInternalEnergyPerUnitMass();
+                thermoStateVars = nResourceManager.getStateFromInternDensity(internalenergy, density);
+                nResourceManager.setState(thermoStateVars, systemVolume);
+            }
 
         }
 
-        protected float getSystemAverageMolarWeight()
+        protected double getSystemAverageMolarWeight()
         {
-            float systemMass = getSystemMass();
-            float massFractionCO2 = co2ResourceManager.getLevel() / systemMass;
-            float massFractionCH4 = ch4ResourceManager.getLevel() / systemMass;
-            float massFractionO = oResourceManager.getLevel() / systemMass;
-            float massFractionN = nResourceManager.getLevel() / systemMass;
+            double systemMass = getSystemMass();
+            double massFractionCO2 = co2ResourceManager.getLevel() / systemMass;
+            double massFractionCH4 = ch4ResourceManager.getLevel() / systemMass;
+            double massFractionO = oResourceManager.getLevel() / systemMass;
+            double massFractionN = nResourceManager.getLevel() / systemMass;
 
-            float averageMolarWeight = (massFractionCO2 * co2ResourceManager.molarWeight);
+            double averageMolarWeight = (massFractionCO2 * co2ResourceManager.molarWeight);
             averageMolarWeight += (massFractionO * oResourceManager.molarWeight);
             averageMolarWeight += (massFractionN * nResourceManager.molarWeight);
             averageMolarWeight += (massFractionCH4 * ch4ResourceManager.molarWeight);
             return averageMolarWeight;
         }
 
-        protected float calculateMolarMassFromMassFraction(float molarWeight, float massFraction)
+        protected double calculateMolarMassFromMassFraction(double molarWeight, double massFraction)
         {
             return massFraction * (getSystemAverageMolarWeight() / molarWeight);
         }

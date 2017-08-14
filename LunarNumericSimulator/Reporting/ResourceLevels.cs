@@ -11,13 +11,14 @@ namespace LunarNumericSimulator.Reporting
     {
         public Atmosphere Atmospheric;
         public Storage Stored;
+        public UInt64 clock;
 
         public class Atmosphere: List<Gas>
         {
-            public float TotalPressure;
-            public float Temperature;
-            public float TotalMass;
-            public float TotalEnthalpy;
+            public double TotalPressure;
+            public double Temperature;
+            public double TotalMass;
+            public double TotalEnthalpy;
         }
 
         public class Storage: List<StoredResource>
@@ -28,8 +29,8 @@ namespace LunarNumericSimulator.Reporting
         public class StoredResource
         {
             public Resources Resource;
-            public float Quantity;
-            public StoredResource(ResourceManager<float> rm)
+            public double Quantity;
+            public StoredResource(ResourceManager<double> rm)
             {
                 Resource = rm.managedResource;
                 Quantity = rm.getLevel();
@@ -39,12 +40,12 @@ namespace LunarNumericSimulator.Reporting
         public class Gas
         {
             public Resources Resource;
-            public float Quantity;
-            public float PartialPressure;
-            public float Temperature;
-            public float PartialEthalpy;
-            public float PartialInternalEnergy;
-            public float Density;
+            public double Quantity;
+            public double PartialPressure;
+            public double Temperature;
+            public double PartialEthalpy;
+            public double PartialInternalEnergy;
+            public double Density;
             public Gas(AtmosphericResourceManager rm)
             {
                 Resource = rm.managedResource;

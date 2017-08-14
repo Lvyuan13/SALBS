@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 
 namespace LunarNumericSimulator {
-	public class Food_ResourceManager : ResourceManager<float> {
-		private float totalFood; //[kg]
+	public class Food_ResourceManager : ResourceManager<double> {
+		private double totalFood; //[kg]
 
         public override Resources managedResource
         {
@@ -13,19 +13,19 @@ namespace LunarNumericSimulator {
             }
         }
 
-        public Food_ResourceManager(float initialValue){
+        public Food_ResourceManager(double initialValue){
 			totalFood = initialValue;
 		}
 
-		public override void addResource(float resource) {
+		public override void addResource(double resource) {
 			totalFood += resource;
 		}
 
-		public override void consumeResource(float resource) {
+		public override void consumeResource(double resource) {
 			totalFood -= resource;
 		}
 
-		public override float getLevel() {
+		public override double getLevel() {
 			return totalFood;
 		}
 	}

@@ -1,6 +1,6 @@
 ﻿namespace SimulatorGUI
 {
-    partial class Form1
+    partial class SimulationGUI
     {
         /// <summary>
         /// Required designer variable.
@@ -137,6 +137,7 @@
             this.CurrentTimeLabel.Size = new System.Drawing.Size(79, 13);
             this.CurrentTimeLabel.TabIndex = 0;
             this.CurrentTimeLabel.Text = "Current Time: 0";
+            this.CurrentTimeLabel.Click += new System.EventHandler(this.CurrentTimeLabel_Click);
             // 
             // ModuleNameBox
             // 
@@ -146,7 +147,7 @@
             this.ModuleNameBox.Size = new System.Drawing.Size(131, 20);
             this.ModuleNameBox.TabIndex = 6;
             // 
-            // Form1
+            // SimulationGUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -158,7 +159,7 @@
             this.Controls.Add(this.RemoveButton);
             this.Controls.Add(this.AddButton);
             this.Controls.Add(this.ModuleList);
-            this.Name = "Form1";
+            this.Name = "SimulationGUI";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.GraphTabs.ResumeLayout(false);

@@ -10,15 +10,15 @@ using LunarNumericSimulator.Reporting;
 namespace LunarNumericSimulator {
     public class Simulation {
 
-        Dictionary<string, float> defaultConfig = new Dictionary<string, float>()
+        Dictionary<string, double> defaultConfig = new Dictionary<string, double>()
             {
                 {"starting_H2O", 1000},
                 {"starting_Food", 200},
                 {"starting_H", 1000 },
-                {"atmospheric_CO2_start", 0.004F},
+                {"atmospheric_CO2_start", 0.003F},
                 {"atmospheric_O_start", 0.216F},
                 {"atmospheric_N_start", 0.78F},
-                {"atmospheric_CH4_start", 0F},
+                {"atmospheric_CH4_start", 0.001F},
                 {"starting_Pressure", 101.4F},
                 {"starting_Temp", 25}
             };
@@ -44,7 +44,7 @@ namespace LunarNumericSimulator {
             loadModuleCatalogue();
         }
 
-        public void initiate(Dictionary<string, float> customConfig)
+        public void initiate(Dictionary<string, double> customConfig)
         {
             customConfig.ToList().ForEach(x => defaultConfig[x.Key] = x.Value);
             initiate();
@@ -52,7 +52,7 @@ namespace LunarNumericSimulator {
 
         protected void setupResourceManagers()
         {
-            float startH2O, startH,startFood;
+            double startH2O, startH,startFood;
             try
             {
                 defaultConfig.TryGetValue("starting_H2O", out startH2O);
@@ -108,9 +108,9 @@ namespace LunarNumericSimulator {
             }
         }
 
-        public ResourceManager<float>[] getAllResourceManagers()
+        public ResourceManager<double>[] getAllResourceManagers()
         {
-            return new ResourceManager<float>[]
+            return new ResourceManager<double>[]
             {
                 CH4ResourceManager,
                 CO2ResourceManager,
@@ -126,6 +126,7 @@ namespace LunarNumericSimulator {
         public EnvironmentState getResourceStatus()
         {
             var state = new EnvironmentState();
+            state.clock = clock;
             state.Atmospheric = new EnvironmentState.Atmosphere();
             state.Atmospheric.TotalPressure = ThermoEngine.getSystemPressure();
             state.Atmospheric.Temperature = ThermoEngine.getSystemTemperature();
@@ -133,14 +134,14 @@ namespace LunarNumericSimulator {
             state.Atmospheric.TotalEnthalpy = ThermoEngine.getSystemEnthalpy();
 
             var atmos_rms = from element in getAllResourceManagers()
-                            where element.GetType() == typeof(AtmosphericResourceManager)
+                            where element.managedResource.IsAtmospheric()
                             select element;
             foreach (var rm in atmos_rms)
                 state.Atmospheric.Add(new EnvironmentState.Gas((AtmosphericResourceManager)rm));
 
             state.Stored = new EnvironmentState.Storage();
             var stored_rms = from element in getAllResourceManagers()
-                            where (element.GetType() != typeof(AtmosphericResourceManager) && element.GetType() != typeof(ThermodynamicEngine))
+                            where (!element.managedResource.IsAtmospheric())
                             select element;
             foreach (var rm in stored_rms)
                 state.Stored.Add(new EnvironmentState.StoredResource(rm));
@@ -167,7 +168,7 @@ namespace LunarNumericSimulator {
 
         }
 
-        protected float getSystemVolume()
+        protected double getSystemVolume()
         {
             return (from element in loadedModules
                     select element.getModuleVolume()).Sum();

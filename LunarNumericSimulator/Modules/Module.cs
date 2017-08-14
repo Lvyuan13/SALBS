@@ -15,13 +15,13 @@ namespace LunarNumericSimulator {
         }
 
         // Keeps track of resources used by the module since last update
-        private float[] resourceReceipts;
+        private double[] resourceReceipts;
         public Module(Simulation sim, int id){
             Environment = sim;
             ModuleID = id;
 
             int resourceCount = Enum.GetNames(typeof(Resources)).Length;
-            resourceReceipts = new float[resourceCount];
+            resourceReceipts = new double[resourceCount];
         }
 
         // Called every tick, describes the behaviour of the module.
@@ -37,7 +37,7 @@ namespace LunarNumericSimulator {
         abstract public string moduleFriendlyName { get; }
 
         // Return the volume of the module in m3
-        abstract public float getModuleVolume();
+        abstract public double getModuleVolume();
 
         // Internal function which is called by the simulator, this function will trigger an update
         public void tick(UInt64 clock){
@@ -48,37 +48,37 @@ namespace LunarNumericSimulator {
         }
 
         // Callable by the simulator to determine the resources used by the module in the last update
-        public float[] getResourceConsumption(){
+        public double[] getResourceConsumption(){
             return resourceReceipts;
         }
 
         // Not abstract, as the subclasses should access resources through this function
-        protected void consumeResource(Resources res, float quantity){
+        protected void consumeResource(Resources res, double quantity){
             if (!getRegisteredResources().Contains(res)){
                 throw new Exception("The module " + ModuleID + " has not declared access to this resource! ");
             }
-            foreach (ResourceManager<float> rm in Environment.getAllResourceManagers())
+            foreach (ResourceManager<double> rm in Environment.getAllResourceManagers())
                 if (rm.managedResource == res)
                     rm.consumeResource(quantity);
             resourceReceipts[(int) res] -= quantity;
         }
 
         // Not abstract, as the subclasses should access resources through this function
-        protected void produceResource(Resources res, float quantity){
+        protected void produceResource(Resources res, double quantity){
             if (!getRegisteredResources().Contains(res)){
                 throw new Exception("The module " + ModuleID + " has not declared access to this resource! ");
             }
-            foreach (ResourceManager<float> rm in Environment.getAllResourceManagers())
+            foreach (ResourceManager<double> rm in Environment.getAllResourceManagers())
                 if (rm.managedResource == res)
                     rm.addResource(quantity);
             resourceReceipts[(int) res] += quantity;
         }
 
-        protected float getResourceLevel(Resources res){
+        protected double getResourceLevel(Resources res){
             if (!getRegisteredResources().Contains(res)){
                 throw new Exception("The module " + ModuleID + " has not declared access to this resource! ");
             }
-            foreach (ResourceManager<float> rm in Environment.getAllResourceManagers())
+            foreach (ResourceManager<double> rm in Environment.getAllResourceManagers())
                 if (rm.managedResource == res)
                     return rm.getLevel();
             return 0F;

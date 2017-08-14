@@ -16,11 +16,12 @@ namespace LunarNumericSimulator.Modules
         public override List<Resources> getRegisteredResources()
         {
             return new List<Resources>() {
-
+                Resources.O,
+                Resources.CH4
             };
         }
 
-        public override float getModuleVolume()
+        public override double getModuleVolume()
         {
             return 400;
         }
@@ -37,7 +38,10 @@ namespace LunarNumericSimulator.Modules
 
         protected override void update(UInt64 clock)
         {
-
+            if (clock > 500)
+            {
+                produceResource(Resources.CH4, 0.2);
+            }
         }
 
 

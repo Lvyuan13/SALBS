@@ -8,9 +8,9 @@ using LunarNumericSimulator.Utilities;
 
 namespace LunarNumericSimulator.ResourceManagers {
 
-	public class H_ResourceManager : ResourceManager<float> {
+	public class H_ResourceManager : ResourceManager<double> {
 
-        protected float totalResource;
+        protected double totalResource;
 
         public override Resources managedResource
         {
@@ -20,24 +20,24 @@ namespace LunarNumericSimulator.ResourceManagers {
             }
         }
 
-        public H_ResourceManager(float initialValue){
+        public H_ResourceManager(double initialValue){
             totalResource = initialValue;
 
 		}
-		public override void addResource(float resource) {
+		public override void addResource(double resource) {
 			totalResource += resource;
 		}
 
-		public override void consumeResource(float resource) {
+		public override void consumeResource(double resource) {
 			totalResource -= resource;
 		}
-		public override float getLevel() {
+		public override double getLevel() {
 			return totalResource;
 		}
 
-		public float LitresToKG(float litres){
+		public double LitresToKG(double litres){
 			double result = litres * (10^(-3)) * 0.0899;
-            return Convert.ToSingle(result);
+            return result;
         }
 	}
 }
