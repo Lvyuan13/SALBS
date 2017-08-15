@@ -51,6 +51,9 @@ namespace LunarParametricNumeric.Modules
 
         public override void setLoad(float value) {}
 
+
+        /*	Add changes to allow ConsumeResource.Energy()
+         */
         protected override void update(UInt64 clock) {
         	
         	/*	Need to insert code here to essentialy decide when
