@@ -37,18 +37,24 @@
             System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.EnvironmentChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             ((System.ComponentModel.ISupportInitialize)(this.EnvironmentChart)).BeginInit();
             this.SuspendLayout();
             // 
             // EnvironmentChart
             // 
+            this.EnvironmentChart.BackColor = System.Drawing.Color.DimGray;
+            chartArea1.AxisX.Title = "Time";
+            chartArea1.AxisY.Title = "Pressure (kPa)";
             chartArea1.Name = "TopLeft";
+            chartArea2.AxisX.Title = "Time";
+            chartArea2.AxisY.Title = "Temperature (C)";
             chartArea2.Name = "BottomLeft";
+            chartArea3.AxisX.Title = "Time";
+            chartArea3.AxisY.Title = "Enthalpy (kJ)";
             chartArea3.Name = "TopRight";
+            chartArea4.AxisX.Title = "Time";
+            chartArea4.AxisY.Title = "Gas Mass (kg)";
             chartArea4.Name = "BottomRight";
             this.EnvironmentChart.ChartAreas.Add(chartArea1);
             this.EnvironmentChart.ChartAreas.Add(chartArea2);
@@ -73,28 +79,13 @@
             series3.Legend = "EnvironmentLegend";
             series3.Name = "Enthalpy";
             series4.ChartArea = "BottomRight";
-            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Pie;
             series4.Legend = "EnvironmentLegend";
-            series4.Name = "CO2 Quantity";
-            series5.ChartArea = "BottomRight";
-            series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            series5.Legend = "EnvironmentLegend";
-            series5.Name = "O Quantity";
-            series6.ChartArea = "BottomRight";
-            series6.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            series6.Legend = "EnvironmentLegend";
-            series6.Name = "CH4 Quantity";
-            series7.ChartArea = "BottomRight";
-            series7.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            series7.Legend = "EnvironmentLegend";
-            series7.Name = "N Quantity";
+            series4.Name = "Gas Distribution";
             this.EnvironmentChart.Series.Add(series1);
             this.EnvironmentChart.Series.Add(series2);
             this.EnvironmentChart.Series.Add(series3);
             this.EnvironmentChart.Series.Add(series4);
-            this.EnvironmentChart.Series.Add(series5);
-            this.EnvironmentChart.Series.Add(series6);
-            this.EnvironmentChart.Series.Add(series7);
             this.EnvironmentChart.Size = new System.Drawing.Size(816, 523);
             this.EnvironmentChart.TabIndex = 0;
             this.EnvironmentChart.Text = "chart1";

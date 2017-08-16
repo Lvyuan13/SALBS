@@ -16,5 +16,10 @@ namespace SimulatorGUI
         {
             InitializeComponent();
         }
+
+        private void EnvironmentChart_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

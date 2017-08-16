@@ -18,7 +18,7 @@ namespace SimulatorGUI
         BackgroundWorker worker;
         Simulation simulation;
         List<Module> moduleList;
-        EnvironmentPanel envPanel;
+        protected float updateTimer = 0;
 
         public SimulationGUI()
         {
@@ -42,11 +42,9 @@ namespace SimulatorGUI
 
             GraphTabs.TabPages.Clear();
             GraphTabs.TabPages.Add("Environmental Summary");
-            envPanel = new EnvironmentPanel();
+            var envPanel = new EnvironmentPanel();
             envPanel.Dock = DockStyle.Fill;
             GraphTabs.TabPages[0].Controls.Add(envPanel);
-
-            GraphTabs.TabPages.Add("Atmosphere");
 
         }
 
@@ -61,30 +59,93 @@ namespace SimulatorGUI
 
             SimulationProgressReport report = (SimulationProgressReport)e.UserState;
             CurrentTimeLabel.Text = "Current Time: " + report.GlobalState.clock;
-            Chart environmentChart = (Chart)envPanel.GetChildAtPoint(new Point(5, 5));
+
+            updateEnvironmentTab(report);
+            foreach (Module m in simulation.getModules())
+            {
+                var state = (from element in report.ModuleStates
+                            where element.getID() == m.ModuleID
+                            select element).First();
+                updateTab(report.GlobalState.clock, m.ModuleID.ToString(), state);
+            }
+        }
+        
+        protected void updateEnvironmentTab(SimulationProgressReport report)
+        {
+            Chart environmentChart = (Chart)GraphTabs.TabPages[0].Controls[0].GetChildAtPoint(new Point(5, 5));
             environmentChart.Series["Pressure"].Points.AddXY(report.GlobalState.clock, report.GlobalState.Atmospheric.TotalPressure);
 
             environmentChart.Series["Temperature"].Points.AddXY(report.GlobalState.clock, report.GlobalState.Atmospheric.Temperature);
 
             environmentChart.Series["Enthalpy"].Points.AddXY(report.GlobalState.clock, report.GlobalState.Atmospheric.TotalEnthalpy);
 
-            var co2 = (from element in report.GlobalState.Atmospheric
-                       where element.Resource == Resources.CO2
-                       select element.Quantity).FirstOrDefault();
-            environmentChart.Series["CO2 Quantity"].Points.AddXY(report.GlobalState.clock, co2);
-            var ch4 = (from element in report.GlobalState.Atmospheric
-                       where element.Resource == Resources.CH4
-                       select element.Quantity).FirstOrDefault();
-            environmentChart.Series["CH4 Quantity"].Points.AddXY(report.GlobalState.clock, ch4);
-            var O = (from element in report.GlobalState.Atmospheric
-                       where element.Resource == Resources.O
-                       select element.Quantity).FirstOrDefault();
-            environmentChart.Series["O Quantity"].Points.AddXY(report.GlobalState.clock, O);
-            var N = (from element in report.GlobalState.Atmospheric
-                       where element.Resource == Resources.N
-                       select element.Quantity).FirstOrDefault();
-            environmentChart.Series["N Quantity"].Points.AddXY(report.GlobalState.clock, N);
+            if (updateTimer % 50 == 0)
+            {
+                environmentChart.Series["Gas Distribution"].Points.Clear();
+                var co2 = (from element in report.GlobalState.Atmospheric
+                           where element.Resource == Resources.CO2
+                           select element.Quantity).FirstOrDefault();
+                environmentChart.Series["Gas Distribution"].Points.AddXY(Resources.CO2.ToString(), co2);
+                var ch4 = (from element in report.GlobalState.Atmospheric
+                           where element.Resource == Resources.CH4
+                           select element.Quantity).FirstOrDefault();
+                environmentChart.Series["Gas Distribution"].Points.AddXY(Resources.CH4.ToString(), ch4);
+                var O = (from element in report.GlobalState.Atmospheric
+                         where element.Resource == Resources.O
+                         select element.Quantity).FirstOrDefault();
+                environmentChart.Series["Gas Distribution"].Points.AddXY(Resources.O.ToString(), O);
+                var N = (from element in report.GlobalState.Atmospheric
+                         where element.Resource == Resources.N
+                         select element.Quantity).FirstOrDefault();
+                environmentChart.Series["Gas Distribution"].Points.AddXY(Resources.N.ToString(), N);
+                updateTimer = -1;
+            }
+            updateTimer++;
+        }
 
+        protected void setupTab(string tabid)
+        {
+            var panel = new AtmospherePanel();
+            int resourceCount = Enum.GetNames(typeof(Resources)).Length;
+            panel.Dock = DockStyle.Fill;
+            GraphTabs.TabPages[tabid].Controls.Add(panel);
+            Module m = (from element in simulation.getModules()
+                        where element.ModuleID == Convert.ToInt32(tabid)
+                        select element).First();
+            Chart chart = (Chart)panel.Controls[0];
+            for(int i = 0; i < resourceCount; i++)
+            {
+                Resources res = (Resources)i;
+                if (res == Resources.ElecticalEnergy)
+                {
+                    chart.Series.Add(new Series(res.ToString()));
+                    chart.Series[0].ChartArea = "Bottom";
+                    continue;
+                }
+                var str = res.ToString();
+                chart.Series.Add(new Series(res.ToString()));
+                chart.Series[0].ChartArea = "Top";
+            }
+        }
+
+        protected void updateTab(UInt64 clock, string tabid, ModuleResourceLevels report)
+        {
+            
+            Chart chart = (Chart)GraphTabs.TabPages[tabid].Controls[0].Controls[0];
+
+            int resourceCount = Enum.GetNames(typeof(Resources)).Length;
+            for(int i = 0; i < resourceCount; i++)
+            {
+                Resources res = (Resources)i;
+                if (res == Resources.ElecticalEnergy)
+                {
+                    chart.Series["Energy Usage"].Points.AddXY(clock, report.getResourceLevel(res));
+                    chart.Series[0].ChartArea = "Bottom";
+                    continue;
+                }
+                chart.Series[res.ToString()].Points.AddXY(clock, report.getResourceLevel(res));
+                chart.Series[0].ChartArea = "Top";
+            }
         }
 
         protected void runSimulation(object sender, DoWorkEventArgs args)
@@ -119,6 +180,13 @@ namespace SimulatorGUI
         {
             AddButton.Enabled = false;
             RemoveButton.Enabled = false;
+
+            foreach (Module m in simulation.getModules())
+            {
+                GraphTabs.TabPages.Add(m.ModuleID.ToString(), m.moduleFriendlyName);
+                setupTab(m.ModuleID.ToString());
+            }
+
             worker.RunWorkerAsync();
         }
 

@@ -154,7 +154,7 @@ namespace LunarNumericSimulator {
             var module = (from element in loadedModules
                          where element.ModuleID == moduleid
                          select element).FirstOrDefault();
-            return new ModuleResourceLevels(module.getResourceConsumption());
+            return new ModuleResourceLevels(module.ModuleID, module.getResourceConsumption());
         }
 
         public SimulationProgressReport getSimulationState()
