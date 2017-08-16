@@ -19,6 +19,7 @@ namespace SimulatorGUI
         Simulation simulation;
         List<Module> moduleList;
         protected float updateTimer = 0;
+        public object sync = 0;
 
         public SimulationGUI()
         {
@@ -56,17 +57,19 @@ namespace SimulatorGUI
 
         private void Worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-
-            SimulationProgressReport report = (SimulationProgressReport)e.UserState;
-            CurrentTimeLabel.Text = "Current Time: " + report.GlobalState.clock;
-
-            updateEnvironmentTab(report);
-            foreach (Module m in simulation.getModules())
+            lock (sync)
             {
-                var state = (from element in report.ModuleStates
-                            where element.getID() == m.ModuleID
-                            select element).First();
-                updateTab(report.GlobalState.clock, m.ModuleID.ToString(), state);
+                SimulationProgressReport report = (SimulationProgressReport)e.UserState;
+                CurrentTimeLabel.Text = "Current Time: " + report.GlobalState.clock;
+
+                updateEnvironmentTab(report);
+                foreach (Module m in simulation.getModules())
+                {
+                    var state = (from element in report.ModuleStates
+                                 where element.getID() == m.ModuleID
+                                 select element).First();
+                    updateTab(report.GlobalState.clock, m.ModuleID.ToString(), state);
+                }
             }
         }
         
@@ -106,24 +109,20 @@ namespace SimulatorGUI
         protected void setupTab(string tabid)
         {
             var panel = new AtmospherePanel();
-            int resourceCount = Enum.GetNames(typeof(Resources)).Length;
             panel.Dock = DockStyle.Fill;
             GraphTabs.TabPages[tabid].Controls.Add(panel);
             Module m = (from element in simulation.getModules()
                         where element.ModuleID == Convert.ToInt32(tabid)
                         select element).First();
             Chart chart = (Chart)panel.Controls[0];
-            for(int i = 0; i < resourceCount; i++)
-            {
-                Resources res = (Resources)i;
-                if (res == Resources.ElecticalEnergy)
+            foreach(var gas in m.getRegisteredResources()) { 
+                if (gas == Resources.ElecticalEnergy)
                 {
-                    chart.Series.Add(new Series(res.ToString()));
+                    chart.Series.Add(new Series("Energy Usage"));
                     chart.Series[0].ChartArea = "Bottom";
                     continue;
                 }
-                var str = res.ToString();
-                chart.Series.Add(new Series(res.ToString()));
+                chart.Series.Add(new Series(gas.ToString()));
                 chart.Series[0].ChartArea = "Top";
             }
         }
@@ -133,17 +132,15 @@ namespace SimulatorGUI
             
             Chart chart = (Chart)GraphTabs.TabPages[tabid].Controls[0].Controls[0];
 
-            int resourceCount = Enum.GetNames(typeof(Resources)).Length;
-            for(int i = 0; i < resourceCount; i++)
+            foreach(var gas in report.getRegisteredResources())
             {
-                Resources res = (Resources)i;
-                if (res == Resources.ElecticalEnergy)
+                if (gas == Resources.ElecticalEnergy)
                 {
-                    chart.Series["Energy Usage"].Points.AddXY(clock, report.getResourceLevel(res));
+                    chart.Series["Energy Usage"].Points.AddXY(clock, report.getResourceLevel(gas));
                     chart.Series[0].ChartArea = "Bottom";
                     continue;
                 }
-                chart.Series[res.ToString()].Points.AddXY(clock, report.getResourceLevel(res));
+                chart.Series[gas.ToString()].Points.AddXY(clock, report.getResourceLevel(gas));
                 chart.Series[0].ChartArea = "Top";
             }
         }

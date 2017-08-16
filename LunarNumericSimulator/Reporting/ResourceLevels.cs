@@ -23,7 +23,6 @@ namespace LunarNumericSimulator.Reporting
 
         public class Storage: List<StoredResource>
         {
-
         }
 
         public class StoredResource
