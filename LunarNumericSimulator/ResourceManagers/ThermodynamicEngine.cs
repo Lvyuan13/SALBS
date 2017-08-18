@@ -144,6 +144,29 @@ namespace LunarNumericSimulator
             return weightedAverageTemp;
         }
 
+        public double getSystemDensity()
+        {
+            double CO2, O, N, CH4, systemMass = getSystemMass();
+            CO2 = co2ResourceManager.getLevel() / systemMass;
+            O = oResourceManager.getLevel() / systemMass;
+            N = nResourceManager.getLevel() / systemMass;
+            CH4 = ch4ResourceManager.getLevel() / systemMass;
+
+            double averageMolarWeight = getSystemAverageMolarWeight();
+
+            double molarFractionCO2 = CO2 * (averageMolarWeight / co2ResourceManager.molarWeight);
+            double molarFractionCH4 = CH4 * (averageMolarWeight / ch4ResourceManager.molarWeight);
+            double molarFractionO = O * (averageMolarWeight / oResourceManager.molarWeight);
+            double molarFractionN = N * (averageMolarWeight / nResourceManager.molarWeight);
+
+            var weightedAverageTemp = molarFractionCO2 * co2ResourceManager.getDensity() +
+                molarFractionCH4 * ch4ResourceManager.getDensity() +
+                molarFractionO * oResourceManager.getDensity() +
+                molarFractionN * nResourceManager.getDensity();
+
+            return weightedAverageTemp;
+        }
+
         public double getSystemMass()
         {
             double totalMass = ch4ResourceManager.getLevel();

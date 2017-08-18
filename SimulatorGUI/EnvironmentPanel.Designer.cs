@@ -46,6 +46,7 @@
             this.EnvironmentChart.BackColor = System.Drawing.Color.DimGray;
             chartArea1.AxisX.Title = "Time";
             chartArea1.AxisY.Title = "Pressure (kPa)";
+            chartArea1.BackColor = System.Drawing.Color.White;
             chartArea1.Name = "TopLeft";
             chartArea2.AxisX.Title = "Time";
             chartArea2.AxisY.Title = "Temperature (C)";
@@ -55,6 +56,8 @@
             chartArea3.Name = "TopRight";
             chartArea4.AxisX.Title = "Time";
             chartArea4.AxisY.Title = "Gas Mass (kg)";
+            chartArea4.BackColor = System.Drawing.Color.DimGray;
+            chartArea4.BackSecondaryColor = System.Drawing.Color.Gray;
             chartArea4.Name = "BottomRight";
             this.EnvironmentChart.ChartAreas.Add(chartArea1);
             this.EnvironmentChart.ChartAreas.Add(chartArea2);

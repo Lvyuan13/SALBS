@@ -9,7 +9,6 @@ namespace LunarNumericSimulator.Modules
     {
 
         Random rand = new Random();
-
         public Human(Simulation sim, int moduleid) : base(sim,moduleid){
             
         }
@@ -42,22 +41,22 @@ namespace LunarNumericSimulator.Modules
         protected override void update(UInt64 clock){
             double airIntakeL = 0.25*(2*Math.PI/5)*Math.Cos((2*Math.PI/5)*clock); // A sine function which estimates human breathing patterns
             // TODO: Factor in varying breathing rates for intensities
-            double airIntakeKG = 0.001225*airIntakeL; // There's 0.001225kg/L of air
+            double airIntakeKG = Math.Abs(getAirDensity() * 0.001 * airIntakeL); // There's 0.001225kg/L of air
 
-            if (airIntakeKG < 0){
+            if (airIntakeL < 0){
                 double nitrogenIntake = 0.78*airIntakeKG;
                 double oxygenIntake = 0.21*airIntakeKG;
                 double co2Intake = 0.0004*airIntakeKG;
                 consumeResource(Resources.N, nitrogenIntake);
                 consumeResource(Resources.O, oxygenIntake);
                 consumeResource(Resources.CO2, co2Intake);
-            } else if (airIntakeKG > 0){
+            } else if (airIntakeL > 0){
                 double nitrogenProduced = 0.78*airIntakeKG;
-                double oxygenProduced = 0.17*airIntakeKG;
-                double co2Produced = 0.05*airIntakeKG;
-                consumeResource(Resources.N, nitrogenProduced);
-                consumeResource(Resources.O, oxygenProduced);
-                consumeResource(Resources.CO2, co2Produced);
+                double oxygenProduced = 0.15*airIntakeKG;
+                double co2Produced = 0.07*airIntakeKG;
+                produceResource(Resources.N, nitrogenProduced);
+                produceResource(Resources.O, oxygenProduced);
+                produceResource(Resources.CO2, co2Produced);
             }
 
             double heatRelease = 118 * Math.Pow(10,-3); // Humans release heat at 118W, converting to kJ
@@ -72,15 +71,14 @@ namespace LunarNumericSimulator.Modules
         }
 
         protected void flatulence(){
-            //produceResource(Resources.N, N_ResourceManager.LitresToKG(0.0531F)); // See Harry's notebook for details of these numbers
-            //produceResource(Resources.H, H_ResourceManager.LitresToKG(0.0189F));
-           // produceResource(Resources.CO2, CO2_ResourceManager.LitresToKG(0.0081F));
-           // produceResource(Resources.CH4, CH4_ResourceManager.LitresToKG(0.0063F));
-           // produceResource(Resources.O, O_ResourceManager.LitresToKG(0.0036F));
+            produceResourceLitres(Resources.N, 0.0531F); // See Harry's notebook for details of these numbers
+            produceResourceLitres(Resources.CO2, 0.0081F);
+            produceResourceLitres(Resources.CH4, 0.0063F);
+            produceResourceLitres(Resources.O, 0.0036F);
         }
 
         protected void eat(){
-            consumeResource(Resources.Food, 0.5F);
+            consumeResource(Resources.Food, 2);
         }
         
     }

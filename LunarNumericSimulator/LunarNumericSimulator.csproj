@@ -83,6 +83,7 @@
     <Compile Include="CoolProp\SWIGTYPE_p_std__vectorT_CoolProp__CriticalState_t.cs" />
     <Compile Include="CoolProp\VectorOfDoubleVector.cs" />
     <Compile Include="CoolProp\VectorOfStringVector.cs" />
+    <Compile Include="Modules\HeatPump.cs" />
     <Compile Include="Modules\Human.cs" />
     <Compile Include="Modules\Habitat.cs" />
     <Compile Include="Modules\Module.cs" />
@@ -104,6 +105,7 @@
     <Compile Include="ResourceManagers\ThermodynamicEngine.cs" />
     <Compile Include="Simulation.cs" />
     <Compile Include="Utilities\NormInv.cs" />
+    <Compile Include="Utilities\PIDController.cs" />
     <Compile Include="Utilities\RBF.cs" />
     <Compile Include="Utilities\ThermoEntry.cs" />
   </ItemGroup>

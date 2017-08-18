@@ -35,9 +35,5 @@ namespace LunarNumericSimulator.ResourceManagers {
 			return totalResource;
 		}
 
-		public double LitresToKG(double litres){
-			double result = litres * (10^(-3)) * 0.0899;
-            return result;
-        }
 	}
 }
