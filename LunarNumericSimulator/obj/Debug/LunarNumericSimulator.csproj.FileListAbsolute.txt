@@ -1,0 +1,10 @@
+c:\users\harry\documents\visual studio 2017\Projects\LunarNumericSimulator\LunarNumericSimulator\obj\Debug\LunarNumericSimulator.csprojResolveAssemblyReference.cache
+D:\LunarParametricNumeric\LunarNumericSimulator\obj\Debug\LunarNumericSimulator.csprojResolveAssemblyReference.cache
+D:\LunarParametricNumeric\LunarNumericSimulator\bin\Debug\LunarNumericSimulator.dll
+D:\LunarParametricNumeric\LunarNumericSimulator\bin\Debug\LunarNumericSimulator.pdb
+D:\LunarParametricNumeric\LunarNumericSimulator\bin\Debug\alglibnet2.dll
+D:\LunarParametricNumeric\LunarNumericSimulator\bin\Debug\CsvHelper.dll
+D:\LunarParametricNumeric\LunarNumericSimulator\bin\Debug\CsvHelper.xml
+D:\LunarParametricNumeric\LunarNumericSimulator\obj\Debug\LunarNumericSimulator.dll
+D:\LunarParametricNumeric\LunarNumericSimulator\obj\Debug\LunarNumericSimulator.pdb
+D:\LunarParametricNumeric\LunarNumericSimulator\bin\Debug\CoolProp.dll

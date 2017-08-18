@@ -1,0 +1,15 @@
+D:\LunarParametricNumeric\SimulatorGUI\bin\Debug\SimulatorGUI.exe.config
+D:\LunarParametricNumeric\SimulatorGUI\bin\Debug\SimulatorGUI.exe
+D:\LunarParametricNumeric\SimulatorGUI\bin\Debug\SimulatorGUI.pdb
+D:\LunarParametricNumeric\SimulatorGUI\bin\Debug\LunarNumericSimulator.dll
+D:\LunarParametricNumeric\SimulatorGUI\bin\Debug\alglibnet2.dll
+D:\LunarParametricNumeric\SimulatorGUI\bin\Debug\LunarNumericSimulator.pdb
+D:\LunarParametricNumeric\SimulatorGUI\obj\Debug\SimulatorGUI.csprojResolveAssemblyReference.cache
+D:\LunarParametricNumeric\SimulatorGUI\obj\Debug\SimulatorGUI.Properties.Resources.resources
+D:\LunarParametricNumeric\SimulatorGUI\obj\Debug\SimulatorGUI.csproj.GenerateResource.Cache
+D:\LunarParametricNumeric\SimulatorGUI\obj\Debug\SimulatorGUI.exe
+D:\LunarParametricNumeric\SimulatorGUI\obj\Debug\SimulatorGUI.pdb
+D:\LunarParametricNumeric\SimulatorGUI\bin\Debug\CoolProp.dll
+D:\LunarParametricNumeric\SimulatorGUI\obj\Debug\SimulatorGUI.EnvironmentPanel.resources
+D:\LunarParametricNumeric\SimulatorGUI\obj\Debug\SimulatorGUI.SimulationGUI.resources
+D:\LunarParametricNumeric\SimulatorGUI\obj\Debug\SimulatorGUI.AtmospherePanel.resources
