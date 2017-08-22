@@ -24,14 +24,8 @@ namespace LunarNumericSimulator {
             };
         
         private UInt64 clock = 0;
-        protected CH4_ResourceManager CH4ResourceManager;
-        protected CO2_ResourceManager CO2ResourceManager;
-        protected Food_ResourceManager FoodResourceManager;
-        protected H_ResourceManager HResourceManager;
-        protected H2O_ResourceManager H2OResourceManager;
-        protected N_ResourceManager NResourceManager;
-        protected O_ResourceManager OResourceManager;
-        protected ElectricalEnergy_ResourceManager EEResourceManager;
+        List<AtmosphericResourceManager> atmosphericResourceManagers = new List<AtmosphericResourceManager>();
+        List<StoredResourceManager> storedResourceManagers = new List<StoredResourceManager>();
         public ThermodynamicEngine ThermoEngine;
         protected List<Module> loadedModules;
         protected Dictionary<string,Type> moduleCatalogue;
@@ -65,22 +59,21 @@ namespace LunarNumericSimulator {
             }
 
 
-            CH4ResourceManager = new CH4_ResourceManager();
-            CO2ResourceManager = new CO2_ResourceManager();
-            FoodResourceManager = new Food_ResourceManager(startFood);
-            HResourceManager = new H_ResourceManager(startH);
-            H2OResourceManager = new H2O_ResourceManager(startH2O);
-            NResourceManager = new N_ResourceManager();
-            OResourceManager = new O_ResourceManager();
-            EEResourceManager = new ElectricalEnergy_ResourceManager(0);
+            atmosphericResourceManagers.Add(new AtmosphericResourceManager(Resources.CH4, "Methane"));
+            atmosphericResourceManagers.Add(new AtmosphericResourceManager(Resources.CO2, "CarbonDioxide"));
+            atmosphericResourceManagers.Add(new AtmosphericResourceManager(Resources.N, "Nitrogen"));
+            atmosphericResourceManagers.Add(new AtmosphericResourceManager(Resources.O, "Oxygen"));
+
+            storedResourceManagers.Add(new StoredResourceManager(Resources.Food, startFood));
+            storedResourceManagers.Add(new StoredResourceManager(Resources.H, startH));
+            storedResourceManagers.Add(new StoredResourceManager(Resources.H2O, startH2O));
+            storedResourceManagers.Add(new StoredResourceManager(Resources.ElecticalEnergy, 0));
         }
 
         protected void assignThermoControllerToResourceManagers()
         {
-            CH4ResourceManager.setThermoManager(ref ThermoEngine);
-            CO2ResourceManager.setThermoManager(ref ThermoEngine);
-            NResourceManager.setThermoManager(ref ThermoEngine);
-            OResourceManager.setThermoManager(ref ThermoEngine);
+            foreach (var rm in atmosphericResourceManagers)
+                rm.setThermoManager(ref ThermoEngine);
         }
 
         private void loadModuleCatalogue(){
@@ -98,7 +91,11 @@ namespace LunarNumericSimulator {
         public void step(){
             if (clock == 0)
             {
-                ThermoEngine = new ThermodynamicEngine(ref CH4ResourceManager, ref CO2ResourceManager, ref OResourceManager, ref NResourceManager, defaultConfig, getSystemVolume());
+                var CH4 = getAtmosphericResourceManagerIndex(Resources.CH4);
+                var CO2 = getAtmosphericResourceManagerIndex(Resources.CO2);
+                var O = getAtmosphericResourceManagerIndex(Resources.O);
+                var N = getAtmosphericResourceManagerIndex(Resources.N);
+                ThermoEngine = new ThermodynamicEngine(ref CH4, ref CO2, ref O, ref N, defaultConfig, getSystemVolume());
                 assignThermoControllerToResourceManagers();
             }
             clock++;
@@ -112,19 +109,21 @@ namespace LunarNumericSimulator {
 
         }
 
+        protected AtmosphericResourceManager getAtmosphericResourceManagerIndex(Resources res)
+        {
+            for (int i = 0; i < atmosphericResourceManagers.Count; i++)
+                if (atmosphericResourceManagers[i].managedResource == res)
+                    return atmosphericResourceManagers[i];
+            throw new Exception("Resource does not exist!");
+        }
+
         public ResourceManager<double>[] getAllResourceManagers()
         {
-            return new ResourceManager<double>[]
-            {
-                CH4ResourceManager,
-                CO2ResourceManager,
-                FoodResourceManager,
-                HResourceManager,
-                H2OResourceManager,
-                NResourceManager,
-                OResourceManager,
-                ThermoEngine
-            };
+            var resourceManagers = new List<ResourceManager<double>>();
+            resourceManagers.AddRange(atmosphericResourceManagers);
+            resourceManagers.AddRange(storedResourceManagers);
+            resourceManagers.Add(ThermoEngine);
+            return resourceManagers.ToArray();
         }
 
         public EnvironmentState getResourceStatus()

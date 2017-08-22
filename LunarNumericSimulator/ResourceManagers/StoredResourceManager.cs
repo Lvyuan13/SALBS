@@ -8,21 +8,15 @@ using LunarNumericSimulator.Utilities;
 
 namespace LunarNumericSimulator.ResourceManagers {
 
-	public class ElectricalEnergy_ResourceManager : ResourceManager<double> {
+	public class StoredResourceManager : ResourceManager<double> {
 
         protected double totalResource;
 
-        public override Resources managedResource
-        {
-            get
-            {
-                return Resources.ElecticalEnergy;
-            }
-        }
+        public override Resources managedResource { get; protected set; }
 
-        public ElectricalEnergy_ResourceManager(double initialValue){
+        public StoredResourceManager(Resources resource, double initialValue){
             totalResource = initialValue;
-
+            managedResource = resource;
 		}
 		public override void addResource(double resource) {
 			totalResource += resource;
@@ -35,8 +29,5 @@ namespace LunarNumericSimulator.ResourceManagers {
 			return totalResource;
 		}
 
-		public double LitresToKG(double litres){
-            return 0;
-        }
 	}
 }

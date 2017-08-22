@@ -6,7 +6,7 @@ namespace LunarNumericSimulator {
 		public abstract void addResource(T resource);
 		public abstract void consumeResource(T resource);
 		public abstract T getLevel();
-        abstract public Resources managedResource { get; }
+        abstract public Resources managedResource { get; protected set; }
         public static double getMolarWeight(Resources res)
         {
             double MW = 0;

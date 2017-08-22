@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace LunarNumericSimulator.ResourceManagers
 {
-    public abstract class AtmosphericResourceManager : ResourceManager<double>
+    public class AtmosphericResourceManager : ResourceManager<double>
     {
         protected double enthalpyPerUnitMass;
         protected double density;
@@ -15,12 +15,15 @@ namespace LunarNumericSimulator.ResourceManagers
         protected double internalEnergy;
         protected double entropy;
         protected double totalResource;
-        abstract public string fluidName { get; }
-        abstract override public Resources managedResource { get; }
+
+        public string fluidName { get; protected set; }
+        override public Resources managedResource { get; protected set; }
         public double molarWeight { get; protected set; }
         public ThermodynamicEngine thermodynamics;
 
-        public AtmosphericResourceManager(){
+        public AtmosphericResourceManager(Resources resource, string fluidname){
+            managedResource = resource;
+            fluidName = fluidname;
             molarWeight = getMolarWeight(managedResource);
         }
 
@@ -41,7 +44,10 @@ namespace LunarNumericSimulator.ResourceManagers
             thermodynamics.updateAtmosphere();
         }
 
-        public abstract override double getLevel();
+        public override double getLevel()
+        {
+            return totalResource;
+        }
 
         public void setState(double temp, double press, double enth, double dens, double internalener, double totalVolume){
 			temperature = temp;

@@ -93,14 +93,7 @@
     <Compile Include="Reporting\SimulationProgressReport.cs" />
     <Compile Include="ResourceEnum.cs" />
     <Compile Include="ResourceManagers\AtmosphericResourceManager.cs" />
-    <Compile Include="ResourceManagers\CH4_ResourceManager.cs" />
-    <Compile Include="ResourceManagers\CO2_ResourceManager.cs" />
-    <Compile Include="ResourceManagers\Food_ResourceManager.cs" />
-    <Compile Include="ResourceManagers\H2O_ResourceManager.cs" />
-    <Compile Include="ResourceManagers\ElectricalEnergy_ResourceManager.cs" />
-    <Compile Include="ResourceManagers\H_ResourceManager.cs" />
-    <Compile Include="ResourceManagers\N_ResourceManager.cs" />
-    <Compile Include="ResourceManagers\O_ResourceManager.cs" />
+    <Compile Include="ResourceManagers\StoredResourceManager.cs" />
     <Compile Include="ResourceManagers\ResourceManager.cs" />
     <Compile Include="ResourceManagers\ThermodynamicEngine.cs" />
     <Compile Include="Simulation.cs" />

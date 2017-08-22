@@ -10,10 +10,10 @@ namespace LunarNumericSimulator
     public partial class ThermodynamicEngine : ResourceManager<double>
     {
 
-        public CH4_ResourceManager ch4ResourceManager;
-        public CO2_ResourceManager co2ResourceManager;
-        public O_ResourceManager oResourceManager;
-        public N_ResourceManager nResourceManager;
+        public AtmosphericResourceManager ch4ResourceManager;
+        public AtmosphericResourceManager co2ResourceManager;
+        public AtmosphericResourceManager oResourceManager;
+        public AtmosphericResourceManager nResourceManager;
 
         protected double systemVolume;
 
@@ -23,9 +23,13 @@ namespace LunarNumericSimulator
             {
                 return Resources.Heat;
             }
+            protected set
+            {
+
+            }
         }
 
-        public ThermodynamicEngine(ref CH4_ResourceManager CH4RMS, ref CO2_ResourceManager CO2RMS, ref O_ResourceManager ORMS, ref N_ResourceManager NRMS, Dictionary<string, double> config, double totalVolume)
+        public ThermodynamicEngine(ref AtmosphericResourceManager CH4RMS, ref AtmosphericResourceManager CO2RMS, ref AtmosphericResourceManager ORMS, ref AtmosphericResourceManager NRMS, Dictionary<string, double> config, double totalVolume)
         {
             ch4ResourceManager = CH4RMS;
             co2ResourceManager = CO2RMS;
