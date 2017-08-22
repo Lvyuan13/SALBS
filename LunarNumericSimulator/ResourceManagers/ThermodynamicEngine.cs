@@ -36,6 +36,7 @@ namespace LunarNumericSimulator
             oResourceManager = ORMS;
             nResourceManager = NRMS;
 
+
             double startO, startN, startCO2, initialTemp, initialPressure, startCH4;
             try
             {
