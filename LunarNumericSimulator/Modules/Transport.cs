@@ -21,7 +21,7 @@ namespace LunarParametricNumeric.Modules
 
         public override string moduleFriendlyName
         {
-            get { return "TransportModule"; }
+            get { return "Transport Module"; }
         }
 
         protected override void update(UInt64 clock) {
