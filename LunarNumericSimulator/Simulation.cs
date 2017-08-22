@@ -102,10 +102,14 @@ namespace LunarNumericSimulator {
                 assignThermoControllerToResourceManagers();
             }
             clock++;
+            ulong thing;
+            if (clock == 86400)
+                thing = clock;
             foreach (Module m in loadedModules)
             {
                 m.tick(clock);
             }
+
         }
 
         public ResourceManager<double>[] getAllResourceManagers()
@@ -154,7 +158,7 @@ namespace LunarNumericSimulator {
             var module = (from element in loadedModules
                          where element.ModuleID == moduleid
                          select element).FirstOrDefault();
-            return new ModuleResourceLevels(module.ModuleID, module.getResourceConsumption(), module.getRegisteredResources());
+            return new ModuleResourceLevels(module.ModuleID, module.moduleName, module.getResourceConsumption(), module.getRegisteredResources());
         }
 
         public SimulationProgressReport getSimulationState()

@@ -1,3 +1,4 @@
+using LunarNumericSimulator.ResourceManagers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ namespace LunarNumericSimulator {
     public abstract class Module {
         // A link to the simulation environment, should not be directly accessed outside of this class (even by subclasses)
         private Simulation Environment;
+        int resourceCount = Enum.GetNames(typeof(Resources)).Length;
 
         // An ID that is allocated to the module when the user loads it into the workspace
         public int ModuleID
@@ -20,7 +22,6 @@ namespace LunarNumericSimulator {
             Environment = sim;
             ModuleID = id;
 
-            int resourceCount = Enum.GetNames(typeof(Resources)).Length;
             resourceReceipts = new double[resourceCount];
         }
 
@@ -41,9 +42,7 @@ namespace LunarNumericSimulator {
 
         // Internal function which is called by the simulator, this function will trigger an update
         public void tick(UInt64 clock){
-            for (int i = 0; i < resourceReceipts.Length; i++){
-                resourceReceipts[i] = 0;
-            }
+            resourceReceipts = new double[resourceCount];
             update(clock);
         }
 
@@ -63,6 +62,12 @@ namespace LunarNumericSimulator {
             resourceReceipts[(int) res] -= quantity;
         }
 
+        protected void consumeResourceLitres(Resources res, double quantity)
+        {
+            var kg_L = getResourceDensity(res) * 0.001;
+            consumeResource(res, quantity * kg_L);
+        }
+
         // Not abstract, as the subclasses should access resources through this function
         protected void produceResource(Resources res, double quantity){
             if (!getRegisteredResources().Contains(res)){
@@ -74,6 +79,12 @@ namespace LunarNumericSimulator {
             resourceReceipts[(int) res] += quantity;
         }
 
+        protected void produceResourceLitres(Resources res, double quantity)
+        {
+            var kg_L = getResourceDensity(res) * 0.001;
+            produceResource(res, quantity * kg_L);
+        }
+
         protected double getResourceLevel(Resources res){
             if (!getRegisteredResources().Contains(res)){
                 throw new Exception("The module " + ModuleID + " has not declared access to this resource! ");
@@ -82,6 +93,34 @@ namespace LunarNumericSimulator {
                 if (rm.managedResource == res)
                     return rm.getLevel();
             return 0F;
+        }
+
+        protected double getResourceDensity(Resources res)
+        {
+            if (!getRegisteredResources().Contains(res))
+            {
+                throw new Exception("The module " + ModuleID + " has not declared access to this resource! ");
+            }
+            foreach (ResourceManager<double> rm in Environment.getAllResourceManagers())
+                if (rm.managedResource == res)
+                    return ((AtmosphericResourceManager)rm).getDensity();
+            return 0F;
+        }
+
+        protected double getAirDensity()
+        {
+            foreach (ResourceManager<double> rm in Environment.getAllResourceManagers())
+                if (rm.managedResource == Resources.Heat)
+                    return ((ThermodynamicEngine)rm).getSystemDensity();
+            return 0;
+        }
+
+        protected double getAirTemperature()
+        {
+            foreach (ResourceManager<double> rm in Environment.getAllResourceManagers())
+                if (rm.managedResource == Resources.Heat)
+                    return ((ThermodynamicEngine)rm).getSystemTemperature();
+            return 0;
         }
     }
 }

@@ -75,12 +75,15 @@ namespace SimulatorGUI
         
         protected void updateEnvironmentTab(SimulationProgressReport report)
         {
-            Chart environmentChart = (Chart)GraphTabs.TabPages[0].Controls[0].GetChildAtPoint(new Point(5, 5));
+            Chart environmentChart = (Chart)GraphTabs.TabPages[0].Controls[0].Controls[0];
             environmentChart.Series["Pressure"].Points.AddXY(report.GlobalState.clock, report.GlobalState.Atmospheric.TotalPressure);
+            environmentChart.Series["Pressure"].BorderWidth = 4;
 
             environmentChart.Series["Temperature"].Points.AddXY(report.GlobalState.clock, report.GlobalState.Atmospheric.Temperature);
+            environmentChart.Series["Temperature"].BorderWidth = 4;
 
             environmentChart.Series["Enthalpy"].Points.AddXY(report.GlobalState.clock, report.GlobalState.Atmospheric.TotalEnthalpy);
+            environmentChart.Series["Enthalpy"].BorderWidth = 4;
 
             if (updateTimer % 50 == 0)
             {
@@ -115,15 +118,78 @@ namespace SimulatorGUI
                         where element.ModuleID == Convert.ToInt32(tabid)
                         select element).First();
             Chart chart = (Chart)panel.Controls[0];
-            foreach(var gas in m.getRegisteredResources()) { 
-                if (gas == Resources.ElecticalEnergy)
-                {
-                    chart.Series.Add(new Series("Energy Usage"));
-                    chart.Series[0].ChartArea = "Bottom";
-                    continue;
-                }
-                chart.Series.Add(new Series(gas.ToString()));
-                chart.Series[0].ChartArea = "Top";
+            foreach(var gas in m.getRegisteredResources()) {
+                setupSeries(gas, chart);
+            }
+        }
+
+        protected void setupSeries(Resources res, Chart chart)
+        {
+            switch (res)
+            {
+                case Resources.CH4:
+                    chart.Series.Add(new Series(res.ToString()));
+                    chart.Series[res.ToString()].ChartArea = "Top";
+                    chart.Series[res.ToString()].ChartType = SeriesChartType.FastLine;
+                    chart.Series[res.ToString()].BorderWidth = 4;
+                    chart.Series[res.ToString()].BorderColor = Color.GreenYellow;
+                    break;
+                case Resources.O:
+                    chart.Series.Add(new Series(res.ToString()));
+                    chart.Series[res.ToString()].ChartArea = "Top";
+                    chart.Series[res.ToString()].ChartType = SeriesChartType.FastLine;
+                    chart.Series[res.ToString()].BorderWidth = 4;
+                    chart.Series[res.ToString()].BorderColor = Color.Azure;
+                    break;
+                case Resources.N:
+                    chart.Series.Add(new Series(res.ToString()));
+                    chart.Series[res.ToString()].ChartArea = "Top";
+                    chart.Series[res.ToString()].ChartType = SeriesChartType.FastLine;
+                    chart.Series[res.ToString()].BorderWidth = 4;
+                    chart.Series[res.ToString()].BorderColor = Color.Black;
+                    break;
+                case Resources.CO2:
+                    chart.Series.Add(new Series(res.ToString()));
+                    chart.Series[res.ToString()].ChartArea = "Top";
+                    chart.Series[res.ToString()].ChartType = SeriesChartType.FastLine;
+                    chart.Series[res.ToString()].BorderWidth = 4;
+                    chart.Series[res.ToString()].BorderColor = Color.RosyBrown;
+                    break;
+                case Resources.H:
+                    chart.Series.Add(new Series(res.ToString()));
+                    chart.Series[res.ToString()].ChartArea = "Top";
+                    chart.Series[res.ToString()].ChartType = SeriesChartType.FastLine;
+                    chart.Series[res.ToString()].BorderWidth = 4;
+                    chart.Series[res.ToString()].BorderColor = Color.Gold;
+                    break;
+                case Resources.H2O:
+                    chart.Series.Add(new Series(res.ToString()));
+                    chart.Series[res.ToString()].ChartArea = "Top";
+                    chart.Series[res.ToString()].ChartType = SeriesChartType.FastLine;
+                    chart.Series[res.ToString()].BorderWidth = 4;
+                    chart.Series[res.ToString()].BorderColor = Color.DarkBlue;
+                    break;
+                case Resources.ElecticalEnergy:
+                    chart.Series.Add(new Series(res.ToString()));
+                    chart.Series[res.ToString()].ChartArea = "Bottom";
+                    chart.Series[res.ToString()].ChartType = SeriesChartType.FastLine;
+                    chart.Series[res.ToString()].BorderWidth = 4;
+                    chart.Series[res.ToString()].BorderColor = Color.Yellow;
+                    break;
+                case Resources.Heat:
+                    chart.Series.Add(new Series(res.ToString()));
+                    chart.Series[res.ToString()].ChartArea = "Top";
+                    chart.Series[res.ToString()].ChartType = SeriesChartType.FastLine;
+                    chart.Series[res.ToString()].BorderWidth = 4;
+                    chart.Series[res.ToString()].BorderColor = Color.DarkRed;
+                    break;
+                case Resources.Food:
+                    chart.Series.Add(new Series(res.ToString()));
+                    chart.Series[res.ToString()].ChartArea = "Top";
+                    chart.Series[res.ToString()].ChartType = SeriesChartType.FastLine;
+                    chart.Series[res.ToString()].BorderWidth = 4;
+                    chart.Series[res.ToString()].BorderColor = Color.Green;
+                    break;
             }
         }
 
@@ -134,14 +200,7 @@ namespace SimulatorGUI
 
             foreach(var gas in report.getRegisteredResources())
             {
-                if (gas == Resources.ElecticalEnergy)
-                {
-                    chart.Series["Energy Usage"].Points.AddXY(clock, report.getResourceLevel(gas));
-                    chart.Series[0].ChartArea = "Bottom";
-                    continue;
-                }
                 chart.Series[gas.ToString()].Points.AddXY(clock, report.getResourceLevel(gas));
-                chart.Series[0].ChartArea = "Top";
             }
         }
 
@@ -149,7 +208,7 @@ namespace SimulatorGUI
         {
             lock (simulation)
             {
-                for (int i = 0; i < 5000; i++)
+                for (int i = 0; i < 3000000000; i++)
                 {
                     simulation.step();
                     worker.ReportProgress(0, simulation.getSimulationState());

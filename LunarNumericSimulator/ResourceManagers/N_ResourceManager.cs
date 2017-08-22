@@ -32,10 +32,5 @@ namespace LunarNumericSimulator.ResourceManagers {
 		public override double getLevel() {
 			return totalResource;
 		}
-
-		public override double LitresToKG(double litres){
-			double result = litres * (10^(-3)) * 1.165;
-            return result;
-        }
 	}
 }
