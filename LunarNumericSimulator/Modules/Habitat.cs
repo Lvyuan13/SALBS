@@ -7,11 +7,8 @@ namespace LunarNumericSimulator.Modules
 {
     public class Habitat : Module
     {
-        Random rand = new Random();
-        int setpoint = 0;
         public Habitat(Simulation sim, int moduleid) : base(sim, moduleid)
         {
-            setpoint = rand.Next(20);
         }
 
         public override List<Resources> getRegisteredResources()
@@ -38,9 +35,7 @@ namespace LunarNumericSimulator.Modules
 
         protected override void update(UInt64 clock)
         {
-            int time = Convert.ToInt32(clock) - 100;
-            var value = rand.Next(10);
-            produceResource(Resources.Heat, (value / (1+Math.Exp(-time))));
+            // TODO: Must model the heat transfer behaviour of the spacecraft hull in here
         }
 
 

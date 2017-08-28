@@ -7,20 +7,21 @@ using System.Threading.Tasks;
 
 namespace LunarNumericSimulator.Modules
 {
-    class HeatPump : Module
+    class VentilationSystem : Module
     {
 
-        public HeatPump(Simulation sim, int id) : base(sim, id)
+        public VentilationSystem(Simulation sim, int id) : base(sim, id)
         {
         }
 
-        public override string moduleName {
-            get { return "HeatPump"; }
+        public override string moduleName
+        {
+            get { return "VentilationSystem"; }
         }
 
         public override string moduleFriendlyName
         {
-            get { return "Heat Pump"; }
+            get { return "Ventilation System"; }
         }
 
         public override double getModuleVolume()
@@ -32,18 +33,17 @@ namespace LunarNumericSimulator.Modules
         {
             return new List<Resources>()
             {
-                Resources.Heat,
-                Resources.ElecticalEnergy
+                Resources.ElecticalEnergy,
+                Resources.Heat
             };
         }
 
         protected override void update(ulong clock)
         {
-            PIDController pid = new PIDController(0.5, 2, 1);
-            var result = pid.update(getAirTemperature() - 25, 1);
-
-            consumeResource(Resources.Heat, result);
-            consumeResource(Resources.ElecticalEnergy, result / 0.15); // Assume the heat pump is 15% efficient
+            double energyUse = Math.Pow(300, -3);
+            double efficiency = 0.9;
+            produceResource(Resources.Heat, energyUse * (1-efficiency));
+            consumeResource(Resources.ElecticalEnergy, energyUse * efficiency); // TODO: get real numbers, right now we assume it uses 300W
         }
     }
 }

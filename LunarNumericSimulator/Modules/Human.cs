@@ -41,19 +41,19 @@ namespace LunarNumericSimulator.Modules
         protected override void update(UInt64 clock){
             double airIntakeL = 0.25*(2*Math.PI/5)*Math.Cos((2*Math.PI/5)*clock); // A sine function which estimates human breathing patterns
             // TODO: Factor in varying breathing rates for intensities
-            double airIntakeKG = Math.Abs(getAirDensity() * 0.001 * airIntakeL); // There's 0.001225kg/L of air
+            double airIntakeKG = Math.Abs(getAirDensity() * 0.001 * airIntakeL);
 
             if (airIntakeL < 0){
-                double nitrogenIntake = 0.78*airIntakeKG;
-                double oxygenIntake = 0.21*airIntakeKG;
-                double co2Intake = 0.0004*airIntakeKG;
+                double nitrogenIntake = getAtmosphericFraction(Resources.N) * airIntakeKG;
+                double oxygenIntake = getAtmosphericFraction(Resources.O) * airIntakeKG;
+                double co2Intake = getAtmosphericFraction(Resources.CO2) * airIntakeKG;
                 consumeResource(Resources.N, nitrogenIntake);
                 consumeResource(Resources.O, oxygenIntake);
                 consumeResource(Resources.CO2, co2Intake);
             } else if (airIntakeL > 0){
-                double nitrogenProduced = 0.78*airIntakeKG;
-                double oxygenProduced = 0.15*airIntakeKG;
-                double co2Produced = 0.07*airIntakeKG;
+                double nitrogenProduced = getAtmosphericFraction(Resources.N) * airIntakeKG; // TODO: Correct breathing calcs
+                double oxygenProduced = getAtmosphericFraction(Resources.O) * 0.6 * airIntakeKG; // This may help: http://www.madsci.org/posts/archives/2004-09/1096283374.En.r.html
+                double co2Produced = getAtmosphericFraction(Resources.CO2) * 175 * airIntakeKG;
                 produceResource(Resources.N, nitrogenProduced);
                 produceResource(Resources.O, oxygenProduced);
                 produceResource(Resources.CO2, co2Produced);

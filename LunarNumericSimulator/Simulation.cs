@@ -6,6 +6,7 @@ using System.Reflection;
 using LunarNumericSimulator.Modules;
 using LunarNumericSimulator.ResourceManagers;
 using LunarNumericSimulator.Reporting;
+using System.Threading.Tasks;
 
 namespace LunarNumericSimulator {
     public class Simulation {
@@ -102,10 +103,11 @@ namespace LunarNumericSimulator {
             ulong thing;
             if (clock == 86400)
                 thing = clock;
-            foreach (Module m in loadedModules)
+            //foreach (Module m in loadedModules)
+            Parallel.ForEach(loadedModules, (m) =>
             {
                 m.tick(clock);
-            }
+            });
 
         }
 

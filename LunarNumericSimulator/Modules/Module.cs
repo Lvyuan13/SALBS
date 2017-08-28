@@ -92,7 +92,7 @@ namespace LunarNumericSimulator {
             foreach (ResourceManager<double> rm in Environment.getAllResourceManagers())
                 if (rm.managedResource == res)
                     return rm.getLevel();
-            return 0F;
+            throw new Exception("Resource not found!");
         }
 
         protected double getResourceDensity(Resources res)
@@ -104,7 +104,7 @@ namespace LunarNumericSimulator {
             foreach (ResourceManager<double> rm in Environment.getAllResourceManagers())
                 if (rm.managedResource == res)
                     return ((AtmosphericResourceManager)rm).getDensity();
-            return 0F;
+            throw new Exception("Resource not found!");
         }
 
         protected double getAirDensity()
@@ -112,7 +112,15 @@ namespace LunarNumericSimulator {
             foreach (ResourceManager<double> rm in Environment.getAllResourceManagers())
                 if (rm.managedResource == Resources.Heat)
                     return ((ThermodynamicEngine)rm).getSystemDensity();
-            return 0;
+            throw new Exception("Resource not found!");
+        }
+
+        protected double getAtmosphericFraction(Resources res)
+        {
+            foreach (ResourceManager<double> rm in Environment.getAllResourceManagers())
+                if (rm.managedResource == Resources.Heat)
+                    return ((ThermodynamicEngine)rm).getMassFraction(res);
+            throw new Exception("Resource not found!");
         }
 
         protected double getAirTemperature()
@@ -120,7 +128,7 @@ namespace LunarNumericSimulator {
             foreach (ResourceManager<double> rm in Environment.getAllResourceManagers())
                 if (rm.managedResource == Resources.Heat)
                     return ((ThermodynamicEngine)rm).getSystemTemperature();
-            return 0;
+            throw new Exception("Resource not found!");
         }
     }
 }
