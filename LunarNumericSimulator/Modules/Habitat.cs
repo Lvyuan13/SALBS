@@ -38,6 +38,9 @@ namespace LunarNumericSimulator.Modules
             // TODO: Must model the heat transfer behaviour of the spacecraft hull in here
         }
 
-
+        public override List<string> requiresTanks()
+        {
+            return new List<string>();
+        }
     }
 }

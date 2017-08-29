@@ -70,6 +70,11 @@ namespace LunarNumericSimulator.Modules
 
         }
 
+        public override List<string> requiresTanks()
+        {
+            return new List<string>();
+        }
+
         protected void flatulence(){
             produceResourceLitres(Resources.N, 0.0531F); // See Harry's notebook for details of these numbers
             produceResourceLitres(Resources.CO2, 0.0081F);

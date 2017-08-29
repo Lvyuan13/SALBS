@@ -94,6 +94,7 @@
     <Compile Include="Reporting\SimulationProgressReport.cs" />
     <Compile Include="ResourceEnum.cs" />
     <Compile Include="ResourceManagers\AtmosphericResourceManager.cs" />
+    <Compile Include="ResourceManagers\TankResourceManager.cs" />
     <Compile Include="ResourceManagers\StoredResourceManager.cs" />
     <Compile Include="ResourceManagers\ResourceManager.cs" />
     <Compile Include="ResourceManagers\ThermodynamicEngine.cs" />

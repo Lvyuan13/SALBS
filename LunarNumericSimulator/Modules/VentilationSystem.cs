@@ -29,6 +29,11 @@ namespace LunarNumericSimulator.Modules
             return 0;
         }
 
+        public override List<string> requiresTanks()
+        {
+            return new List<string>();
+        }
+
         public override List<Resources> getRegisteredResources()
         {
             return new List<Resources>()

@@ -18,16 +18,15 @@ namespace LunarNumericSimulator.ResourceManagers
         protected double totalResource;
 
         public string fluidName { get; protected set; }
-        AbstractState fluidTable;
         override public Resources managedResource { get; protected set; }
         public double molarWeight { get; protected set; }
         public ThermodynamicEngine thermodynamics;
 
-        public AtmosphericResourceManager(Resources resource, string fluidname){
+        public AtmosphericResourceManager(Resources resource, string fluidname)
+        {
             managedResource = resource;
             fluidName = fluidname;
             molarWeight = getMolarWeight(managedResource);
-            fluidTable = AbstractState.factory("BICUBIC&HEOS", fluidName);
         }
 
         public void setThermoManager(ref ThermodynamicEngine ThermoMan)
@@ -52,14 +51,15 @@ namespace LunarNumericSimulator.ResourceManagers
             return totalResource;
         }
 
-        public void setState(double temp, double press, double enth, double dens, double internalener, double totalVolume){
-			temperature = temp;
-			pressure = press;
-			enthalpyPerUnitMass = enth;
+        public void setState(double temp, double press, double enth, double dens, double internalener, double totalVolume)
+        {
+            temperature = temp;
+            pressure = press;
+            enthalpyPerUnitMass = enth;
             density = dens;
             internalEnergy = internalener;
-            totalResource = density * totalVolume; 
-		}
+            totalResource = density * totalVolume;
+        }
 
         public void setState(ThermoState state, double totalVolume)
         {
@@ -71,9 +71,10 @@ namespace LunarNumericSimulator.ResourceManagers
             setState(state, totalVolume);
         }
 
-		public double getEnthalpyPerUnitMass(){
-			return enthalpyPerUnitMass;
-		}
+        public double getEnthalpyPerUnitMass()
+        {
+            return enthalpyPerUnitMass;
+        }
 
         public double getInternalEnergyPerUnitMass()
         {
@@ -90,17 +91,20 @@ namespace LunarNumericSimulator.ResourceManagers
             return entropy;
         }
 
-        public double getTemperature(){
-			return temperature;
-		}
+        public double getTemperature()
+        {
+            return temperature;
+        }
 
-		public double getPressure(){
-			return pressure;
-		}
+        public double getPressure()
+        {
+            return pressure;
+        }
 
-		public double getTotalEnthalpy(){
-			return totalResource * enthalpyPerUnitMass;
-		}
+        public double getTotalEnthalpy()
+        {
+            return totalResource * enthalpyPerUnitMass;
+        }
 
         public double getTotalInternalEnergy()
         {
@@ -113,7 +117,8 @@ namespace LunarNumericSimulator.ResourceManagers
             return litres * kg_L;
         }
 
-		public ThermoState getStateFromTempPres(double tmp, double pres){
+        public ThermoState getStateFromTempPres(double tmp, double pres)
+        {
 
             StringVector outputs = new StringVector(new string[]{
                 "H",
@@ -121,10 +126,10 @@ namespace LunarNumericSimulator.ResourceManagers
                 "U"
             });
             DoubleVector temps = new DoubleVector(new double[] { tmp + 273.15 });
-            DoubleVector press = new DoubleVector(new double[] { pres *1000 });
-            double[] result = CoolProp.PropsSImulti(outputs, "T", temps , "P", press, "HEOS", new StringVector(new string[] { fluidName }), new DoubleVector(new double[]{ 1 }))[0].ToArray();
+            DoubleVector press = new DoubleVector(new double[] { pres * 1000 });
+            double[] result = CoolProp.PropsSImulti(outputs, "T", temps, "P", press, "HEOS", new StringVector(new string[] { fluidName }), new DoubleVector(new double[] { 1 }))[0].ToArray();
             return new ThermoState(tmp, pres, result[0] * 0.001, result[1], result[2] * 0.001);
-            
+
         }
 
         public ThermoState getStateFromInternDensity(double internalenergy, double dens)
@@ -135,7 +140,7 @@ namespace LunarNumericSimulator.ResourceManagers
                 "P",
                 "H"
             });
-            DoubleVector umass = new DoubleVector(new double[] { internalenergy*1000 });
+            DoubleVector umass = new DoubleVector(new double[] { internalenergy * 1000 });
             DoubleVector dmass = new DoubleVector(new double[] { dens });
             double[] result = CoolProp.PropsSImulti(outputs, "U", umass, "D", dmass, "HEOS", new StringVector(new string[] { fluidName }), new DoubleVector(new double[] { 1 }))[0].ToArray();
             return new ThermoState(result[0] - 273.15, result[1] * 0.001, result[2] * 0.001, dens, internalenergy);

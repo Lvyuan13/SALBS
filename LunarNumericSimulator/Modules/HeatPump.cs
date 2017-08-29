@@ -45,5 +45,10 @@ namespace LunarNumericSimulator.Modules
             consumeResource(Resources.Heat, result);
             consumeResource(Resources.ElecticalEnergy, result / 0.15); // Assume the heat pump is 15% efficient
         }
+
+        public override List<string> requiresTanks()
+        {
+            return new List<string>();
+        }
     }
 }

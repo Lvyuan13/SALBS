@@ -9,6 +9,8 @@ namespace LunarNumericSimulator {
         private Simulation Environment;
         int resourceCount = Enum.GetNames(typeof(Resources)).Length;
 
+        protected static Dictionary<string, TankResourceManager> tanks = new Dictionary<string, TankResourceManager>();
+
         // An ID that is allocated to the module when the user loads it into the workspace
         public int ModuleID
         {
@@ -21,6 +23,9 @@ namespace LunarNumericSimulator {
         public Module(Simulation sim, int id){
             Environment = sim;
             ModuleID = id;
+
+            foreach (string s in requiresTanks())
+                createTank(s);
 
             resourceReceipts = new double[resourceCount];
         }
@@ -39,6 +44,35 @@ namespace LunarNumericSimulator {
 
         // Return the volume of the module in m3
         abstract public double getModuleVolume();
+
+        // A list of string with required tank names
+        abstract public List<string> requiresTanks();
+
+        // Gets a TankResurceManager from the Shared tank database
+        public TankResourceManager getTank(string name)
+        {
+            if (!requiresTanks().Contains(name))
+                throw new Exception("Module hasn't declared access to this tank!");
+            TankResourceManager tank;
+            try
+            {
+                tanks.TryGetValue(name, out tank);
+            } catch (Exception e)
+            {
+                throw e;
+            }
+            if (tanks == null)
+                throw new Exception("Tank does not exist!");
+            return tank;
+        }
+
+        // Creates a new tank in the database, should not be directly called by implementation code
+        protected void createTank(string s)
+        {
+            if (tanks.ContainsKey(s))
+                return;
+            tanks.Add(s, new TankResourceManager(0));
+        }
 
         // Internal function which is called by the simulator, this function will trigger an update
         public void tick(UInt64 clock){
