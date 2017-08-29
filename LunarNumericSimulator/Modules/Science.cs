@@ -3,6 +3,10 @@ using System;
 using System.Collections.Generic;
 namespace LunarParametricNumeric.Modules
 {
+
+    /*  NEED TO CHANGE THIS TO BE AN EXTENSION OF THE 
+        HABITAT MODULES.
+     */
 	public class Science: Module
 	{
         private float energyUse;
