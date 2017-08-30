@@ -41,6 +41,17 @@ namespace LunarNumericSimulator.Modules
             get { return "Human"; }
         }
 
+
+        public override List<string> requiresTanks()
+        {
+            return new List<string> { "UrineAndFlushH2O",
+                                      "RespirationPerspirationH2O",
+                                      "FecesH2O",
+                                      "HygieneH2O" };
+
+        }
+
+
         protected override void update(UInt64 clock){
             double airIntakeL = 0.25*(2*Math.PI/5)*Math.Cos((2*Math.PI/5 )*clock + m_randomPhaseShift); // A sine function which estimates human breathing patterns
             // TODO: Factor in varying breathing rates for intensities
@@ -65,18 +76,37 @@ namespace LunarNumericSimulator.Modules
             double heatRelease = 118 * Math.Pow(10,-3); // Humans release heat at 118W, converting to kJ
             produceResource(Resources.Heat, heatRelease); 
             
-            if (rand.Next(10800) == 1) // There is an 8 in 86400 chance that flatulence will occur, since average person has flatulence 8 times per day
+            if (rand.Next((int)m_secondsIn24Hours / 8) == 1) // There is an 8 in 86400 (24 hours) chance that flatulence will occur, since average person has flatulence 8 times per day
                 flatulence();
 
-            if (rand.Next(21600) == 1) // There is an 4 in 86400 chance that eating will occur, since a person has 4 meals in a day
-                eat();
+
+            // Day time / working activities only
+            if (isHumanDay(clock))
+            { 
+                // TODO work schedule that changes metabolism
+               
+                if (rand.Next( (int)m_secondsIn12Hours / 4) == 1) // There is an 4 in 43200 chance that eating will occur, since a person has 4 meals in a day
+                  eat();
+
+                // TODO implement urination and flush water produced.
+                // TODO implement respiration and perspiration produced - related to metabolism?
+                // TODO implement excrement water produced
+                // TODO implement hygiene water used.
+
+        }
+            // Night time / resting activites only
+            else
+            {
+                // TODO lower metabolism whilst sleeping and resting
+                
+            }
+          
 
         }
 
-        public override List<string> requiresTanks()
-        {
-            return new List<string>();
-        }
+
+
+
 
         protected void flatulence(){
             produceResourceLitres(Resources.N, 0.0531F); // See Harry's notebook for details of these numbers
@@ -87,7 +117,8 @@ namespace LunarNumericSimulator.Modules
 
         protected void eat(){
             consumeResource(Resources.Food, 2);
-        }
-        
+        // TODO implement food rehydration h20 consumption?
     }
+
+}
 }

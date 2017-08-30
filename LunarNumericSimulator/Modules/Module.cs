@@ -8,6 +8,9 @@ namespace LunarNumericSimulator {
         // A link to the simulation environment, should not be directly accessed outside of this class (even by subclasses)
         private Simulation Environment;
         int resourceCount = Enum.GetNames(typeof(Resources)).Length;
+        // useful values for child classes to refer to
+        protected const uint m_secondsIn12Hours = 43200;
+        protected const uint m_secondsIn24Hours = 86400;
 
         protected static Dictionary<string, TankResourceManager> tanks = new Dictionary<string, TankResourceManager>();
 
@@ -164,5 +167,54 @@ namespace LunarNumericSimulator {
                     return ((ThermodynamicEngine)rm).getSystemTemperature();
             throw new Exception("Resource not found!");
         }
+
+
+        // return true if time given is lunar day time and false if lunar night time
+        protected bool isLunarDay(UInt64 currentTime)
+        {
+            UInt64 lowestDayValue = currentTime;
+            UInt64 secondsInLunarCycle = 2551442;
+            UInt64 secondsInLunarDay = 1275721;
+
+            while (lowestDayValue >= secondsInLunarCycle)
+            {
+                lowestDayValue = lowestDayValue - secondsInLunarCycle;
+            }
+            if (lowestDayValue <= secondsInLunarDay)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        // return true if time given is human daytime, false if human night time.
+        protected bool isHumanDay(UInt64 currentTime)
+        {
+            // assumes that human is active/working between 07:00 and 21:00 (14 hours)
+            // assumes that the human sleeps/inactive from 21:00 to 07:00 (10 hours)
+            UInt64 lowestDayValue = currentTime;
+            UInt64 secondsInHumanDayCycle = 86400;
+            UInt64 secondsLunarDayStart = 25200;
+            UInt64 secondsLunarDayEnd = 75600;
+
+            while (lowestDayValue >= secondsInHumanDayCycle)
+            {
+                lowestDayValue = lowestDayValue - secondsInHumanDayCycle;
+            }
+            // if the time given is 
+            if (lowestDayValue >= secondsLunarDayStart && lowestDayValue < secondsLunarDayEnd)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+
     }
 }
