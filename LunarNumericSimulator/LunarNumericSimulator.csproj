@@ -83,10 +83,13 @@
     <Compile Include="CoolProp\SWIGTYPE_p_std__vectorT_CoolProp__CriticalState_t.cs" />
     <Compile Include="CoolProp\VectorOfDoubleVector.cs" />
     <Compile Include="CoolProp\VectorOfStringVector.cs" />
+    <Compile Include="Modules\CO2 Recycling\BoschCO2Recycler.cs" />
+    <Compile Include="Modules\CO2 Recycling\CO2Recycler.cs" />
     <Compile Include="Modules\HeatPump.cs" />
     <Compile Include="Modules\Human.cs" />
     <Compile Include="Modules\Habitat.cs" />
     <Compile Include="Modules\Module.cs" />
+    <Compile Include="Modules\CO2 Recycling\SabatierCO2Recycler.CS" />
     <Compile Include="Modules\VentilationSystem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reporting\ModuleResourceLevels.cs" />

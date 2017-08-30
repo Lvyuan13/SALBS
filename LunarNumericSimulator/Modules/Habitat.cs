@@ -36,6 +36,7 @@ namespace LunarNumericSimulator.Modules
         protected override void update(UInt64 clock)
         {
             // TODO: Must model the heat transfer behaviour of the spacecraft hull in here
+
         }
 
         public override List<string> requiresTanks()

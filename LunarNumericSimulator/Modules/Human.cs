@@ -9,8 +9,11 @@ namespace LunarNumericSimulator.Modules
     {
 
         Random rand = new Random();
+        private double m_randomPhaseShift;
+
         public Human(Simulation sim, int moduleid) : base(sim,moduleid){
-            
+            Random random = new Random();
+            m_randomPhaseShift = random.NextDouble()*Math.PI; // random number between 0.0 and 2PI
         }
         
         public override List<Resources> getRegisteredResources(){
@@ -39,7 +42,7 @@ namespace LunarNumericSimulator.Modules
         }
 
         protected override void update(UInt64 clock){
-            double airIntakeL = 0.25*(2*Math.PI/5)*Math.Cos((2*Math.PI/5)*clock); // A sine function which estimates human breathing patterns
+            double airIntakeL = 0.25*(2*Math.PI/5)*Math.Cos((2*Math.PI/5 )*clock + m_randomPhaseShift); // A sine function which estimates human breathing patterns
             // TODO: Factor in varying breathing rates for intensities
             double airIntakeKG = Math.Abs(getAirDensity() * 0.001 * airIntakeL);
 

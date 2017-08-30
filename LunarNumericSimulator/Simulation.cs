@@ -30,6 +30,7 @@ namespace LunarNumericSimulator {
         public ThermodynamicEngine ThermoEngine;
         protected List<Module> loadedModules;
         protected Dictionary<string,Type> moduleCatalogue;
+        static bool locked = false;
         
         public void initiate(){
 
@@ -103,11 +104,11 @@ namespace LunarNumericSimulator {
             ulong thing;
             if (clock == 86400)
                 thing = clock;
-            //foreach (Module m in loadedModules)
-            Parallel.ForEach(loadedModules, (m) =>
+            foreach (Module m in loadedModules)
+            //Parallel.ForEach(loadedModules, (m) =>
             {
                 m.tick(clock);
-            });
+            }
 
         }
 

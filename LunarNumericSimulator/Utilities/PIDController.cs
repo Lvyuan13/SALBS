@@ -18,9 +18,14 @@ namespace LunarNumericSimulator.Utilities
             dGain = dG;
         }
 
+        public void removeWindup()
+        {
+            integrator = 0;
+        }
+
         public double update(double error, double deltaT)
         {
-            integrator += error * deltaT;
+            integrator += iGain * error * deltaT;
             var derivative = (error-lastError) / deltaT;
             lastError = error;
             return (pGain * error) + (iGain * integrator) + (dGain * derivative);
