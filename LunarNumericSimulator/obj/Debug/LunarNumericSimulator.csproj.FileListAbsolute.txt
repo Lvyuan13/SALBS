@@ -8,3 +8,12 @@ D:\LunarParametricNumeric\LunarNumericSimulator\bin\Debug\CsvHelper.xml
 D:\LunarParametricNumeric\LunarNumericSimulator\obj\Debug\LunarNumericSimulator.dll
 D:\LunarParametricNumeric\LunarNumericSimulator\obj\Debug\LunarNumericSimulator.pdb
 D:\LunarParametricNumeric\LunarNumericSimulator\bin\Debug\CoolProp.dll
+C:\Users\Addy360\Downloads\Uni\FYP\GIT\LunarParametricNumeric\LunarNumericSimulator\bin\Debug\CoolProp.dll
+C:\Users\Addy360\Downloads\Uni\FYP\GIT\LunarParametricNumeric\LunarNumericSimulator\bin\Debug\LunarNumericSimulator.dll
+C:\Users\Addy360\Downloads\Uni\FYP\GIT\LunarParametricNumeric\LunarNumericSimulator\bin\Debug\LunarNumericSimulator.pdb
+C:\Users\Addy360\Downloads\Uni\FYP\GIT\LunarParametricNumeric\LunarNumericSimulator\bin\Debug\CsvHelper.dll
+C:\Users\Addy360\Downloads\Uni\FYP\GIT\LunarParametricNumeric\LunarNumericSimulator\bin\Debug\CsvHelper.xml
+C:\Users\Addy360\Downloads\Uni\FYP\GIT\LunarParametricNumeric\LunarNumericSimulator\obj\Debug\LunarNumericSimulator.csprojResolveAssemblyReference.cache
+C:\Users\Addy360\Downloads\Uni\FYP\GIT\LunarParametricNumeric\LunarNumericSimulator\obj\Debug\LunarNumericSimulator.csproj.CoreCompileInputs.cache
+C:\Users\Addy360\Downloads\Uni\FYP\GIT\LunarParametricNumeric\LunarNumericSimulator\obj\Debug\LunarNumericSimulator.dll
+C:\Users\Addy360\Downloads\Uni\FYP\GIT\LunarParametricNumeric\LunarNumericSimulator\obj\Debug\LunarNumericSimulator.pdb
