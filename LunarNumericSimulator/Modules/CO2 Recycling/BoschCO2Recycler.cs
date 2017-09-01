@@ -9,7 +9,8 @@ namespace LunarNumericSimulator.Modules
 {
     class BoschCO2Recycler : CO2Recycler
     {
-        PIDController m_pid = new PIDController(2, 0.1, 0);
+        PIDController 
+            pid = new PIDController(2, 0.1, 0);
         // Functions
         public BoschCO2Recycler(Simulation sim, int moduleid) : base(sim, moduleid)
         {
@@ -56,7 +57,7 @@ namespace LunarNumericSimulator.Modules
             var result = updatePID();
 
             // check if the resources need changing
-            if (!m_changeResources)
+            if (!changeResources)
                 return;
 
 
