@@ -85,6 +85,10 @@
     <Compile Include="CoolProp\VectorOfStringVector.cs" />
     <Compile Include="Modules\CO2 Recycling\BoschCO2Recycler.cs" />
     <Compile Include="Modules\CO2 Recycling\CO2Recycler.cs" />
+    <Compile Include="Modules\H2O Management\MFBWaterProcessor.cs" />
+    <Compile Include="Modules\H2O Management\UrineProcessor.cs" />
+    <Compile Include="Modules\H2O Management\VCDUrineProcessor.cs" />
+    <Compile Include="Modules\H2O Management\WaterProcessor.cs" />
     <Compile Include="Modules\HeatPump.cs" />
     <Compile Include="Modules\Human.cs" />
     <Compile Include="Modules\Habitat.cs" />

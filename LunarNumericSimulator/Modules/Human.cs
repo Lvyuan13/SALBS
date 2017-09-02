@@ -152,7 +152,7 @@ namespace LunarNumericSimulator.Modules
 
         public override List<string> requiresTanks()
         {
-            return new List<string> {   "UrineTreatmeantTank",
+            return new List<string> {   "UrineTreatmentTank",
                                         "WasteWaterStorage"};
 
         }
@@ -261,7 +261,7 @@ namespace LunarNumericSimulator.Modules
                 if (drinksCount < drinkFrequency)
                 {
                     // if its time to drink
-                    if (clock % drinkTimes[urinationCount] == 0)
+                    if (clock % drinkTimes[drinksCount] == 0)
                     {
                         drink();
                     }
@@ -298,8 +298,8 @@ namespace LunarNumericSimulator.Modules
 
         protected void urinate()
         {
-            getTank("UrineTreatmeantTank").addResource(urineH2OProduced / urinationFrequency);
-            getTank("UrineTreatmeantTank").addResource(flushH2OProduced / urinationFrequency);
+            getTank("UrineTreatmentTank").addResource(urineH2OProduced / urinationFrequency);
+            getTank("UrineTreatmentTank").addResource(flushH2OProduced / urinationFrequency);
             urinationCount++;
             // wash hands 
             consumeResource(Resources.H2O, handWashH2OConsumed / (urinationFrequency + excretionFrequency));
@@ -307,7 +307,7 @@ namespace LunarNumericSimulator.Modules
 
         private void excrete()
         {
-            getTank("UrineTreatmeantTank").addResource(fecesH2Oproduced);
+            getTank("UrineTreatmentTank").addResource(fecesH2Oproduced);
             hasExcreted = true;
             // wash hands
             consumeResource(Resources.H2O, handWashH2OConsumed / (urinationFrequency + excretionFrequency));
