@@ -95,18 +95,20 @@ namespace LunarNumericSimulator.Modules.O2_Generation
 
         }
 
+
+        // TODO the double floating point values are tricky to compare, this needs making more robust
         protected double updatePID()
         {
             double O2Level = getAtmosphericFraction(Resources.O);
             double O2Mass = getResourceLevel(Resources.O);
 
-            var result = pid.update(0.216 - O2Level, 1); // check for acceptable O2 level
+            var result = pid.update(0.21600000000000 - O2Level, 1); // check for acceptable O2 level
 
             // set member variable as to whether the resources should be updated on this particular update call
             // true by default
             changeResources = false;
 
-            if (result >= 0)
+            if (result >= 0.000000000000 || O2Level < 0.2160000000000)
                 changeResources = true;
 
             //if (O2Mass - result < 0)
@@ -115,7 +117,7 @@ namespace LunarNumericSimulator.Modules.O2_Generation
             //    changeResources = false;
             //}
 
-            Console.WriteLine("O2 level = " + O2Level + "   O2Mass = " + O2Mass + "   result = " + result + " changeResources = " + changeResources);
+            //Console.WriteLine("O2 level = " + O2Level + "   O2Mass = " + O2Mass + "   result = " + result + " changeResources = " + changeResources);
 
             // return the result of the pid controller
             return result;
