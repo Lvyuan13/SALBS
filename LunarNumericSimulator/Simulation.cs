@@ -99,6 +99,8 @@ namespace LunarNumericSimulator {
                 var N = getAtmosphericResourceManagerIndex(Resources.N);
                 ThermoEngine = new ThermodynamicEngine(ref CH4, ref CO2, ref O, ref N, defaultConfig, getSystemVolume());
                 assignThermoControllerToResourceManagers();
+                if (getSystemVolume() == 0)
+                    throw new Exception("System has no volume!");
             }
             clock++;
             ulong thing;
@@ -177,6 +179,11 @@ namespace LunarNumericSimulator {
 
         }
 
+        public List<string> getLoadedModuleNames()
+        {
+            return (from element in moduleCatalogue select element.Key).ToList();
+        }
+
         protected double getSystemVolume()
         {
             return (from element in loadedModules
@@ -217,6 +224,7 @@ namespace LunarNumericSimulator {
         public List<Module> getModules(){
             return loadedModules;
         }
+
 
     }
 }

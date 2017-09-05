@@ -92,7 +92,7 @@ namespace LunarNumericSimulator.Modules
             consumeResource(Resources.CO2, boschCO2Consumed);
             consumeResource(Resources.H, boschH2Consumed);
             consumeResource(Resources.N, boschN2Consumed);
-            consumeResource(Resources.ElecticalEnergy, boschPower); // convert kW to Joules in 1 second
+            consumePower(boschPower); // convert kW to Joules in 1 second
 
             produceResource(Resources.H2O, boschH2OProduced);
             produceResource(Resources.N, boschN2Produced);

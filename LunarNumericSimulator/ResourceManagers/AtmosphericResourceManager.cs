@@ -18,6 +18,7 @@ namespace LunarNumericSimulator.ResourceManagers
         protected double totalResource;
 
         public string fluidName { get; protected set; }
+        public string propsDatabase = "HEOS";
         override public Resources managedResource { get; protected set; }
         public double molarWeight { get; protected set; }
         public ThermodynamicEngine thermodynamics;
@@ -127,7 +128,7 @@ namespace LunarNumericSimulator.ResourceManagers
             });
             DoubleVector temps = new DoubleVector(new double[] { tmp + 273.15 });
             DoubleVector press = new DoubleVector(new double[] { pres * 1000 });
-            double[] result = CoolProp.PropsSImulti(outputs, "T", temps, "P", press, "HEOS", new StringVector(new string[] { fluidName }), new DoubleVector(new double[] { 1 }))[0].ToArray();
+            double[] result = CoolProp.PropsSImulti(outputs, "T", temps, "P", press, propsDatabase, new StringVector(new string[] { fluidName }), new DoubleVector(new double[] { 1 }))[0].ToArray();
             return new ThermoState(tmp, pres, result[0] * 0.001, result[1], result[2] * 0.001);
 
         }
@@ -142,7 +143,7 @@ namespace LunarNumericSimulator.ResourceManagers
             });
             DoubleVector umass = new DoubleVector(new double[] { internalenergy * 1000 });
             DoubleVector dmass = new DoubleVector(new double[] { dens });
-            double[] result = CoolProp.PropsSImulti(outputs, "U", umass, "D", dmass, "HEOS", new StringVector(new string[] { fluidName }), new DoubleVector(new double[] { 1 }))[0].ToArray();
+            double[] result = CoolProp.PropsSImulti(outputs, "U", umass, "D", dmass, propsDatabase, new StringVector(new string[] { fluidName }), new DoubleVector(new double[] { 1 }))[0].ToArray();
             return new ThermoState(result[0] - 273.15, result[1] * 0.001, result[2] * 0.001, dens, internalenergy);
         }
 
@@ -155,7 +156,7 @@ namespace LunarNumericSimulator.ResourceManagers
             });
             DoubleVector temps = new DoubleVector(new double[] { tmp + 273.15 });
             DoubleVector dmass = new DoubleVector(new double[] { dens });
-            double[] result = CoolProp.PropsSImulti(outputs, "T", temps, "D", dmass, "HEOS", new StringVector(new string[] { fluidName }), new DoubleVector(new double[] { 1 }))[0].ToArray();
+            double[] result = CoolProp.PropsSImulti(outputs, "T", temps, "D", dmass, propsDatabase, new StringVector(new string[] { fluidName }), new DoubleVector(new double[] { 1 }))[0].ToArray();
             return new ThermoState(tmp, result[0] * 0.001, result[2] * 0.001, dens, result[1] * 0.001);
         }
 

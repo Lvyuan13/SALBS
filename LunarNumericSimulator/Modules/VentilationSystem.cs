@@ -48,7 +48,7 @@ namespace LunarNumericSimulator.Modules
             double energyUse = Math.Pow(300, -3);
             double efficiency = 0.9;
             produceResource(Resources.Heat, energyUse * (1-efficiency));
-            consumeResource(Resources.ElecticalEnergy, energyUse * efficiency); // TODO: get real numbers, right now we assume it uses 300W
+            consumePower(energyUse * efficiency); // TODO: get real numbers, right now we assume it uses 300W
         }
     }
 }

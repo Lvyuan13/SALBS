@@ -93,6 +93,23 @@ namespace LunarNumericSimulator {
         public void tick(UInt64 clock){
             resourceReceipts = new double[resourceCount];
             update(clock);
+            updateResources();
+        }
+
+        private void updateResources()
+        {
+            for (int i = 0; i < resourceReceipts.Length; i++)
+            {
+                foreach (ResourceManager<double> rm in Environment.getAllResourceManagers())
+                    if (rm.managedResource == ((Resources)i))
+                        if (resourceReceipts[i] < 0)
+                        {
+                            rm.consumeResource(-resourceReceipts[i]);
+                        } else
+                        {
+                            rm.addResource(resourceReceipts[i]);
+                        }      
+            }
         }
 
         // Callable by the simulator to determine the resources used by the module in the last update
@@ -101,14 +118,29 @@ namespace LunarNumericSimulator {
         }
 
         // Not abstract, as the subclasses should access resources through this function
-        protected void consumeResource(Resources res, double quantity){
+        protected bool consumeResource(Resources res, double quantity){
+            if (Math.Sign(quantity) == -1)
+                produceResource(res, -quantity);
+            if (res == Resources.ElecticalEnergy)
+                throw new Exception("Use consumePower instead of consumeResource");
             if (!getRegisteredResources().Contains(res)){
                 throw new Exception("The module " + ModuleID + " has not declared access to this resource! ");
             }
-            foreach (ResourceManager<double> rm in Environment.getAllResourceManagers())
-                if (rm.managedResource == res)
-                    rm.consumeResource(quantity);
+            if (getResourceLevel(res) - quantity < 0)
+                return false;
             resourceReceipts[(int) res] -= quantity;
+            return true;
+        }
+
+        protected void consumePower(double quantity)
+        {
+            if (!getRegisteredResources().Contains(Resources.ElecticalEnergy))
+                throw new Exception("The module " + ModuleID + " has not declared access to power! ");
+            if (quantity < 0)
+                throw new Exception("Cannot consume negative energy usage");
+            foreach (ResourceManager<double> rm in Environment.getAllResourceManagers())
+                if (rm.managedResource == Resources.ElecticalEnergy)
+                    resourceReceipts[(int)Resources.ElecticalEnergy] -= quantity;
         }
 
         protected void consumeResourceLitres(Resources res, double quantity)
@@ -119,12 +151,11 @@ namespace LunarNumericSimulator {
 
         // Not abstract, as the subclasses should access resources through this function
         protected void produceResource(Resources res, double quantity){
+            if (Math.Sign(quantity) == -1)
+                consumeResource(res, -quantity);
             if (!getRegisteredResources().Contains(res)){
                 throw new Exception("The module " + ModuleID + " has not declared access to this resource! ");
             }
-            foreach (ResourceManager<double> rm in Environment.getAllResourceManagers())
-                if (rm.managedResource == res)
-                    rm.addResource(quantity);
             resourceReceipts[(int) res] += quantity;
         }
 

@@ -64,7 +64,7 @@ namespace LunarNumericSimulator.Modules.H2O_Management
             designPowerRequired = (.115 / 0.00037789352) * result;
             designHeatProduced = (.115 / 0.00037789352) * result;
 
-            consumeResource(Resources.ElecticalEnergy, designPowerRequired);
+            consumePower(designPowerRequired);
             getTank("UrineTreatmentTank").consumeResource(designLiquidInFlow);
             // assume all inflow is converted to outflow
             getTank("WasteWaterStorage").addResource(designLiquidInFlow);

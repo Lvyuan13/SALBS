@@ -161,7 +161,8 @@ namespace LunarNumericSimulator.Modules
         protected override void update(UInt64 clock){
             double airIntakeL = 0.25*(2*Math.PI/5)*Math.Cos((2*Math.PI/5 )*clock + randomPhaseShift); // A sine function which estimates human breathing patterns
             // TODO: Factor in varying breathing rates for intensities
-            double airIntakeKG = Math.Abs(getAirDensity() * 0.001 * airIntakeL);
+            var density = getAirDensity();
+            double airIntakeKG = Math.Abs(density * 0.001 * airIntakeL);
 
             if (airIntakeL < 0){
                 double nitrogenIntake = getAtmosphericFraction(Resources.N) * airIntakeKG;

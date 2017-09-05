@@ -89,7 +89,7 @@ namespace LunarNumericSimulator.Modules
             // Consume and produce all resources
             consumeResource(Resources.CO2, sabatierCO2Consumed);
             consumeResource(Resources.H, sabatierH2Consumed);
-            consumeResource(Resources.ElecticalEnergy, sabatierPower);
+            consumePower(sabatierPower);
 
             produceResource(Resources.H2O, sabatierH2OProduced);
             //produceResource(Resources.Heat, sabatierHeatGeneration); 

@@ -88,7 +88,7 @@ namespace LunarNumericSimulator.Modules.O2_Generation
 
             Console.WriteLine("power used = " + powerUsed);
             consumeResource(Resources.H2O, inflowAdjusted);
-            consumeResource(Resources.ElecticalEnergy, powerUsed);
+            consumePower(powerUsed);
             produceResource(Resources.O, O2Produced);
             produceResource(Resources.H, H2Produced);
             // TODO find theoretical values for heat produced if any

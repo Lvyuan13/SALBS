@@ -52,6 +52,16 @@ namespace SimulatorGUI
             moPanel.Dock = DockStyle.Fill;
             GraphTabs.TabPages[1].Controls.Add(moPanel);
 
+
+            var loadedModulesNames = simulation.getLoadedModuleNames();
+            var autocomplete = new AutoCompleteStringCollection();
+            autocomplete.AddRange(loadedModulesNames.ToArray());
+            ModuleNameBox.AutoCompleteSource = AutoCompleteSource.CustomSource;
+            ModuleNameBox.AutoCompleteCustomSource = autocomplete;
+            ModuleNameBox.AutoCompleteMode = AutoCompleteMode.Append;
+
+            this.AcceptButton = AddButton;
+
         }
 
         protected void updateList()
@@ -257,6 +267,7 @@ namespace SimulatorGUI
             simulation.registerModule(moduleName);
             moduleList = simulation.getModules();
             updateList();
+            ModuleNameBox.Clear();
         }
 
         private void RemoveButton_Click(object sender, EventArgs e)
