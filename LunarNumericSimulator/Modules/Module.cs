@@ -77,6 +77,14 @@ namespace LunarNumericSimulator {
             tanks.Add(s, new TankResourceManager(0));
         }
 
+        public static Dictionary<string, double> getTankLevels()
+        {
+            var result = new Dictionary<string, double>();
+            foreach (var rm in tanks)
+                result.Add(rm.Key, rm.Value.getLevel());
+            return result;
+        }
+
         // Internal function which is called by the simulator, this function will trigger an update
         public void tick(UInt64 clock){
             resourceReceipts = new double[resourceCount];

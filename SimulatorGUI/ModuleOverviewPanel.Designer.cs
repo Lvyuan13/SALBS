@@ -1,6 +1,6 @@
 ﻿namespace SimulatorGUI
 {
-    partial class EnvironmentPanel
+    partial class ModuleOverviewPanel
     {
         /// <summary> 
         /// Required designer variable.
@@ -35,8 +35,6 @@
             System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.EnvironmentChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             ((System.ComponentModel.ISupportInitialize)(this.EnvironmentChart)).BeginInit();
             this.SuspendLayout();
@@ -44,12 +42,12 @@
             // EnvironmentChart
             // 
             this.EnvironmentChart.BackColor = System.Drawing.Color.DimGray;
-            chartArea1.AxisX.Title = "Time";
-            chartArea1.AxisY.Title = "Pressure (kPa)";
+            chartArea1.AxisX.Title = "Tank Name";
+            chartArea1.AxisY.Title = "Quantity (kg)";
             chartArea1.BackColor = System.Drawing.Color.White;
             chartArea1.Name = "TopLeft";
-            chartArea2.AxisX.Title = "Time";
-            chartArea2.AxisY.Title = "Temperature (C)";
+            chartArea2.AxisX.Title = "Module Name";
+            chartArea2.AxisY.Title = "Load (kW)";
             chartArea2.Name = "BottomLeft";
             chartArea3.AxisX.Title = "Time";
             chartArea3.AxisY.Title = "Base Load (kW)";
@@ -70,37 +68,25 @@
             this.EnvironmentChart.Location = new System.Drawing.Point(0, 0);
             this.EnvironmentChart.Name = "EnvironmentChart";
             series1.ChartArea = "TopLeft";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
             series1.Legend = "EnvironmentLegend";
-            series1.Name = "Pressure";
+            series1.Name = "Tanks";
             series2.ChartArea = "BottomLeft";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
             series2.Legend = "EnvironmentLegend";
-            series2.Name = "Temperature";
-            series3.ChartArea = "TopRight";
-            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            series3.Legend = "EnvironmentLegend";
-            series3.Name = "BaseLoad";
-            series4.ChartArea = "BottomRight";
-            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Pie;
-            series4.Legend = "EnvironmentLegend";
-            series4.Name = "Gas Distribution";
+            series2.Name = "Module Power Usage";
+            series2.YValuesPerPoint = 2;
             this.EnvironmentChart.Series.Add(series1);
             this.EnvironmentChart.Series.Add(series2);
-            this.EnvironmentChart.Series.Add(series3);
-            this.EnvironmentChart.Series.Add(series4);
-            this.EnvironmentChart.Size = new System.Drawing.Size(816, 523);
-            this.EnvironmentChart.TabIndex = 0;
+            this.EnvironmentChart.Size = new System.Drawing.Size(1098, 526);
+            this.EnvironmentChart.TabIndex = 1;
             this.EnvironmentChart.Text = "chart1";
-            this.EnvironmentChart.Click += new System.EventHandler(this.EnvironmentChart_Click);
             // 
-            // EnvironmentPanel
+            // ModuleOverviewPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.EnvironmentChart);
-            this.Name = "EnvironmentPanel";
-            this.Size = new System.Drawing.Size(816, 523);
+            this.Name = "ModuleOverviewPanel";
+            this.Size = new System.Drawing.Size(1098, 526);
             ((System.ComponentModel.ISupportInitialize)(this.EnvironmentChart)).EndInit();
             this.ResumeLayout(false);
 

@@ -10,16 +10,11 @@ using System.Windows.Forms;
 
 namespace SimulatorGUI
 {
-    public partial class EnvironmentPanel : UserControl
+    public partial class ModuleOverviewPanel : UserControl
     {
-        public EnvironmentPanel()
+        public ModuleOverviewPanel()
         {
             InitializeComponent();
-        }
-
-        private void EnvironmentChart_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }

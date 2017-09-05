@@ -10,5 +10,7 @@ namespace LunarNumericSimulator.Reporting
     {
         public EnvironmentState GlobalState;
         public List<ModuleResourceLevels> ModuleStates;
+        public Dictionary<string, double> TankStates;
+        public double PowerLoad;
     }
 }

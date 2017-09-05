@@ -9,7 +9,7 @@ namespace LunarNumericSimulator.Modules
 {
     class HeatPump : Module
     {
-        PIDController pid = new PIDController(0.5, 2, 1);
+        PIDController pid = new PIDController(0.5, 0.4, 1);
         public HeatPump(Simulation sim, int id) : base(sim, id)
         {
         }
@@ -42,6 +42,8 @@ namespace LunarNumericSimulator.Modules
             
             var result = pid.update(getAirTemperature() - 25, 1);
 
+            if (result < 0)
+                return;
             consumeResource(Resources.Heat, result);
             consumeResource(Resources.ElecticalEnergy, result / 0.15); // Assume the heat pump is 15% efficient
         }

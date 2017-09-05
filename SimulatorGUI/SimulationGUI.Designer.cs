@@ -38,6 +38,7 @@
             this.StatusBox = new System.Windows.Forms.GroupBox();
             this.CurrentTimeLabel = new System.Windows.Forms.Label();
             this.ModuleNameBox = new System.Windows.Forms.TextBox();
+            this.BaseLoad = new System.Windows.Forms.Label();
             this.GraphTabs.SuspendLayout();
             this.StatusBox.SuspendLayout();
             this.SuspendLayout();
@@ -121,6 +122,7 @@
             // StatusBox
             // 
             this.StatusBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.StatusBox.Controls.Add(this.BaseLoad);
             this.StatusBox.Controls.Add(this.CurrentTimeLabel);
             this.StatusBox.Location = new System.Drawing.Point(695, 408);
             this.StatusBox.Name = "StatusBox";
@@ -146,6 +148,15 @@
             this.ModuleNameBox.Name = "ModuleNameBox";
             this.ModuleNameBox.Size = new System.Drawing.Size(131, 20);
             this.ModuleNameBox.TabIndex = 6;
+            // 
+            // BaseLoad
+            // 
+            this.BaseLoad.AutoSize = true;
+            this.BaseLoad.Location = new System.Drawing.Point(6, 33);
+            this.BaseLoad.Name = "BaseLoad";
+            this.BaseLoad.Size = new System.Drawing.Size(90, 13);
+            this.BaseLoad.TabIndex = 1;
+            this.BaseLoad.Text = "Base Load: 0 kW";
             // 
             // SimulationGUI
             // 
@@ -182,6 +193,7 @@
         private System.Windows.Forms.GroupBox StatusBox;
         private System.Windows.Forms.Label CurrentTimeLabel;
         private System.Windows.Forms.TextBox ModuleNameBox;
+        private System.Windows.Forms.Label BaseLoad;
     }
 }
 

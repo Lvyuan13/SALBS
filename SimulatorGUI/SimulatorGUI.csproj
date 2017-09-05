@@ -58,6 +58,12 @@
     <Compile Include="EnvironmentPanel.Designer.cs">
       <DependentUpon>EnvironmentPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="ModuleOverviewPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ModuleOverviewPanel.Designer.cs">
+      <DependentUpon>ModuleOverviewPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="SimulationGUI.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -71,6 +77,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="EnvironmentPanel.resx">
       <DependentUpon>EnvironmentPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ModuleOverviewPanel.resx">
+      <DependentUpon>ModuleOverviewPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SimulationGUI.resx">
       <DependentUpon>SimulationGUI.cs</DependentUpon>

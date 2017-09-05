@@ -170,6 +170,9 @@ namespace LunarNumericSimulator {
             var modules = (from element in loadedModules
                             select getModuleResourceStatus(element.ModuleID)).ToList();
             report.ModuleStates = modules;
+            report.PowerLoad = -(from element in modules
+                                select element.getResourceLevel(Resources.ElecticalEnergy)).Sum();
+            report.TankStates = Module.getTankLevels();
             return report;
 
         }

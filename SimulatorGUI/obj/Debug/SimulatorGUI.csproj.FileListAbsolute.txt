@@ -29,3 +29,4 @@ C:\Users\Addy360\Downloads\Uni\FYP\GIT\LunarParametricNumeric\SimulatorGUI\obj\D
 C:\Users\Addy360\Downloads\Uni\FYP\GIT\LunarParametricNumeric\SimulatorGUI\obj\Debug\SimulatorGUI.csproj.CoreCompileInputs.cache
 C:\Users\Addy360\Downloads\Uni\FYP\GIT\LunarParametricNumeric\SimulatorGUI\obj\Debug\SimulatorGUI.exe
 C:\Users\Addy360\Downloads\Uni\FYP\GIT\LunarParametricNumeric\SimulatorGUI\obj\Debug\SimulatorGUI.pdb
+D:\LunarParametricNumeric\SimulatorGUI\obj\Debug\SimulatorGUI.ModuleOverviewPanel.resources

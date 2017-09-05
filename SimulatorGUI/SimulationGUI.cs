@@ -47,6 +47,11 @@ namespace SimulatorGUI
             envPanel.Dock = DockStyle.Fill;
             GraphTabs.TabPages[0].Controls.Add(envPanel);
 
+            GraphTabs.TabPages.Add("Module Overview");
+            var moPanel = new ModuleOverviewPanel();
+            moPanel.Dock = DockStyle.Fill;
+            GraphTabs.TabPages[1].Controls.Add(moPanel);
+
         }
 
         protected void updateList()
@@ -61,8 +66,9 @@ namespace SimulatorGUI
             {
                 SimulationProgressReport report = (SimulationProgressReport)e.UserState;
                 CurrentTimeLabel.Text = "Current Time: " + report.GlobalState.clock;
-
+                BaseLoad.Text = "Base Load: " + Math.Round(report.PowerLoad) + " kW";
                 updateEnvironmentTab(report);
+                updateModuleOverviewTab(report);
                 foreach (Module m in simulation.getModules())
                 {
 
@@ -83,11 +89,12 @@ namespace SimulatorGUI
             environmentChart.Series["Temperature"].Points.AddXY(report.GlobalState.clock, report.GlobalState.Atmospheric.Temperature);
             environmentChart.Series["Temperature"].BorderWidth = 4;
 
-            environmentChart.Series["Enthalpy"].Points.AddXY(report.GlobalState.clock, report.GlobalState.Atmospheric.TotalEnthalpy);
-            environmentChart.Series["Enthalpy"].BorderWidth = 4;
+            environmentChart.Series["BaseLoad"].Points.AddXY(report.GlobalState.clock, report.PowerLoad);
+            environmentChart.Series["BaseLoad"].BorderWidth = 4;
 
             if (updateTimer % 50 == 0)
             {
+
                 environmentChart.Series["Gas Distribution"].Points.Clear();
                 var co2 = (from element in report.GlobalState.Atmospheric
                            where element.Resource == Resources.CO2
@@ -108,6 +115,33 @@ namespace SimulatorGUI
                 updateTimer = -1;
             }
             updateTimer++;
+        }
+
+        protected void updateModuleOverviewTab(SimulationProgressReport report)
+        {
+            Chart moduleOverviewChart = (Chart)GraphTabs.TabPages[1].Controls[0].Controls[0];
+            if (updateTimer % 50 == 0)
+            {
+                moduleOverviewChart.Series["Tanks"].Points.Clear();
+                foreach (var tank in report.TankStates)
+                {
+                    if (tank.Value == 0)
+                        continue;
+                    moduleOverviewChart.Series["Tanks"].Points.AddXY(tank.Key, tank.Value);
+                }
+
+                moduleOverviewChart.Series["Module Power Usage"].Points.Clear();
+                var modules = from element in report.ModuleStates
+                              select new { Name = element.getName(), PowerUsage = -element.getResourceLevel(Resources.ElecticalEnergy) };
+
+                foreach (var module in modules)
+                {
+                    if (module.PowerUsage == 0)
+                        continue;
+                    moduleOverviewChart.Series["Module Power Usage"].Points.AddXY(module.Name, module.PowerUsage);
+                }
+                
+            }
         }
 
         protected void setupTab(string tabid)
