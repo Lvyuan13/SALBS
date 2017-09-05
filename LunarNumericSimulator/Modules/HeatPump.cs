@@ -9,7 +9,11 @@ namespace LunarNumericSimulator.Modules
 {
     class HeatPump : Module
     {
+<<<<<<< HEAD
         PIDController pid = new PIDController(0.5, 0.4, 1);
+=======
+        PIDController pid = new PIDController(0.5, 1, 0.3);
+>>>>>>> 1008cce9c034d24a122ccd0f75f279cbef26eae0
         public HeatPump(Simulation sim, int id) : base(sim, id)
         {
         }

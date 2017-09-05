@@ -9,8 +9,12 @@ namespace LunarNumericSimulator {
         private Simulation Environment;
         int resourceCount = Enum.GetNames(typeof(Resources)).Length;
         // useful values for child classes to refer to
-        protected const uint m_secondsIn12Hours = 43200;
-        protected const uint m_secondsIn24Hours = 86400;
+        protected const uint secondsIn12Hours = 43200;
+        protected const uint secondsIn24Hours = 86400;
+        protected const UInt64 secondsHumanDayStart = 25200;
+        protected const UInt64 secondsHumanDayEnd = 75600;
+        //protected const UInt64 secondsHumanDayStart = 1;
+        //protected const UInt64 secondsHumanDayEnd = 5000;
 
         protected static Dictionary<string, TankResourceManager> tanks = new Dictionary<string, TankResourceManager>();
 
@@ -205,15 +209,13 @@ namespace LunarNumericSimulator {
             // assumes that the human sleeps/inactive from 21:00 to 07:00 (10 hours)
             UInt64 lowestDayValue = currentTime;
             UInt64 secondsInHumanDayCycle = 86400;
-            UInt64 secondsLunarDayStart = 25200;
-            UInt64 secondsLunarDayEnd = 75600;
 
             while (lowestDayValue >= secondsInHumanDayCycle)
             {
                 lowestDayValue = lowestDayValue - secondsInHumanDayCycle;
             }
             // if the time given is 
-            if (lowestDayValue >= secondsLunarDayStart && lowestDayValue < secondsLunarDayEnd)
+            if (lowestDayValue >= secondsHumanDayStart && lowestDayValue < secondsHumanDayEnd)
             {
                 return true;
             }

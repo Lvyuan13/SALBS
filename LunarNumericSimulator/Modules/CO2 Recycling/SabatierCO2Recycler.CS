@@ -54,7 +54,7 @@ namespace LunarNumericSimulator.Modules
             var result = updatePID();
 
             // check if the resources need changing
-            if (!m_changeResources)
+            if (!changeResources)
                 return;
 
 
