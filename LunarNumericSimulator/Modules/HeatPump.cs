@@ -10,6 +10,7 @@ namespace LunarNumericSimulator.Modules
     class HeatPump : Module
     {
         PIDController pid = new PIDController(0.5, 0.4, 1);
+        bool passed = false;
         public HeatPump(Simulation sim, int id) : base(sim, id)
         {
         }
@@ -39,7 +40,6 @@ namespace LunarNumericSimulator.Modules
 
         protected override void update(ulong clock)
         {
-            
             var result = pid.update(getAirTemperature() - 25, 1);
 
             if (result < 0)

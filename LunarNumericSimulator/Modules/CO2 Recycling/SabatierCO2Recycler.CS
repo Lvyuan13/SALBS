@@ -92,7 +92,7 @@ namespace LunarNumericSimulator.Modules
             consumePower(sabatierPower);
 
             produceResource(Resources.H2O, sabatierH2OProduced);
-            //produceResource(Resources.Heat, sabatierHeatGeneration); 
+            produceResource(Resources.Heat, sabatierHeatGeneration); 
             getTank("SabatierMethane").addResource(sabatierCH4Produced);
             
 
