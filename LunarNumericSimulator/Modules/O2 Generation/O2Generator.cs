@@ -9,7 +9,7 @@ namespace LunarNumericSimulator.Modules.O2_Generation
 {
     class O2Generator : Module
     {
-        protected PIDController pid = new PIDController(5, 0.1, 0);
+        protected PIDController pid = new PIDController(0.01, 0.01, 0.01);
 
         public O2Generator(Simulation sim, int moduleid) : base(sim,moduleid)
         {
@@ -50,13 +50,15 @@ namespace LunarNumericSimulator.Modules.O2_Generation
 
         protected override void update(UInt64 clock)
         {
-
             // update the PID
             double O2Level = getAtmosphericFraction(Resources.O);
             double O2Mass = getResourceLevel(Resources.O);
 
+
             var result = pid.update(0.24 - O2Level, 1);
 
+            if (result < 0.0)
+                return;
 
             // Example calculation
             // say we need Xkg of O2, we then need
@@ -76,7 +78,6 @@ namespace LunarNumericSimulator.Modules.O2_Generation
 
             double powerReq = 9.2; // kJ
 
-
             double inflowAdjusted = result;
 
             double O2Produced = 0.8889 * result;
@@ -84,7 +85,6 @@ namespace LunarNumericSimulator.Modules.O2_Generation
 
             double powerUsed = (powerReq / massflowRate) * result;
 
-            Console.WriteLine("power used = " + powerUsed);
             consumeResource(Resources.H2O, inflowAdjusted);
             consumePower(powerUsed);
             produceResource(Resources.O, O2Produced);
@@ -94,29 +94,6 @@ namespace LunarNumericSimulator.Modules.O2_Generation
         }
 
 
-        // TODO the double floating point values are tricky to compare, this needs making more robust
-        /*protected double updatePID()
-        {
- // check for acceptable O2 level
-
-            // set member variable as to whether the resources should be updated on this particular update call
-            // true by default
-            changeResources = false;
-
-            if (result >= 0.000000000000 || O2Level < 0.2160000000000)
-                changeResources = true;
-
-            //if (O2Mass - result < 0)
-            //{
-            //    pid.removeWindup();
-            //    changeResources = false;
-            //}
-
-            //Console.WriteLine("O2 level = " + O2Level + "   O2Mass = " + O2Mass + "   result = " + result + " changeResources = " + changeResources);
-
-            // return the result of the pid controller
-            return result;
-        }*/
     }
 }
 

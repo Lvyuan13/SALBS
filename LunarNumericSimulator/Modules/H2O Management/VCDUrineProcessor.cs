@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LunarNumericSimulator.Utilities;
 
 namespace LunarNumericSimulator.Modules.H2O_Management
 {
-    class VCDUrineProcessor : UrineProcessor
+    class VCDUrineProcessor : Module
     {
+
+        protected PIDController pid = new PIDController(0, 0.0005, 0);
+
         // Power requirement figures obtained from:
         // "Spaceflight life supprt and biospherics" by Peter Eckart
         // power used is 0.115kW inflow of 32.65 [kg/day] = 0.00037789352 [kg/s]
@@ -26,7 +30,8 @@ namespace LunarNumericSimulator.Modules.H2O_Management
         public override List<Resources> getRegisteredResources()
         {
             return new List<Resources>() {
-                Resources.ElecticalEnergy
+                Resources.ElecticalEnergy,
+                Resources.Heat
             };
         }
 
@@ -55,10 +60,14 @@ namespace LunarNumericSimulator.Modules.H2O_Management
         protected override void update(UInt64 clock)
         {
 
-            var result = updatePID();
+            double currentUrineLevel = getTank("UrineTreatmentTank").getLevel();
 
-            if (allowFilling)
-                return;
+            var result = pid.update(currentUrineLevel, 1);
+
+            if (currentUrineLevel - result < 0.0)
+            {
+                result = currentUrineLevel;
+            }
 
             designLiquidInFlow = result;
             designPowerRequired = (.115 / 0.00037789352) * result;

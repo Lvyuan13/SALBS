@@ -46,7 +46,8 @@ namespace LunarNumericSimulator.Modules
 
         public override List<string> requiresTanks()
         {
-            return new List<string> { "SabatierMethane" };
+            return new List<string> { "SabatierMethane",
+                                       "WasteWaterStorage"};
         }
 
         protected override void update(UInt64 clock)
@@ -94,7 +95,8 @@ namespace LunarNumericSimulator.Modules
             consumeResource(Resources.H, sabatierH2Consumed);
             consumePower(sabatierPower);
 
-            produceResource(Resources.H2O, sabatierH2OProduced);
+            //produceResource(Resources.H2O, sabatierH2OProduced);
+            getTank("WasteWaterStorage").addResource(sabatierH2OProduced);
             //produceResource(Resources.Heat, sabatierHeatGeneration); 
             getTank("SabatierMethane").addResource(sabatierCH4Produced);
             

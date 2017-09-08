@@ -12,10 +12,10 @@ namespace LunarNumericSimulator {
         // useful values for child classes to refer to
         protected const uint secondsIn12Hours = 43200;
         protected const uint secondsIn24Hours = 86400;
-        protected const UInt64 secondsHumanDayStart = 25200;
-        protected const UInt64 secondsHumanDayEnd = 75600;
-        //protected const UInt64 secondsHumanDayStart = 1;
-        //protected const UInt64 secondsHumanDayEnd = 5000;
+        //protected const UInt64 secondsHumanDayStart = 25200;
+        //protected const UInt64 secondsHumanDayEnd = 75600;
+        protected const UInt64 secondsHumanDayStart = 1;
+        protected const UInt64 secondsHumanDayEnd = 5000;
 
         protected static Dictionary<string, TankResourceManager> tanks = new Dictionary<string, TankResourceManager>();
 
