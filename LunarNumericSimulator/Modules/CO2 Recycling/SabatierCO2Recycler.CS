@@ -7,8 +7,9 @@ using LunarNumericSimulator.Utilities;
 
 namespace LunarNumericSimulator.Modules
 {
-    class SabatierCO2Recycler : CO2Recycler
+    class SabatierCO2Recycler: Module
     {
+        protected PIDController pid = new PIDController(2, 0.1, 0.01);
         // Functions
         public SabatierCO2Recycler(Simulation sim, int moduleid) : base(sim, moduleid) {
 
@@ -51,10 +52,12 @@ namespace LunarNumericSimulator.Modules
         protected override void update(UInt64 clock)
         {
             // update the PID
-            var result = updatePID();
+            double CO2Level = getAtmosphericFraction(Resources.CO2);
+            double CO2mass = getResourceLevel(Resources.CO2);
 
-            // check if the resources need changing
-            if (!changeResources)
+            var result = pid.update(CO2Level - 0.005, 1); // check for acceptable CO2 level
+
+            if (result < 0)
                 return;
 
 
@@ -82,7 +85,7 @@ namespace LunarNumericSimulator.Modules
 
             //TODO explain the numbers below: 118139 (kj/kg) = 0.268 / 0.00000226851
             // 22041 (kj/kg) = 0.05 / 0.00000226851
-            double sabatierPower = 0.05 / Math.Abs(result);                               // [kJ]
+            double sabatierPower = 22041 * Math.Abs(result);                               // [kJ]
             double sabatierHeatGeneration = 118061 * Math.Abs(result);                     // [kJ]
 
 
@@ -92,7 +95,7 @@ namespace LunarNumericSimulator.Modules
             consumePower(sabatierPower);
 
             produceResource(Resources.H2O, sabatierH2OProduced);
-            produceResource(Resources.Heat, sabatierHeatGeneration); 
+            //produceResource(Resources.Heat, sabatierHeatGeneration); 
             getTank("SabatierMethane").addResource(sabatierCH4Produced);
             
 

@@ -7,8 +7,9 @@ using LunarNumericSimulator.Utilities;
 
 namespace LunarNumericSimulator.Modules
 {
-    class BoschCO2Recycler : CO2Recycler
+    class BoschCO2Recycler : Module
     {
+        protected PIDController pid = new PIDController(2, 0.1, 0.01);
         // Functions
         public BoschCO2Recycler(Simulation sim, int moduleid) : base(sim, moduleid)
         {
@@ -52,10 +53,12 @@ namespace LunarNumericSimulator.Modules
         protected override void update(UInt64 clock)
         {
             // update the PID
-            var result = updatePID();
+            double CO2Level = getAtmosphericFraction(Resources.CO2);
+            double CO2mass = getResourceLevel(Resources.CO2);
 
-            // check if the resources need changing
-            if (!changeResources)
+            var result = pid.update(CO2Level - 0.005, 1); // check for acceptable CO2 level
+
+            if (result < 0)
                 return;
 
 
