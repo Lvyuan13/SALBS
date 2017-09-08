@@ -10,6 +10,7 @@ namespace LunarNumericSimulator.Modules
     class VentilationSystem : Module
     {
 
+        public static double percentageVolumeFlowRate = 0.05;
         public VentilationSystem(Simulation sim, int id) : base(sim, id)
         {
         }
@@ -45,10 +46,18 @@ namespace LunarNumericSimulator.Modules
 
         protected override void update(ulong clock)
         {
-            double energyUse = Math.Pow(300, -3);
-            double efficiency = 0.9;
-            produceResource(Resources.Heat, energyUse * (1-efficiency));
-            consumePower(energyUse * efficiency); // TODO: get real numbers, right now we assume it uses 300W
+            var airState = getAirState();
+            double volumetricFlowRate = getSystemVolume() * percentageVolumeFlowRate; // We want air to flow at 5% the total volume of air per second
+            double fanArea = 1 * 1; //Assume fan area of 1m2
+            double airSpeed = volumetricFlowRate / fanArea;
+            double mass = airState.Density * volumetricFlowRate;
+
+            double efficiency = 0.7;
+            double energyRequired = 0.5 * mass * airSpeed;
+            double energyUsed = energyRequired / efficiency; // Assume 70% efficiency
+
+            produceResource(Resources.Heat, energyUsed * (1-efficiency));
+            consumePower(energyUsed * efficiency); 
         }
     }
 }

@@ -93,7 +93,7 @@
     <Compile Include="Modules\Human.cs" />
     <Compile Include="Modules\Habitat.cs" />
     <Compile Include="Modules\Module.cs" />
-    <Compile Include="Modules\CO2 Recycling\SabatierCO2Recycler.CS" />
+    <Compile Include="Modules\CO2 Recycling\SabatierCO2Recycler.cs" />
     <Compile Include="Modules\O2 Generation\O2Generator.cs" />
     <Compile Include="Modules\VentilationSystem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -9,8 +9,7 @@ namespace LunarNumericSimulator.Modules.O2_Generation
 {
     class O2Generator : Module
     {
-        protected PIDController pid = new PIDController(0.005, 0.001, 0.002);
-        protected bool changeResources = true;
+        protected PIDController pid = new PIDController(5, 0.1, 0);
 
         public O2Generator(Simulation sim, int moduleid) : base(sim,moduleid)
         {
@@ -53,11 +52,10 @@ namespace LunarNumericSimulator.Modules.O2_Generation
         {
 
             // update the PID
-            var result = updatePID();
+            double O2Level = getAtmosphericFraction(Resources.O);
+            double O2Mass = getResourceLevel(Resources.O);
 
-            // check if the resources need changing
-            if (!changeResources)
-                return;
+            var result = pid.update(0.24 - O2Level, 1);
 
 
             // Example calculation
@@ -97,12 +95,9 @@ namespace LunarNumericSimulator.Modules.O2_Generation
 
 
         // TODO the double floating point values are tricky to compare, this needs making more robust
-        protected double updatePID()
+        /*protected double updatePID()
         {
-            double O2Level = getAtmosphericFraction(Resources.O);
-            double O2Mass = getResourceLevel(Resources.O);
-
-            var result = pid.update(0.21600000000000 - O2Level, 1); // check for acceptable O2 level
+ // check for acceptable O2 level
 
             // set member variable as to whether the resources should be updated on this particular update call
             // true by default
@@ -121,7 +116,7 @@ namespace LunarNumericSimulator.Modules.O2_Generation
 
             // return the result of the pid controller
             return result;
-        }
+        }*/
     }
 }
 

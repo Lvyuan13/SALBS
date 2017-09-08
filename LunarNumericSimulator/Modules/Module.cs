@@ -2,6 +2,7 @@ using LunarNumericSimulator.ResourceManagers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using static LunarNumericSimulator.ResourceManagers.AtmosphericResourceManager;
 
 namespace LunarNumericSimulator {
     public abstract class Module {
@@ -117,6 +118,11 @@ namespace LunarNumericSimulator {
             return resourceReceipts;
         }
 
+        public double getSystemVolume()
+        {
+            return Environment.getSystemVolume();
+        }
+
         // Not abstract, as the subclasses should access resources through this function
         protected bool consumeResource(Resources res, double quantity){
             if (Math.Sign(quantity) == -1)
@@ -183,15 +189,15 @@ namespace LunarNumericSimulator {
             }
             foreach (ResourceManager<double> rm in Environment.getAllResourceManagers())
                 if (rm.managedResource == res)
-                    return ((AtmosphericResourceManager)rm).getDensity();
+                    return ((AtmosphericResourceManager)rm).Density;
             throw new Exception("Resource not found!");
         }
 
-        protected double getAirDensity()
+        protected ThermoState getAirState()
         {
             foreach (ResourceManager<double> rm in Environment.getAllResourceManagers())
                 if (rm.managedResource == Resources.Heat)
-                    return ((ThermodynamicEngine)rm).getSystemDensity();
+                    return ((ThermodynamicEngine)rm).getAverageAirState();
             throw new Exception("Resource not found!");
         }
 
@@ -200,14 +206,6 @@ namespace LunarNumericSimulator {
             foreach (ResourceManager<double> rm in Environment.getAllResourceManagers())
                 if (rm.managedResource == Resources.Heat)
                     return ((ThermodynamicEngine)rm).getMassFraction(res);
-            throw new Exception("Resource not found!");
-        }
-
-        protected double getAirTemperature()
-        {
-            foreach (ResourceManager<double> rm in Environment.getAllResourceManagers())
-                if (rm.managedResource == Resources.Heat)
-                    return ((ThermodynamicEngine)rm).getSystemTemperature();
             throw new Exception("Resource not found!");
         }
 

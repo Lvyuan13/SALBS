@@ -49,11 +49,11 @@ namespace LunarNumericSimulator.Reporting
             {
                 Resource = rm.managedResource;
                 Quantity = rm.getLevel();
-                PartialPressure = rm.getPressure();
-                Temperature = rm.getTemperature();
-                PartialEthalpy = rm.getEnthalpyPerUnitMass();
-                PartialInternalEnergy = rm.getInternalEnergyPerUnitMass();
-                Density = rm.getDensity();
+                PartialPressure = rm.Pressure;
+                Temperature = rm.Temperature;
+                PartialEthalpy = rm.EnthalpyPerUnitMass;
+                PartialInternalEnergy = rm.InternalEnergy;
+                Density = rm.Density;
             }
             public Gas()
             {

@@ -9,8 +9,8 @@ namespace LunarNumericSimulator.Modules
 {
     class HeatPump : Module
     {
-        PIDController pid = new PIDController(0.5, 0.4, 1);
-        bool passed = false;
+        PIDController pid = new PIDController(1, 0.4, 0);
+
         public HeatPump(Simulation sim, int id) : base(sim, id)
         {
         }
@@ -40,10 +40,11 @@ namespace LunarNumericSimulator.Modules
 
         protected override void update(ulong clock)
         {
-            var result = pid.update(getAirTemperature() - 25, 1);
+            var result = pid.update(getAirState().Temperature - 25, 1);
 
             if (result < 0)
                 return;
+
             consumeResource(Resources.Heat, result);
             consumePower(result / 0.15); // Assume the heat pump is 15% efficient
         }

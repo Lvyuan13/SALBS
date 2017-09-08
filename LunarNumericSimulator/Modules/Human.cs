@@ -45,6 +45,10 @@ namespace LunarNumericSimulator.Modules
         private const double hygieneH2OProduced = 12.58; // kg per day
         private const double clothesWashH2OProduced = 12.5; // kg per day
 
+        private const double humanSleepingIntensity = -0.4;
+        private const double humanNormalIntensity = 0;
+        private const double humanActiveIntensity = 1;
+
         // variables for set quantities of resource CONSUMPTION
         // TODO write these in..
         // 1.15kg in food
@@ -159,9 +163,11 @@ namespace LunarNumericSimulator.Modules
 
 
         protected override void update(UInt64 clock){
-            double airIntakeL = 0.25*(2*Math.PI/5)*Math.Cos((2*Math.PI/5 )*clock + randomPhaseShift); // A sine function which estimates human breathing patterns
+           
+            double intensity = -0.6988452409052097 + 0.00003324243435223318*clock + (1.47732330889e-9)*Math.Pow(clock,2) - (4.3681e-14) * Math.Pow(clock, 3) + (2.6e-19) * Math.Pow(clock, 4);
+            double airIntakeL = 0.1*(2*intensity + 1)*Math.PI*Math.Cos((2*Math.PI/5 )*clock + randomPhaseShift); // A sine function which estimates human breathing patterns
             // TODO: Factor in varying breathing rates for intensities
-            var density = getAirDensity();
+            var density = getAirState().Density;
             double airIntakeKG = Math.Abs(density * 0.001 * airIntakeL);
 
             if (airIntakeL < 0){
@@ -173,8 +179,8 @@ namespace LunarNumericSimulator.Modules
                 consumeResource(Resources.CO2, co2Intake);
             } else if (airIntakeL > 0){
                 double nitrogenProduced = getAtmosphericFraction(Resources.N) * airIntakeKG; // TODO: Correct breathing calcs
-                double oxygenProduced = getAtmosphericFraction(Resources.O) * 0.6 * airIntakeKG; // This may help: http://www.madsci.org/posts/archives/2004-09/1096283374.En.r.html
-                double co2Produced = getAtmosphericFraction(Resources.CO2) * 175 * airIntakeKG;
+                double oxygenProduced = getAtmosphericFraction(Resources.O) * airIntakeKG - 2*(9.096643518518519e-6); // This may help: http://www.madsci.org/posts/archives/2004-09/1096283374.En.r.html
+                double co2Produced = getAtmosphericFraction(Resources.CO2) * airIntakeKG + 2*0.0000784;
                 produceResource(Resources.N, nitrogenProduced);
                 produceResource(Resources.O, oxygenProduced);
                 produceResource(Resources.CO2, co2Produced);

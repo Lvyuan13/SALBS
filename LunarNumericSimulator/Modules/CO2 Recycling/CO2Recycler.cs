@@ -9,7 +9,7 @@ namespace LunarNumericSimulator.Modules
 {
     public abstract class CO2Recycler : Module
     {
-        protected PIDController pid = new PIDController(2, 0.1, 0);
+        protected PIDController pid = new PIDController(0.01, 0.5, 0);
         protected bool changeResources = true;
 
 

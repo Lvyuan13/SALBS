@@ -30,7 +30,6 @@ namespace LunarNumericSimulator {
         public ThermodynamicEngine ThermoEngine;
         protected List<Module> loadedModules;
         protected Dictionary<string,Type> moduleCatalogue;
-        static bool locked = false;
         
         public void initiate(){
 
@@ -136,8 +135,9 @@ namespace LunarNumericSimulator {
             var state = new EnvironmentState();
             state.clock = clock;
             state.Atmospheric = new EnvironmentState.Atmosphere();
-            state.Atmospheric.TotalPressure = ThermoEngine.getSystemPressure();
-            state.Atmospheric.Temperature = ThermoEngine.getSystemTemperature();
+            var airState = ThermoEngine.getAverageAirState();
+            state.Atmospheric.TotalPressure = airState.Pressure;
+            state.Atmospheric.Temperature = airState.Temperature;
             state.Atmospheric.TotalMass = ThermoEngine.getSystemMass();
             state.Atmospheric.TotalEnthalpy = ThermoEngine.getSystemEnthalpy();
 
@@ -184,7 +184,7 @@ namespace LunarNumericSimulator {
             return (from element in moduleCatalogue select element.Key).ToList();
         }
 
-        protected double getSystemVolume()
+        public double getSystemVolume()
         {
             return (from element in loadedModules
                     select element.getModuleVolume()).Sum();

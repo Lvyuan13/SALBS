@@ -82,8 +82,8 @@ namespace LunarNumericSimulator.Modules
 
             //TODO explain the numbers below: 118139 (kj/kg) = 0.268 / 0.00000226851
             // 22041 (kj/kg) = 0.05 / 0.00000226851
-            double sabatierPower = 22041 * Math.Abs(result);                               // [kJ]
-            double sabatierHeatGeneration = 118139 * Math.Abs(result);                     // [kJ]
+            double sabatierPower = 0.05 / Math.Abs(result);                               // [kJ]
+            double sabatierHeatGeneration = 118061 * Math.Abs(result);                     // [kJ]
 
 
             // Consume and produce all resources
