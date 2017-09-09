@@ -349,6 +349,31 @@ namespace LunarNumericSimulator
             }
         }
 
+        public double getMolarFraction(Resources res)
+        {
+            double CO2, O, N, CH4, systemMass = getSystemMass();
+            CO2 = co2ResourceManager.getLevel() / systemMass;
+            O = oResourceManager.getLevel() / systemMass;
+            N = nResourceManager.getLevel() / systemMass;
+            CH4 = ch4ResourceManager.getLevel() / systemMass;
+
+            double averageMolarWeight = getSystemAverageMolarWeight();
+
+            switch (res)
+            {
+                case Resources.CO2:
+                    return CO2 * (averageMolarWeight / co2ResourceManager.molarWeight);
+                case Resources.O:
+                    return O * (averageMolarWeight / oResourceManager.molarWeight);
+                case Resources.N:
+                    return N * (averageMolarWeight / nResourceManager.molarWeight);
+                case Resources.CH4:
+                    return CH4 * (averageMolarWeight / ch4ResourceManager.molarWeight);
+                default:
+                    throw new Exception("Resource is not an atomospheric resource");
+            }
+        }
+
         protected double calculateMolarMassFromMassFraction(double molarWeight, double massFraction)
         {
             return massFraction * (getSystemAverageMolarWeight() / molarWeight);

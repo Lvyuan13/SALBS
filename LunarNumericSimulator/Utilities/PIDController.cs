@@ -10,12 +10,15 @@ namespace LunarNumericSimulator.Utilities
     {
         double pGain, iGain, dGain;
         double integrator = 0;
-        double lastError = 0;
-        public PIDController(double pG, double iG, double dG)
+        Queue<double> lastError = new Queue<double>();
+        double lpfOrder;
+        public PIDController(double pG, double iG, double dG, double lpf)
         {
             pGain = pG;
             iGain = iG;
             dGain = dG;
+            lpfOrder = lpf;
+            lastError.Enqueue(0);
         }
 
         public void removeWindup()
@@ -26,9 +29,21 @@ namespace LunarNumericSimulator.Utilities
         public double update(double error, double deltaT)
         {
             integrator += iGain * error * deltaT;
-            var derivative = (error-lastError) / deltaT;
-            lastError = error;
+            var derivative = (error-weightedAverage(lastError)) / deltaT;
+            lastError.Enqueue(error);
+            if (lastError.Count > lpfOrder)
+                lastError.Dequeue();
             return (pGain * error) + (iGain * integrator) + (dGain * derivative);
+        }
+
+        private double weightedAverage(Queue<double> list)
+        {
+            double sum = 0;
+            for(int i = 0; i < list.Count; i++)
+            {
+                sum += i*list.ElementAt(i) / lpfOrder;
+            }
+            return sum / (0.5*lpfOrder+0.5);
         }
 
     }

@@ -2,6 +2,7 @@ using LunarNumericSimulator.ResourceManagers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using static LunarNumericSimulator.ResourceManagers.AtmosphericResourceManager;
 
 namespace LunarNumericSimulator {
@@ -28,7 +29,7 @@ namespace LunarNumericSimulator {
 
         // Keeps track of resources used by the module since last update
         private double[] resourceReceipts;
-        public Module(Simulation sim, int id){
+        public Module(Simulation sim, int id) {
             Environment = sim;
             ModuleID = id;
 
@@ -37,6 +38,8 @@ namespace LunarNumericSimulator {
 
             resourceReceipts = new double[resourceCount];
         }
+
+        abstract public void ModuleReady();
 
         // Called every tick, describes the behaviour of the module.
         abstract protected void update(UInt64 clock);
@@ -91,7 +94,7 @@ namespace LunarNumericSimulator {
         }
 
         // Internal function which is called by the simulator, this function will trigger an update
-        public void tick(UInt64 clock){
+        public void tick(UInt64 clock) {
             resourceReceipts = new double[resourceCount];
             update(clock);
             updateResources();
@@ -109,12 +112,12 @@ namespace LunarNumericSimulator {
                         } else
                         {
                             rm.addResource(resourceReceipts[i]);
-                        }      
+                        }
             }
         }
 
         // Callable by the simulator to determine the resources used by the module in the last update
-        public double[] getResourceConsumption(){
+        public double[] getResourceConsumption() {
             return resourceReceipts;
         }
 
@@ -124,17 +127,17 @@ namespace LunarNumericSimulator {
         }
 
         // Not abstract, as the subclasses should access resources through this function
-        protected bool consumeResource(Resources res, double quantity){
+        protected bool consumeResource(Resources res, double quantity) {
             if (Math.Sign(quantity) == -1)
                 produceResource(res, -quantity);
             if (res == Resources.ElecticalEnergy)
                 throw new Exception("Use consumePower instead of consumeResource");
-            if (!getRegisteredResources().Contains(res)){
+            if (!getRegisteredResources().Contains(res)) {
                 throw new Exception("The module " + ModuleID + " has not declared access to this resource! ");
             }
             if (getResourceLevel(res) - quantity < 0)
                 return false;
-            resourceReceipts[(int) res] -= quantity;
+            resourceReceipts[(int)res] -= quantity;
             return true;
         }
 
@@ -156,13 +159,13 @@ namespace LunarNumericSimulator {
         }
 
         // Not abstract, as the subclasses should access resources through this function
-        protected void produceResource(Resources res, double quantity){
+        protected void produceResource(Resources res, double quantity) {
             if (Math.Sign(quantity) == -1)
                 consumeResource(res, -quantity);
-            if (!getRegisteredResources().Contains(res)){
+            if (!getRegisteredResources().Contains(res)) {
                 throw new Exception("The module " + ModuleID + " has not declared access to this resource! ");
             }
-            resourceReceipts[(int) res] += quantity;
+            resourceReceipts[(int)res] += quantity;
         }
 
         protected void produceResourceLitres(Resources res, double quantity)
@@ -171,8 +174,8 @@ namespace LunarNumericSimulator {
             produceResource(res, quantity * kg_L);
         }
 
-        protected double getResourceLevel(Resources res){
-            if (!getRegisteredResources().Contains(res)){
+        protected double getResourceLevel(Resources res) {
+            if (!getRegisteredResources().Contains(res)) {
                 throw new Exception("The module " + ModuleID + " has not declared access to this resource! ");
             }
             foreach (ResourceManager<double> rm in Environment.getAllResourceManagers())
@@ -201,12 +204,25 @@ namespace LunarNumericSimulator {
             throw new Exception("Resource not found!");
         }
 
-        protected double getAtmosphericFraction(Resources res)
+        protected double getAtmosphericMassFraction(Resources res)
         {
             foreach (ResourceManager<double> rm in Environment.getAllResourceManagers())
                 if (rm.managedResource == Resources.Heat)
                     return ((ThermodynamicEngine)rm).getMassFraction(res);
             throw new Exception("Resource not found!");
+        }
+
+        protected double getAtmosphericMolarFraction(Resources res)
+        {
+            foreach (ResourceManager<double> rm in Environment.getAllResourceManagers())
+                if (rm.managedResource == Resources.Heat)
+                    return ((ThermodynamicEngine)rm).getMolarFraction(res);
+            throw new Exception("Resource not found!");
+        }
+
+        public Random getRandom()
+        {
+            return Environment.random;
         }
 
 
@@ -254,6 +270,34 @@ namespace LunarNumericSimulator {
             }
         }
 
+        [AttributeUsage(AttributeTargets.All, Inherited = true, AllowMultiple = true)]
+        public class NumericConfigurationParameter: Attribute
+        {
+            public readonly Type ParameterType;
+            public readonly string friendlyName;
+            public readonly bool AllowNegative;
+            public readonly string propertyName;
+
+            public NumericConfigurationParameter(string name, string type, bool allowNeg, [CallerMemberNameAttribute]string property = null)
+            {
+                if (ParameterType == typeof(string))
+                    throw new Exception("Cannot place string value in Numeric Configuration Parameter");
+                AllowNegative = allowNeg;
+                switch (type)
+                {
+                    case ("double"):
+                        ParameterType = typeof(double);
+                        break;
+                    case ("int"):
+                        ParameterType = typeof(int);
+                        break;
+                    default:
+                        throw new Exception("Invalid type for configuration parameter");
+                }
+                friendlyName = name;
+                propertyName = property;
+            }
+        }
 
     }
 }

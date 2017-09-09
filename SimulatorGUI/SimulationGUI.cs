@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
+using static LunarNumericSimulator.Module;
 
 namespace SimulatorGUI
 {
@@ -87,6 +88,7 @@ namespace SimulatorGUI
                                  select element).First();
                     updateTab(report.GlobalState.clock, m.ModuleID.ToString(), state);
                 }
+                updateTimer++;
             }
         }
         
@@ -122,15 +124,14 @@ namespace SimulatorGUI
                          where element.Resource == Resources.N
                          select element.Quantity).FirstOrDefault();
                 environmentChart.Series["Gas Distribution"].Points.AddXY(Resources.N.ToString(), N);
-                updateTimer = -1;
             }
-            updateTimer++;
+            
         }
 
         protected void updateModuleOverviewTab(SimulationProgressReport report)
         {
             Chart moduleOverviewChart = (Chart)GraphTabs.TabPages[1].Controls[0].Controls[0];
-            if (updateTimer % 50 == 0)
+            if (updateTimer % 20 == 0)
             {
                 moduleOverviewChart.Series["Tanks"].Points.Clear();
                 foreach (var tank in report.TankStates)
@@ -264,15 +265,122 @@ namespace SimulatorGUI
         private void AddButton_Click(object sender, EventArgs e)
         {
             string moduleName = ModuleNameBox.Text;
-            simulation.registerModule(moduleName);
-            moduleList = simulation.getModules();
-            updateList();
-            ModuleNameBox.Clear();
+            var res = simulation.getModuleConfiguration(moduleName);
+            if (res == null)
+                return;
+
+            Form popup = new Form();
+            popup.Text = "Add new Module";
+            TableLayoutPanel layout = new TableLayoutPanel();
+            layout.ColumnCount = 1;
+            layout.RowCount = res.Count + 1;
+            for (int i = 0; i < res.Count; i++)
+            {
+                layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 35F));
+                var control = createFromConfig(res[i]);
+                control.Dock = DockStyle.Fill;
+                layout.Controls.Add(control, 0, i);
+            }
+
+            Panel buttonPanel = new Panel();
+            TableLayoutPanel buttonLayout = new TableLayoutPanel();
+            Button cancelButton = new Button();
+            cancelButton.Text = "Cancel";
+            Button addButton = new Button();
+            addButton.Text = "Add";
+            addButton.Click += (obj, eventargs) =>
+            {
+                Dictionary<string, object> result = new Dictionary<string, object>();
+                for(int j = 0; j < layout.Controls.Count; j++)
+                {
+                    if (layout.Controls[j].GetType().Name != "AttributePanel")
+                        continue;
+                    var propName = ((AttributePanel)layout.Controls[j]).propertyName;
+                    var slider = ((NumericUpDown)layout.Controls[j].Controls[0].Controls[1]);
+                    var propValue = slider.Value;
+                    if (slider.Increment == 1)
+                    {
+                        result.Add(propName, Convert.ToInt32(propValue));
+                    } else
+                    {
+                        result.Add(propName, Convert.ToDouble(propValue));
+                    }
+                }
+                simulation.registerModule(moduleName, result);
+                moduleList = simulation.getModules();
+                updateList();
+                ModuleNameBox.Clear();
+                popup.Close();
+            };
+
+            cancelButton.Click += (obj, eventargs) =>
+            {
+                popup.Close();
+            };
+
+            buttonLayout.Controls.Add(cancelButton, 0, 0);
+            buttonLayout.Controls.Add(addButton, 1, 0);
+            buttonPanel.Controls.Add(buttonLayout);
+            buttonPanel.Dock = DockStyle.Fill;
+            layout.Controls.Add(buttonPanel, 0, layout.RowCount);
+
+            layout.Dock = DockStyle.Fill;
+            layout.Refresh();
+
+            popup.Controls.Add(layout);
+            popup.AutoSize = true;
+            popup.Height = (layout.RowCount + 1) * 35;
+            popup.AutoSizeMode = AutoSizeMode.GrowOnly;
+            popup.FormBorderStyle = FormBorderStyle.FixedDialog;
+            popup.ControlBox = false;
+            popup.Show();
+        }
+
+        private Panel createFromConfig(NumericConfigurationParameter attr)
+        {
+            AttributePanel pan = new AttributePanel();
+            TableLayoutPanel layout = new TableLayoutPanel();
+            layout.RowCount = 1;
+            layout.ColumnCount = 2;
+            Label textLabel = new Label();
+            NumericUpDown entryField = new NumericUpDown();
+            switch (attr.ParameterType.Name)
+            {
+                case "Integer":
+                    textLabel.Text = attr.friendlyName;
+                    if (!attr.AllowNegative)
+                        entryField.Minimum = 0;
+                    entryField.Increment = 1M;
+                    pan.propertyName = attr.propertyName;
+                    layout.Controls.Add(textLabel,0,0);
+                    layout.Controls.Add(entryField, 1, 0);
+                    layout.Dock = DockStyle.Fill;
+                    textLabel.Dock = DockStyle.Fill;
+                    entryField.Dock = DockStyle.Fill;
+                    pan.Controls.Add(layout);
+                    return pan;
+                case "Double":
+                    textLabel.Text = attr.friendlyName;
+                    if (!attr.AllowNegative)
+                        entryField.Minimum = 0;
+                    entryField.Increment = 0.2M;
+                    entryField.DecimalPlaces = 8;
+                    pan.propertyName = attr.propertyName;
+                    layout.Controls.Add(textLabel, 0, 0);
+                    layout.Controls.Add(entryField, 1, 0);
+                    layout.Dock = DockStyle.Fill;
+                    textLabel.Dock = DockStyle.Fill;
+                    entryField.Dock = DockStyle.Fill;
+                    pan.Controls.Add(layout);
+                    return pan;
+                default:
+                    throw new Exception("Unknown Parameter Type!");
+            }
         }
 
         private void RemoveButton_Click(object sender, EventArgs e)
         {
-            int id = (int)ModuleList.SelectedValue;
+            int id = ((Module)ModuleList.SelectedItem).ModuleID;
             simulation.deregisterModule(id);
             moduleList = simulation.getModules();
             updateList();
@@ -295,6 +403,16 @@ namespace SimulatorGUI
         private void CurrentTimeLabel_Click(object sender, EventArgs e)
         {
 
+        }
+
+        public class AttributePanel: Panel
+        {
+            public string propertyName { get; set; }
+
+            public AttributePanel(): base()
+            {
+                
+            }
         }
     }
 }

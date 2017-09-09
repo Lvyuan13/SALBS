@@ -24,6 +24,10 @@ namespace LunarNumericSimulator.Modules.H2O_Management
 
         }
 
+        public override void ModuleReady()
+        {
+        }
+
 
         public override List<Resources> getRegisteredResources()
         {
