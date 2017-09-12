@@ -83,7 +83,6 @@ namespace LunarParametricNumeric.Modules
                 consumePower(energyConsumed*result);
             }
 
-
         }
 
     }
