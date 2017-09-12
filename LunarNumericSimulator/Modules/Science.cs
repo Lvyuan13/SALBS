@@ -3,13 +3,9 @@ using System;
 using System.Collections.Generic;
 namespace LunarParametricNumeric.Modules
 {
-
-    /*  NEED TO CHANGE THIS TO BE AN EXTENSION OF THE 
-        HABITAT MODULES.
-     */
 	public class Science: Module
 	{
-        private float energyUse;
+        private float energyUse, startTime, finishTime;
 
 		public override List<Resources> getRegisteredResources(){
             return new List<Resources>() { 
@@ -32,17 +28,21 @@ namespace LunarParametricNumeric.Modules
         }
 
         protected override void update(UInt64 clock) {
-            consumeResource(Resources.ElecticalEnergy, energyUse);
+            if (clock > startTime && clock < finishTime) {
+                consumeResource(Resources.ElecticalEnergy, energyUse);
+            }
         }
 
         /*  Allow the user to set the amount of energy
             useage required for the module as specified
             in the prelim report. This will be the energy
-            used per day in kW and will then be converted
+            used in kW and will then be converted
             to kJ to be consumed every tick.
          */
-        public void setUseage(float useage) {
-            energyUse = useage/(24 * 60 * 60)
+        public void setUseage(float energy, float start, float finish) {
+            energyUse = energy;
+            startTime = start;
+            finishTime = finish;
         }
 	}
 }
