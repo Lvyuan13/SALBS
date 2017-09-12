@@ -9,7 +9,7 @@ namespace LunarNumericSimulator.Modules.H2O_Management
 {
     abstract class UrineProcessor : Module
     {
-        protected PIDController pid = new PIDController(0.001, 0.0005, 0.0002);
+        protected PIDController pid = new PIDController(0.001, 0.0005, 0.0002, 1);
         protected bool changeResources = true;
 
         protected double maximumUrineStorageTankLevel;
@@ -27,6 +27,10 @@ namespace LunarNumericSimulator.Modules.H2O_Management
 
             allowFilling = true;
             margin = 0.01;
+        }
+
+        public override void ModuleReady()
+        {
         }
 
         public override List<string> requiresTanks()

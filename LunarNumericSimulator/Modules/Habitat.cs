@@ -8,7 +8,8 @@ namespace LunarNumericSimulator.Modules
     public class Habitat : Module
     {
 
-        double currentTemp = 25;
+        [NumericConfigurationParameter("Initial Hull Temperature", "25", "double", false)]
+        public double currentTemp { private get; set; }
         public static double moduleRadius = 2;
         public Habitat(Simulation sim, int moduleid) : base(sim, moduleid)
         {
@@ -19,6 +20,10 @@ namespace LunarNumericSimulator.Modules
             return new List<Resources>() {
                 Resources.Heat
             };
+        }
+
+        public override void ModuleReady()
+        {
         }
 
         public override double getModuleVolume()
@@ -34,6 +39,10 @@ namespace LunarNumericSimulator.Modules
         public override string moduleFriendlyName
         {
             get { return "Habitat"; }
+        }
+        public override List<string> requiresTanks()
+        {
+            return new List<string>();
         }
 
         protected override void update(UInt64 clock)
@@ -82,11 +91,6 @@ namespace LunarNumericSimulator.Modules
                 currentTemp = (((currentEnergy + flux) / hull_Cp) / hullMass) - 273.15;
             }
 
-        }
-
-        public override List<string> requiresTanks()
-        {
-            return new List<string>();
         }
     }
 }

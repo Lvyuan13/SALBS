@@ -8,7 +8,6 @@ namespace LunarNumericSimulator.Modules
     public class Human: Module
     {
 
-        Random rand = new Random();
         private double randomPhaseShift;
 
         // variables for setting time of day to day activities
@@ -72,15 +71,15 @@ namespace LunarNumericSimulator.Modules
 
 
         public Human(Simulation sim, int moduleid) : base(sim,moduleid){
-            Random random = new Random();
-            randomPhaseShift = random.NextDouble()*Math.PI; // random number between 0.0 and 2PI
+   
+            randomPhaseShift = getRandom().NextDouble()*Math.PI; // random number between 0.0 and PI
 
             // set time to wash clothes
             clothesWashTime = 17 * 60 * 60;
             // set time to wash dishes
             dishWashTime = 18 * 60 * 60;
             // set random time for this human to shower daily
-            showerTime = (uint)random.Next((int)secondsHumanDayStart,(int)secondsHumanDayEnd);
+            showerTime = (uint)getRandom().Next((int)secondsHumanDayStart,(int)secondsHumanDayEnd);
 
             // initialise urination properties
             urinationCount = 0;
@@ -88,14 +87,14 @@ namespace LunarNumericSimulator.Modules
             urinationTimes = new uint[4];
 
             // set excretion variables
-            excretionTime = (uint)random.Next((int)secondsHumanDayStart, (int)secondsHumanDayEnd);
+            excretionTime = (uint)getRandom().Next((int)secondsHumanDayStart, (int)secondsHumanDayEnd);
             excretionFrequency = 1;
             hasExcreted = false;
 
             // initialise random times to urinate through the day time
             for (int i = 0; i < urinationFrequency; i++)
             {
-                urinationTimes[i] = (uint)random.Next((int)secondsHumanDayStart, (int)secondsHumanDayEnd);
+                urinationTimes[i] = (uint)getRandom().Next((int)secondsHumanDayStart, (int)secondsHumanDayEnd);
             }
 
             // initialise water drinking properties
@@ -105,11 +104,15 @@ namespace LunarNumericSimulator.Modules
             // initialise some random drinking times
             for (int i = 0; i < urinationFrequency; i++)
             {
-                drinkTimes[i] = (uint)random.Next((int)secondsHumanDayStart, (int)secondsHumanDayEnd);
+                drinkTimes[i] = (uint)getRandom().Next((int)secondsHumanDayStart, (int)secondsHumanDayEnd);
             }
 
         }
-        
+
+        public override void ModuleReady()
+        {
+        }
+
         public override List<Resources> getRegisteredResources(){
             return new List<Resources>() { 
                 Resources.CO2,
@@ -163,24 +166,24 @@ namespace LunarNumericSimulator.Modules
 
 
         protected override void update(UInt64 clock){
-           
-            double intensity = -0.6988452409052097 + 0.00003324243435223318*clock + (1.47732330889e-9)*Math.Pow(clock,2) - (4.3681e-14) * Math.Pow(clock, 3) + (2.6e-19) * Math.Pow(clock, 4);
+            double intensity_time = clock % 86400;
+            double intensity = -0.6988452409052097 + 0.00003324243435223318* intensity_time + (1.47732330889e-9)*Math.Pow(intensity_time, 2) - (4.3681e-14) * Math.Pow(intensity_time, 3) + (2.6e-19) * Math.Pow(intensity_time, 4);
             double airIntakeL = 0.1*(2*intensity + 1)*Math.PI*Math.Cos((2*Math.PI/5 )*clock + randomPhaseShift); // A sine function which estimates human breathing patterns
             // TODO: Factor in varying breathing rates for intensities
             var density = getAirState().Density;
             double airIntakeKG = Math.Abs(density * 0.001 * airIntakeL);
 
             if (airIntakeL < 0){
-                double nitrogenIntake = getAtmosphericFraction(Resources.N) * airIntakeKG;
-                double oxygenIntake = getAtmosphericFraction(Resources.O) * airIntakeKG;
-                double co2Intake = getAtmosphericFraction(Resources.CO2) * airIntakeKG;
+                double nitrogenIntake = getAtmosphericMassFraction(Resources.N) * airIntakeKG;
+                double oxygenIntake = getAtmosphericMassFraction(Resources.O) * airIntakeKG;
+                double co2Intake = getAtmosphericMassFraction(Resources.CO2) * airIntakeKG;
                 consumeResource(Resources.N, nitrogenIntake);
                 consumeResource(Resources.O, oxygenIntake);
                 consumeResource(Resources.CO2, co2Intake);
             } else if (airIntakeL > 0){
-                double nitrogenProduced = getAtmosphericFraction(Resources.N) * airIntakeKG; // TODO: Correct breathing calcs
-                double oxygenProduced = getAtmosphericFraction(Resources.O) * airIntakeKG - 2*(9.096643518518519e-6); // This may help: http://www.madsci.org/posts/archives/2004-09/1096283374.En.r.html
-                double co2Produced = getAtmosphericFraction(Resources.CO2) * airIntakeKG + 2*0.0000784;
+                double nitrogenProduced = getAtmosphericMassFraction(Resources.N) * airIntakeKG; // TODO: Correct breathing calcs
+                double oxygenProduced = getAtmosphericMassFraction(Resources.O) * airIntakeKG - 2*(9.096643518518519e-6); // This may help: http://www.madsci.org/posts/archives/2004-09/1096283374.En.r.html
+                double co2Produced = getAtmosphericMassFraction(Resources.CO2) * airIntakeKG + 2*0.0000784;
                 produceResource(Resources.N, nitrogenProduced);
                 produceResource(Resources.O, oxygenProduced);
                 produceResource(Resources.CO2, co2Produced);
@@ -189,7 +192,7 @@ namespace LunarNumericSimulator.Modules
             double heatRelease = 118 * Math.Pow(10,-3); // Humans release heat at 118W, converting to kJ
             produceResource(Resources.Heat, heatRelease); 
             
-            if (rand.Next((int)secondsIn24Hours / 8) == 1) // There is an 8 in 86400 (24 hours) chance that flatulence will occur, since average person has flatulence 8 times per day
+            if (getRandom().Next((int)secondsIn24Hours / 8) == 1) // There is an 8 in 86400 (24 hours) chance that flatulence will occur, since average person has flatulence 8 times per day
                 flatulence();
 
             // if day has just ended
@@ -224,7 +227,7 @@ namespace LunarNumericSimulator.Modules
             { 
                 // TODO work schedule that changes metabolism
                
-                if (rand.Next( (int)secondsIn12Hours / 4) == 1) // There is an 4 in 43200 chance that eating will occur, since a person has 4 meals in a day
+                if (getRandom().Next( (int)secondsIn12Hours / 4) == 1) // There is an 4 in 43200 chance that eating will occur, since a person has 4 meals in a day
                   eat();
 
                 // TODO implement respiration and perspiration produced - related to metabolism?

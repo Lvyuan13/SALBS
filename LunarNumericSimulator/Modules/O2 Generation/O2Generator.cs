@@ -9,7 +9,16 @@ namespace LunarNumericSimulator.Modules.O2_Generation
 {
     class O2Generator : Module
     {
-        protected PIDController pid = new PIDController(5, 0.1, 0);
+        protected PIDController pid;
+
+        [NumericConfigurationParameter("P Gain", "0.01", "double", false)]
+        public double PGain { private get; set; }
+        [NumericConfigurationParameter("I Gain", "0.01", "double", false)]
+        public double IGain { private get; set; }
+        [NumericConfigurationParameter("D Gain", "0.01", "double", false)]
+        public double DGain { private get; set; }
+        [NumericConfigurationParameter("Nominal O2 Volume %", "0.24", "double", false)]
+        public double DesiredO2Level { private get; set; }
 
         public O2Generator(Simulation sim, int moduleid) : base(sim,moduleid)
         {
@@ -25,6 +34,11 @@ namespace LunarNumericSimulator.Modules.O2_Generation
                 Resources.H,
                 Resources.O,
             };
+        }
+
+        public override void ModuleReady()
+        {
+            pid = new PIDController(PGain, IGain, DGain, 1);
         }
 
         public override double getModuleVolume()
@@ -52,11 +66,17 @@ namespace LunarNumericSimulator.Modules.O2_Generation
         {
 
             // update the PID
-            double O2Level = getAtmosphericFraction(Resources.O);
+            double O2Level = getAtmosphericMolarFraction(Resources.O);
             double O2Mass = getResourceLevel(Resources.O);
 
-            var result = pid.update(0.24 - O2Level, 1);
+            var result = pid.update(DesiredO2Level - O2Level, 1);
 
+            if (result < 0)
+            {
+                pid.removeWindup();
+                return;
+            }
+                
 
             // Example calculation
             // say we need Xkg of O2, we then need
@@ -70,19 +90,20 @@ namespace LunarNumericSimulator.Modules.O2_Generation
             // the machine will run at 9.2kW
             // it will generate an unknown amount of heat.
 
+            double massflowRate = 0.00011979167; // kg
+            double powerPerMassFlowRate = 9.2; // kJ
+
+            double powerRequired = powerPerMassFlowRate / massflowRate; // kJ / kg
+
             //double inflowH2O = 10.35; // kg/day = mass flow rate = 1 percentage by mass
             //double outflowO2 = 9.2; // kg/day => 0.8888 percentage by mass
-            double massflowRate = 0.00011979167; // kg
-
-            double powerReq = 9.2; // kJ
-
-
             double inflowAdjusted = result;
 
             double O2Produced = 0.8889 * result;
             double H2Produced = 0.1111 * result;
 
-            double powerUsed = (powerReq / massflowRate) * result;
+            double powerUsed = powerRequired * result;
+
 
             Console.WriteLine("power used = " + powerUsed);
             consumeResource(Resources.H2O, inflowAdjusted);

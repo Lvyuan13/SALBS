@@ -7,6 +7,7 @@ using LunarNumericSimulator.Modules;
 using LunarNumericSimulator.ResourceManagers;
 using LunarNumericSimulator.Reporting;
 using System.Threading.Tasks;
+using static LunarNumericSimulator.Module;
 
 namespace LunarNumericSimulator {
     public class Simulation {
@@ -30,6 +31,7 @@ namespace LunarNumericSimulator {
         public ThermodynamicEngine ThermoEngine;
         protected List<Module> loadedModules;
         protected Dictionary<string,Type> moduleCatalogue;
+        public Random random = new Random();
         
         public void initiate(){
 
@@ -190,7 +192,7 @@ namespace LunarNumericSimulator {
                     select element.getModuleVolume()).Sum();
         }
 
-        public bool registerModule(string moduleName){
+        public bool registerModule(string moduleName, Dictionary<string, object> configParameters){
             if (clock > 0)
                 throw new Exception("All Modules must be registered before the simulation starts!");
             Type moduleType = null;
@@ -205,8 +207,52 @@ namespace LunarNumericSimulator {
                 return false;
 
             Module newModule = (Module)Activator.CreateInstance(moduleType, this, loadedModules.Count+1);
+
+            List<PropertyInfo> configProperties =
+                newModule.GetType()
+                .GetProperties()
+                .Where(
+                    p =>
+                        p.GetCustomAttributes(typeof(NumericConfigurationParameter), false)
+                        .Any()
+                    )
+                .ToList();
+
+            foreach (var prop in configProperties) {
+                object value;
+                configParameters.TryGetValue(prop.Name, out value);
+                newModule.GetType().GetProperty(prop.Name).SetValue(newModule, value);
+            }
+
+            newModule.ModuleReady();
+
             loadedModules.Add(newModule);
             return true;
+        }
+
+        public List<NumericConfigurationParameter> getModuleConfiguration(string moduleName)
+        {
+            var result = new List<NumericConfigurationParameter>();
+            Type moduleType = null;
+            moduleCatalogue.TryGetValue(moduleName, out moduleType);
+
+            if (moduleType == null)
+                return null;
+
+            List<PropertyInfo> configProperties =
+                moduleType
+                .GetProperties()
+                .Where(
+                    p =>
+                        p.GetCustomAttributes(typeof(NumericConfigurationParameter), false)
+                        .Any()
+                    )
+                .ToList();
+
+            foreach(var prop in configProperties)
+                result.Add(prop.GetCustomAttribute<NumericConfigurationParameter>());
+
+            return result;
         }
 
         public bool deregisterModule(int moduleid){

@@ -9,7 +9,16 @@ namespace LunarNumericSimulator.Modules
 {
     class BoschCO2Recycler : Module
     {
-        protected PIDController pid = new PIDController(2, 0.1, 0.01);
+        protected PIDController pid;
+
+        [NumericConfigurationParameter("P Gain", "2", "double", false)]
+        public double PGain { private get; set; }
+        [NumericConfigurationParameter("I Gain", "0.1", "double", false)]
+        public double IGain { private get; set; }
+        [NumericConfigurationParameter("D Gain", "0.01", "double", false)]
+        public double DGain { private get; set; }
+        [NumericConfigurationParameter("Nominal CO2 Volume %", "0.005", "double", false)]
+        public double DesiredCO2Level { private get; set; }
         // Functions
         public BoschCO2Recycler(Simulation sim, int moduleid) : base(sim, moduleid)
         {
@@ -30,6 +39,11 @@ namespace LunarNumericSimulator.Modules
             };
         }
 
+        public override void ModuleReady()
+        {
+            pid = new PIDController(PGain, IGain, DGain, 50);
+        }
+
         public override double getModuleVolume()
         {
             return 0;
@@ -47,16 +61,16 @@ namespace LunarNumericSimulator.Modules
 
         public override List<string> requiresTanks()
         {
-            return new List<string> { "BoschCarbon" };
+            return new List<string> { "BoschCarbon", "ActiveThermalLoop" };
         }
 
         protected override void update(UInt64 clock)
         {
             // update the PID
-            double CO2Level = getAtmosphericFraction(Resources.CO2);
+            double CO2Level = getAtmosphericMolarFraction(Resources.CO2);
             double CO2mass = getResourceLevel(Resources.CO2);
 
-            var result = pid.update(CO2Level - 0.005, 1); // check for acceptable CO2 level
+            var result = pid.update(CO2Level - 0.004, 1); // check for acceptable CO2 level
 
             if (result < 0)
                 return;
@@ -99,7 +113,8 @@ namespace LunarNumericSimulator.Modules
 
             produceResource(Resources.H2O, boschH2OProduced);
             produceResource(Resources.N, boschN2Produced);
-            //produceResource(Resources.Heat, boschHeatGeneration * 0.001); // convert kW to Joules in 1 second
+            produceResource(Resources.Heat, boschHeatGeneration * 0.05);
+            getTank("ActiveThermalLoop").addResource(boschHeatGeneration * 0.95);
             getTank("BoschCarbon").addResource(boschCProduced);
             
         }
