@@ -254,7 +254,7 @@ namespace SimulatorGUI
         {
             lock (simulation)
             {
-                for (int i = 0; i < 3000000000; i++)
+                for (int i = 0; i < int.MaxValue; i++)
                 {
                     simulation.step();
                     worker.ReportProgress(0, simulation.getSimulationState());

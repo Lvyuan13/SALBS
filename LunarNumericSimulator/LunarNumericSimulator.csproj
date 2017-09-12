@@ -104,6 +104,7 @@
     <Compile Include="ResourceManagers\StoredResourceManager.cs" />
     <Compile Include="ResourceManagers\ResourceManager.cs" />
     <Compile Include="ResourceManagers\ThermodynamicEngine.cs" />
+    <Compile Include="Modules\Science.cs" />
     <Compile Include="Simulation.cs" />
     <Compile Include="Utilities\NormInv.cs" />
     <Compile Include="Utilities\PIDController.cs" />
