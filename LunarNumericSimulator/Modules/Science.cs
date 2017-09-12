@@ -13,9 +13,12 @@ namespace LunarParametricNumeric.Modules
             };
         } 
 
-        // This is just a dummy variable.
+        /*  This value comes from "The Lunar Base Handbook"
+            by Peter Eckhart in the section "Habitats,
+            Laboratories, and Airlocks".
+         */ 
         public override double getModuleVolume(){
-            return 10.0;
+            return 100.0;
         }
 
         public override string moduleName {
