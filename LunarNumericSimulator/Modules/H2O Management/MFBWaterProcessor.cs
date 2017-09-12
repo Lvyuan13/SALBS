@@ -9,8 +9,13 @@ namespace LunarNumericSimulator.Modules.H2O_Management
 {
     class MFBWaterProcessor : Module
     {
-
-        protected PIDController pid = new PIDController(0, 0.0005, 0);
+        PIDController pid;
+        [NumericConfigurationParameter("P Gain", "0", "double", false)]
+        public double PGain { private get; set; }
+        [NumericConfigurationParameter("I Gain", "0.0005", "double", false)]
+        public double IGain { private get; set; }
+        [NumericConfigurationParameter("D Gain", "0", "double", false)]
+        public double DGain { private get; set; }
         // Figures obtained from:
         // "Spaceflight life supprt and biospherics" by Peter Eckart
         // power used is 0.00038kW for inflow of 32.65 [kg/day] = 0.00131944 [kg/s]
@@ -27,6 +32,7 @@ namespace LunarNumericSimulator.Modules.H2O_Management
 
         public override void ModuleReady()
         {
+            pid = new PIDController(PGain, IGain, DGain, 1);
         }
 
 
