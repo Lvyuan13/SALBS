@@ -31,3 +31,5 @@ C:\Users\Addy360\Downloads\Uni\FYP\GIT\LunarParametricNumeric\SimulatorGUI\obj\D
 C:\Users\Addy360\Downloads\Uni\FYP\GIT\LunarParametricNumeric\SimulatorGUI\obj\Debug\SimulatorGUI.pdb
 D:\LunarParametricNumeric\SimulatorGUI\obj\Debug\SimulatorGUI.ModuleOverviewPanel.resources
 C:\Users\Addy360\Downloads\Uni\FYP\GIT\LunarParametricNumeric\SimulatorGUI\obj\Debug\SimulatorGUI.ModuleOverviewPanel.resources
+D:\LunarParametricNumeric\SimulatorGUI\bin\Debug\Newtonsoft.Json.dll
+D:\LunarParametricNumeric\SimulatorGUI\bin\Debug\Newtonsoft.Json.xml

@@ -1,5 +1,6 @@
 ﻿using LunarNumericSimulator;
 using LunarNumericSimulator.Reporting;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -425,16 +426,33 @@ namespace SimulatorGUI
             OpenFileDialog dialog = new OpenFileDialog();
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                var jss = new JavaScriptSerializer();
                 var serializedState = File.ReadAllText(dialog.FileName);
+                var state = JsonConvert.DeserializeObject<List<Dictionary<string, object>>>(serializedState);
+                foreach(var obj in state)
+                {
+                    object moduleNameObj;
+                    obj.TryGetValue("moduleName", out moduleNameObj);
+                    string moduleName = (string)moduleNameObj;
+                    var configurationParameters = simulation.getModuleConfiguration(moduleName);
+                    Dictionary<string, object> newConfig = new Dictionary<string, object>();
+                    foreach(var param in configurationParameters)
+                    {
+                        object value;
+                        obj.TryGetValue(param.propertyName, out value);
+                        if (value == null)
+                            throw new Exception("Could not load saved file!");
+                        newConfig.Add(param.propertyName, value);
+                    }
+                    simulation.registerModule(moduleName, newConfig);
+                }
+                updateList();
             }
         }
 
         private void SaveButton_Click(object sender, EventArgs e)
         {
-            JavaScriptSerializer jss = new JavaScriptSerializer();
             var state = simulation.getModules();
-            var serializedState = jss.Serialize(state);
+            var serializedState = JsonConvert.SerializeObject(state);
             SaveFileDialog dialog = new SaveFileDialog();
             dialog.Filter = "json files (*.json)|*.json";
             if (dialog.ShowDialog() == DialogResult.OK)

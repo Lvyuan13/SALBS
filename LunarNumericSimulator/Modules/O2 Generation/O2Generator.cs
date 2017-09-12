@@ -17,7 +17,7 @@ namespace LunarNumericSimulator.Modules.O2_Generation
         public double IGain { get; set; }
         [NumericConfigurationParameter("D Gain", "0.01", "double", false)]
         public double DGain { get; set; }
-        [NumericConfigurationParameter("Nominal O2 Volume %", "0.24", "double", false)]
+        [NumericConfigurationParameter("Nominal O2 Volume %", "0.216", "double", false)]
         public double DesiredO2Level { get; set; }
 
         public O2Generator(Simulation sim, int moduleid) : base(sim,moduleid)
