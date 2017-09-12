@@ -8,10 +8,9 @@ namespace LunarParametricNumeric.Modules
 {
     public class Transport : Module
     {
-        /*	The LRV is just being monitered as a battery that
+        /*	The transport is just being modelled as a battery that
 			will be recharged whenever it is back at the base.
 		 */
-
 
         [NumericConfigurationParameter("Rover Battery Voltage [V]", "36.0", "double", false)]
         public double batteryVoltage { private get; set; }
@@ -74,12 +73,14 @@ namespace LunarParametricNumeric.Modules
             int startSeconds = (int)StartupTime * 60 * 60;
             int endSeconds = (int)ShutdownTime * 60 * 60;
 
-            double currentRequired = batteryAmpHrs / (StartupTime - ShutdownTime);  // [A]
+            double currentRequired = batteryAmpHrs / ( ShutdownTime - StartupTime);  // [A]
 
             if ((int)clock > startSeconds && (int)clock <= endSeconds)
             {
                 double energyConsumed = batteryVoltage * currentRequired * 1 / 1000; //[kJ]
-                consumePower(energyConsumed);
+
+                var result = (1 / (1 + Math.Exp(-0.05 * ((int)clock - startSeconds)))) * (1 / (1 + Math.Exp(0.05 * ((int)clock - endSeconds))));
+                consumePower(energyConsumed*result);
             }
 
 
