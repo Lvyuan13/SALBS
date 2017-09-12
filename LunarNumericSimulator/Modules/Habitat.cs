@@ -8,7 +8,7 @@ namespace LunarNumericSimulator.Modules
     public class Habitat : Module
     {
 
-        [NumericConfigurationParameter("Initial Hull Temperature", "double", false)]
+        [NumericConfigurationParameter("Initial Hull Temperature", "25", "double", false)]
         public double currentTemp { private get; set; }
         public static double moduleRadius = 2;
         public Habitat(Simulation sim, int moduleid) : base(sim, moduleid)

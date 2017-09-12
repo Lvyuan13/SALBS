@@ -277,12 +277,14 @@ namespace LunarNumericSimulator {
             public readonly string friendlyName;
             public readonly bool AllowNegative;
             public readonly string propertyName;
+            public readonly string defaultValue;
 
-            public NumericConfigurationParameter(string name, string type, bool allowNeg, [CallerMemberNameAttribute]string property = null)
+            public NumericConfigurationParameter(string name, string defaultVal, string type, bool allowNeg, [CallerMemberNameAttribute]string property = null)
             {
                 if (ParameterType == typeof(string))
                     throw new Exception("Cannot place string value in Numeric Configuration Parameter");
                 AllowNegative = allowNeg;
+                defaultValue = defaultVal;
                 switch (type)
                 {
                     case ("double"):

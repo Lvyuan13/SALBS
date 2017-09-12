@@ -13,21 +13,21 @@ namespace LunarNumericSimulator.Modules
         PIDController pidAtmosphere;
         PIDController pidLoop;
 
-        [NumericConfigurationParameter("Atmosphere P Gain", "double", false)]
+        [NumericConfigurationParameter("Atmosphere P Gain", "1", "double", false)]
         public double pidAtmospherePGain { private get; set; }
-        [NumericConfigurationParameter("Atmosphere I Gain", "double", false)]
+        [NumericConfigurationParameter("Atmosphere I Gain", "0.4", "double", false)]
         public double pidAtmosphereIGain { private get; set; }
-        [NumericConfigurationParameter("Atmosphere D Gain", "double", false)]
+        [NumericConfigurationParameter("Atmosphere D Gain", "0", "double", false)]
         public double pidAtmosphereDGain { private get; set; }
 
-        [NumericConfigurationParameter("Loop P Gain", "double", false)]
+        [NumericConfigurationParameter("Loop P Gain", "1", "double", false)]
         public double pidLoopPGain { private get; set; }
-        [NumericConfigurationParameter("Loop I Gain", "double", false)]
+        [NumericConfigurationParameter("Loop I Gain", "0.5", "double", false)]
         public double pidLoopIGain { private get; set; }
-        [NumericConfigurationParameter("Loop D Gain", "double", false)]
+        [NumericConfigurationParameter("Loop D Gain", "0", "double", false)]
         public double pidLoopDGain { private get; set; }
 
-        [NumericConfigurationParameter("Coefficient of Performance", "double", false)]
+        [NumericConfigurationParameter("Coefficient of Performance", "7", "double", false)]
         public double coefficientOfPerformance { private get; set; }
 
 

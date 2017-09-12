@@ -11,13 +11,13 @@ namespace LunarNumericSimulator.Modules
     {
         protected PIDController pid;
 
-        [NumericConfigurationParameter("P Gain", "double", false)]
+        [NumericConfigurationParameter("P Gain", "2", "double", false)]
         public double PGain { private get; set; }
-        [NumericConfigurationParameter("I Gain", "double", false)]
+        [NumericConfigurationParameter("I Gain", "0.1", "double", false)]
         public double IGain { private get; set; }
-        [NumericConfigurationParameter("D Gain", "double", false)]
+        [NumericConfigurationParameter("D Gain", "0.01", "double", false)]
         public double DGain { private get; set; }
-        [NumericConfigurationParameter("Nominal CO2 Volume %", "double", false)]
+        [NumericConfigurationParameter("Nominal CO2 Volume %", "0.005", "double", false)]
         public double DesiredCO2Level { private get; set; }
         // Functions
         public SabatierCO2Recycler(Simulation sim, int moduleid) : base(sim, moduleid) {
@@ -69,7 +69,7 @@ namespace LunarNumericSimulator.Modules
             double CO2Level = getAtmosphericMolarFraction(Resources.CO2);
             double CO2mass = getResourceLevel(Resources.CO2);
 
-            var result = pid.update(DesiredCO2Level - CO2Level, 1); // check for acceptable CO2 level
+            var result = pid.update(CO2Level - DesiredCO2Level, 1); // check for acceptable CO2 level
 
             if (result < 0)
             {

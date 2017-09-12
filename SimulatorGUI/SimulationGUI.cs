@@ -351,6 +351,7 @@ namespace SimulatorGUI
                     if (!attr.AllowNegative)
                         entryField.Minimum = 0;
                     entryField.Increment = 1M;
+                    entryField.Value = Convert.ToInt32(attr.defaultValue);
                     pan.propertyName = attr.propertyName;
                     layout.Controls.Add(textLabel,0,0);
                     layout.Controls.Add(entryField, 1, 0);
@@ -364,7 +365,8 @@ namespace SimulatorGUI
                     if (!attr.AllowNegative)
                         entryField.Minimum = 0;
                     entryField.Increment = 0.2M;
-                    entryField.DecimalPlaces = 8;
+                    entryField.DecimalPlaces = 4;
+                    entryField.Value = Convert.ToDecimal(attr.defaultValue);
                     pan.propertyName = attr.propertyName;
                     layout.Controls.Add(textLabel, 0, 0);
                     layout.Controls.Add(entryField, 1, 0);
