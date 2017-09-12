@@ -12,6 +12,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
+using System.Reflection;
+using Module = LunarNumericSimulator.Module;
 using static LunarNumericSimulator.Module;
 
 namespace SimulatorGUI
@@ -165,7 +167,30 @@ namespace SimulatorGUI
             Module m = (from element in simulation.getModules()
                         where element.ModuleID == Convert.ToInt32(tabid)
                         select element).First();
-            Chart chart = (Chart)panel.Controls[0];
+            var configProperties = from element in m.GetType().GetProperties()
+                                   where element.GetCustomAttribute<NumericConfigurationParameter>() != null
+                                   select new { prop= element, attr=  element.GetCustomAttribute<NumericConfigurationParameter>() };
+            TableLayoutPanel parameterTable = (TableLayoutPanel)panel.Controls["ParameterPanel"];
+            int row =0, col = 0;
+            parameterTable.RowCount = 2;
+            parameterTable.ColumnCount = 4;
+            foreach (var param in configProperties) {
+                Label lab = new Label();
+                lab.Font = new Font(lab.Font.Name, 12, FontStyle.Bold);
+                lab.Dock = DockStyle.Fill;
+                lab.Text = param.attr.friendlyName + ": " + param.prop.GetValue(m);
+                parameterTable.Controls.Add(lab, col, row);
+                if (row > 1)
+                {
+                    row = 0;
+                    col++;
+                } else
+                {
+                    row++;
+                }
+            }
+
+            Chart chart = (Chart)panel.Controls["AtmosphereChart"];
             foreach(var gas in m.getRegisteredResources()) {
                 setupSeries(gas, chart);
             }
@@ -226,7 +251,7 @@ namespace SimulatorGUI
                     break;
                 case Resources.Heat:
                     chart.Series.Add(new Series(res.ToString()));
-                    chart.Series[res.ToString()].ChartArea = "Top";
+                    chart.Series[res.ToString()].ChartArea = "Bottom";
                     chart.Series[res.ToString()].ChartType = SeriesChartType.FastLine;
                     chart.Series[res.ToString()].BorderWidth = 4;
                     chart.Series[res.ToString()].BorderColor = Color.DarkRed;
@@ -244,7 +269,7 @@ namespace SimulatorGUI
         protected void updateTab(UInt64 clock, string tabid, ModuleResourceLevels report)
         {
             
-            Chart chart = (Chart)GraphTabs.TabPages[tabid].Controls[0].Controls[0];
+            Chart chart = (Chart)GraphTabs.TabPages[tabid].Controls[0].Controls["AtmosphereChart"];
 
             foreach(var gas in report.getRegisteredResources())
             {
@@ -395,6 +420,9 @@ namespace SimulatorGUI
         {
             AddButton.Enabled = false;
             RemoveButton.Enabled = false;
+            StartButton.Enabled = false;
+            openButton.Enabled = false;
+            SaveButton.Enabled = false;
 
             foreach (Module m in simulation.getModules())
             {
@@ -425,6 +453,8 @@ namespace SimulatorGUI
             OpenFileDialog dialog = new OpenFileDialog();
             if (dialog.ShowDialog() == DialogResult.OK)
             {
+                if (moduleList.Count > 0)
+                    simulation.deregisterAllModules();
                 var serializedState = File.ReadAllText(dialog.FileName);
                 var state = JsonConvert.DeserializeObject<List<Dictionary<string, object>>>(serializedState);
                 foreach(var obj in state)
