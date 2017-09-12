@@ -11,9 +11,16 @@ namespace LunarParametricNumeric.Modules
         /*	The LRV is just being monitered as a battery that
 			will be recharged whenever it is back at the base.
 		 */
-        private double batterySize; //[Ah]
-        private double batteryCharge; //[Ah]
 
+
+        [NumericConfigurationParameter("Rover Battery Voltage [V]", "36.0", "double", false)]
+        public double batteryVoltage { private get; set; }
+        [NumericConfigurationParameter("Rover Batter AmpHours [Amp-hrs]", "120.0", "double", false)]
+        public double batteryAmpHrs { private get; set; }
+        [NumericConfigurationParameter("Rover Charging Start Time [hr]", "02.0", "double", false)]
+        public double StartupTime { private get; set; }
+        [NumericConfigurationParameter("Rover Charging End Time [hr]", "05.0", "double", false)]
+        public double ShutdownTime { private get; set; }
 
 
         public override double getModuleVolume()
@@ -57,18 +64,21 @@ namespace LunarParametricNumeric.Modules
 
         protected override void update(UInt64 clock)
         {
-                /*	If the time during the simulation is between
-        		Midnight and 6AM then charge the rover. If
-        		we assume a 120 Ah battery and a charge current
-        		of 20 A then it takes six hours to charge the
-        		battery fully. The voltage of charging is the 
-        		basewide voltage, assumed here to be 36V. */
-            if ((double)clock / 86400 > 0.0 && (double)clock / 86400 < 21600)
-            {
-                float voltage = 36; //[V]
-                float current = 20; //[A]
+            /*	If the time during the simulation is between
+            Midnight and 6AM then charge the rover. If
+            we assume a 120 Ah battery and a charge current
+            of 20 A then it takes six hours to charge the
+            battery fully. The voltage of charging is the 
+            basewide voltage, assumed here to be 36V. */
 
-                float energyConsumed = voltage * current * 1 / 1000; //[kJ]
+            int startSeconds = (int)StartupTime * 60 * 60;
+            int endSeconds = (int)ShutdownTime * 60 * 60;
+
+            double currentRequired = batteryAmpHrs / (StartupTime - ShutdownTime);  // [A]
+
+            if ((int)clock > startSeconds && (int)clock <= endSeconds)
+            {
+                double energyConsumed = batteryVoltage * currentRequired * 1 / 1000; //[kJ]
                 consumePower(energyConsumed);
             }
 

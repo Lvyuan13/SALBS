@@ -29,7 +29,7 @@ namespace LunarParametricNumeric.Modules
 
         public override void ModuleReady()
         {
-            pid = new PIDController(PGain, IGain, DGain, 50);
+
         }
 
         /*  This value comes from "The Lunar Base Handbook"
