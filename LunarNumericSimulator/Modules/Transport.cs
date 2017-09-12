@@ -11,15 +11,8 @@ namespace LunarParametricNumeric.Modules
         /*	The LRV is just being monitered as a battery that
 			will be recharged whenever it is back at the base.
 		 */
-        protected PIDController pid;
         private double batterySize; //[Ah]
         private double batteryCharge; //[Ah]
-        [NumericConfigurationParameter("P Gain", "2", "double", false)]
-        public double PGain { private get; set; }
-        [NumericConfigurationParameter("I Gain", "0.1", "double", false)]
-        public double IGain { private get; set; }
-        [NumericConfigurationParameter("D Gain", "0.01", "double", false)]
-        public double DGain { private get; set; }
 
 
 
@@ -43,7 +36,6 @@ namespace LunarParametricNumeric.Modules
 
         public override void ModuleReady()
         {
-            pid = new PIDController(PGain, IGain, DGain, 50);
         }
 
         public override string moduleName

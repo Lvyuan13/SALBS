@@ -8,13 +8,10 @@ namespace LunarParametricNumeric.Modules
 {
     public class Science : Module
     {
-        protected PIDController pid;
-        [NumericConfigurationParameter("P Gain", "2", "double", false)]
-        public double PGain { private get; set; }
-        [NumericConfigurationParameter("I Gain", "0.1", "double", false)]
-        public double IGain { private get; set; }
-        [NumericConfigurationParameter("D Gain", "0.01", "double", false)]
-        public double DGain { private get; set; }
+        [NumericConfigurationParameter("Startup Time", "36000", "integer", false)]
+        public double StartupTime { private get; set; }
+        [NumericConfigurationParameter("Shutdown Time", "80000", "integer", false)]
+        public double ShutdownTime { private get; set; }
 
 
 
