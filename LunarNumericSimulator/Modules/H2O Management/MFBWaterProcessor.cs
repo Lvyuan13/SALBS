@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LunarNumericSimulator.Utilities;
 
 namespace LunarNumericSimulator.Modules.H2O_Management
 {
-    class MFBWaterProcessor : WaterProcessor
+    class MFBWaterProcessor : Module
     {
 
-        // Constants
+        protected PIDController pid = new PIDController(0, 0.0005, 0);
         // Figures obtained from:
         // "Spaceflight life supprt and biospherics" by Peter Eckart
         // power used is 0.00038kW for inflow of 32.65 [kg/day] = 0.00131944 [kg/s]
@@ -61,10 +62,14 @@ namespace LunarNumericSimulator.Modules.H2O_Management
 
         protected override void update(UInt64 clock)
         {
-            var result = updatePID();
 
-            if (allowFilling)
-                return;
+            double currentWasteLevel = getTank("WasteWaterStorage").getLevel();
+            var result = pid.update(currentWasteLevel, 1);
+
+            if (currentWasteLevel -  result < 0.0)
+            {
+                result = currentWasteLevel;
+            }
 
             designInflow = result;
             designPower = (0.00038 / 0.00131944) * result;
