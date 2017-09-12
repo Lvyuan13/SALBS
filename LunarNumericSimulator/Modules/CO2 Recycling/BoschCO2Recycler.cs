@@ -12,13 +12,13 @@ namespace LunarNumericSimulator.Modules
         protected PIDController pid;
 
         [NumericConfigurationParameter("P Gain", "2", "double", false)]
-        public double PGain { private get; set; }
+        public double PGain { get; set; }
         [NumericConfigurationParameter("I Gain", "0.1", "double", false)]
-        public double IGain { private get; set; }
+        public double IGain { get; set; }
         [NumericConfigurationParameter("D Gain", "0.01", "double", false)]
-        public double DGain { private get; set; }
-        [NumericConfigurationParameter("Nominal CO2 Volume %", "0.005", "double", false)]
-        public double DesiredCO2Level { private get; set; }
+        public double DGain { get; set; }
+        [NumericConfigurationParameter("Nomial CO2 Volume %", "0.005", "double", false)]
+        public double DesiredCO2Level { get; set; }
         // Functions
         public BoschCO2Recycler(Simulation sim, int moduleid) : base(sim, moduleid)
         {

@@ -11,11 +11,11 @@ namespace LunarNumericSimulator.Modules.H2O_Management
     {
         PIDController pid;
         [NumericConfigurationParameter("P Gain", "0", "double", false)]
-        public double PGain { private get; set; }
+        public double PGain { get; set; }
         [NumericConfigurationParameter("I Gain", "0.0005", "double", false)]
-        public double IGain { private get; set; }
+        public double IGain { get; set; }
         [NumericConfigurationParameter("D Gain", "0", "double", false)]
-        public double DGain { private get; set; }
+        public double DGain { get; set; }
         // Figures obtained from:
         // "Spaceflight life supprt and biospherics" by Peter Eckart
         // power used is 0.00038kW for inflow of 32.65 [kg/day] = 0.00131944 [kg/s]

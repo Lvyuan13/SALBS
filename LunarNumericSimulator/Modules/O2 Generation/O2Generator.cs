@@ -11,14 +11,14 @@ namespace LunarNumericSimulator.Modules.O2_Generation
     {
         protected PIDController pid;
 
-        [NumericConfigurationParameter("P Gain", "0.01", "double", false)]
-        public double PGain { private get; set; }
+        [NumericConfigurationParameter("P Gain", "0.1", "double", false)]
+        public double PGain { get; set; }
         [NumericConfigurationParameter("I Gain", "0.01", "double", false)]
-        public double IGain { private get; set; }
+        public double IGain { get; set; }
         [NumericConfigurationParameter("D Gain", "0.01", "double", false)]
-        public double DGain { private get; set; }
+        public double DGain { get; set; }
         [NumericConfigurationParameter("Nominal O2 Volume %", "0.24", "double", false)]
-        public double DesiredO2Level { private get; set; }
+        public double DesiredO2Level { get; set; }
 
         public O2Generator(Simulation sim, int moduleid) : base(sim,moduleid)
         {
