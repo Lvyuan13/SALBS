@@ -36,11 +36,16 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.StartButton = new System.Windows.Forms.Button();
             this.StatusBox = new System.Windows.Forms.GroupBox();
+            this.BaseLoad = new System.Windows.Forms.Label();
             this.CurrentTimeLabel = new System.Windows.Forms.Label();
             this.ModuleNameBox = new System.Windows.Forms.TextBox();
-            this.BaseLoad = new System.Windows.Forms.Label();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openButton = new System.Windows.Forms.ToolStripMenuItem();
+            this.SaveButton = new System.Windows.Forms.ToolStripMenuItem();
             this.GraphTabs.SuspendLayout();
             this.StatusBox.SuspendLayout();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // ModuleList
@@ -48,9 +53,9 @@
             this.ModuleList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.ModuleList.FormattingEnabled = true;
-            this.ModuleList.Location = new System.Drawing.Point(13, 13);
+            this.ModuleList.Location = new System.Drawing.Point(13, 26);
             this.ModuleList.Name = "ModuleList";
-            this.ModuleList.Size = new System.Drawing.Size(130, 407);
+            this.ModuleList.Size = new System.Drawing.Size(130, 394);
             this.ModuleList.TabIndex = 0;
             // 
             // AddButton
@@ -82,10 +87,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.GraphTabs.Controls.Add(this.tabPage1);
             this.GraphTabs.Controls.Add(this.tabPage2);
-            this.GraphTabs.Location = new System.Drawing.Point(149, 13);
+            this.GraphTabs.Location = new System.Drawing.Point(149, 27);
             this.GraphTabs.Name = "GraphTabs";
             this.GraphTabs.SelectedIndex = 0;
-            this.GraphTabs.Size = new System.Drawing.Size(843, 388);
+            this.GraphTabs.Size = new System.Drawing.Size(843, 393);
             this.GraphTabs.TabIndex = 3;
             // 
             // tabPage1
@@ -93,7 +98,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(835, 362);
+            this.tabPage1.Size = new System.Drawing.Size(835, 367);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "tabPage1";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -111,9 +116,9 @@
             // StartButton
             // 
             this.StartButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.StartButton.Location = new System.Drawing.Point(862, 407);
+            this.StartButton.Location = new System.Drawing.Point(862, 426);
             this.StartButton.Name = "StartButton";
-            this.StartButton.Size = new System.Drawing.Size(130, 71);
+            this.StartButton.Size = new System.Drawing.Size(130, 52);
             this.StartButton.TabIndex = 4;
             this.StartButton.Text = "Start";
             this.StartButton.UseVisualStyleBackColor = true;
@@ -124,12 +129,21 @@
             this.StatusBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.StatusBox.Controls.Add(this.BaseLoad);
             this.StatusBox.Controls.Add(this.CurrentTimeLabel);
-            this.StatusBox.Location = new System.Drawing.Point(695, 408);
+            this.StatusBox.Location = new System.Drawing.Point(695, 426);
             this.StatusBox.Name = "StatusBox";
-            this.StatusBox.Size = new System.Drawing.Size(161, 70);
+            this.StatusBox.Size = new System.Drawing.Size(161, 52);
             this.StatusBox.TabIndex = 5;
             this.StatusBox.TabStop = false;
             this.StatusBox.Text = "Status";
+            // 
+            // BaseLoad
+            // 
+            this.BaseLoad.AutoSize = true;
+            this.BaseLoad.Location = new System.Drawing.Point(6, 33);
+            this.BaseLoad.Name = "BaseLoad";
+            this.BaseLoad.Size = new System.Drawing.Size(90, 13);
+            this.BaseLoad.TabIndex = 1;
+            this.BaseLoad.Text = "Base Load: 0 kW";
             // 
             // CurrentTimeLabel
             // 
@@ -149,14 +163,38 @@
             this.ModuleNameBox.Size = new System.Drawing.Size(131, 20);
             this.ModuleNameBox.TabIndex = 6;
             // 
-            // BaseLoad
+            // menuStrip1
             // 
-            this.BaseLoad.AutoSize = true;
-            this.BaseLoad.Location = new System.Drawing.Point(6, 33);
-            this.BaseLoad.Name = "BaseLoad";
-            this.BaseLoad.Size = new System.Drawing.Size(90, 13);
-            this.BaseLoad.TabIndex = 1;
-            this.BaseLoad.Text = "Base Load: 0 kW";
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(1004, 24);
+            this.menuStrip1.TabIndex = 7;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // fileToolStripMenuItem
+            // 
+            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openButton,
+            this.SaveButton});
+            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.fileToolStripMenuItem.Text = "File";
+            // 
+            // openButton
+            // 
+            this.openButton.Name = "openButton";
+            this.openButton.Size = new System.Drawing.Size(152, 22);
+            this.openButton.Text = "Open";
+            this.openButton.Click += new System.EventHandler(this.openButton_Click);
+            // 
+            // SaveButton
+            // 
+            this.SaveButton.Name = "SaveButton";
+            this.SaveButton.Size = new System.Drawing.Size(152, 22);
+            this.SaveButton.Text = "Save";
+            this.SaveButton.Click += new System.EventHandler(this.SaveButton_Click);
             // 
             // SimulationGUI
             // 
@@ -170,12 +208,16 @@
             this.Controls.Add(this.RemoveButton);
             this.Controls.Add(this.AddButton);
             this.Controls.Add(this.ModuleList);
+            this.Controls.Add(this.menuStrip1);
+            this.MainMenuStrip = this.menuStrip1;
             this.Name = "SimulationGUI";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.GraphTabs.ResumeLayout(false);
             this.StatusBox.ResumeLayout(false);
             this.StatusBox.PerformLayout();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -194,6 +236,10 @@
         private System.Windows.Forms.Label CurrentTimeLabel;
         private System.Windows.Forms.TextBox ModuleNameBox;
         private System.Windows.Forms.Label BaseLoad;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openButton;
+        private System.Windows.Forms.ToolStripMenuItem SaveButton;
     }
 }
 

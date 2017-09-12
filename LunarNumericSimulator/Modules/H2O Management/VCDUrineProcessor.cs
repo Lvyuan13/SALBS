@@ -12,11 +12,11 @@ namespace LunarNumericSimulator.Modules.H2O_Management
 
         protected PIDController pid;
         [NumericConfigurationParameter("P Gain", "0", "double", false)]
-        public double PGain { private get; set; }
+        public double PGain { get; set; }
         [NumericConfigurationParameter("I Gain", "0.0005", "double", false)]
-        public double IGain { private get; set; }
+        public double IGain { get; set; }
         [NumericConfigurationParameter("D Gain", "0", "double", false)]
-        public double DGain { private get; set; }
+        public double DGain { get; set; }
 
         // Power requirement figures obtained from:
         // "Spaceflight life supprt and biospherics" by Peter Eckart

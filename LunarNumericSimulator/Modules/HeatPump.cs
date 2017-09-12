@@ -14,21 +14,24 @@ namespace LunarNumericSimulator.Modules
         PIDController pidLoop;
 
         [NumericConfigurationParameter("Atmosphere P Gain", "1", "double", false)]
-        public double pidAtmospherePGain { private get; set; }
+        public double pidAtmospherePGain { get; set; }
         [NumericConfigurationParameter("Atmosphere I Gain", "0.4", "double", false)]
-        public double pidAtmosphereIGain { private get; set; }
+        public double pidAtmosphereIGain { get; set; }
         [NumericConfigurationParameter("Atmosphere D Gain", "0", "double", false)]
-        public double pidAtmosphereDGain { private get; set; }
+        public double pidAtmosphereDGain { get; set; }
 
         [NumericConfigurationParameter("Loop P Gain", "1", "double", false)]
-        public double pidLoopPGain { private get; set; }
+        public double pidLoopPGain { get; set; }
         [NumericConfigurationParameter("Loop I Gain", "0.5", "double", false)]
-        public double pidLoopIGain { private get; set; }
+        public double pidLoopIGain { get; set; }
         [NumericConfigurationParameter("Loop D Gain", "0", "double", false)]
-        public double pidLoopDGain { private get; set; }
+        public double pidLoopDGain { get; set; }
 
         [NumericConfigurationParameter("Coefficient of Performance", "7", "double", false)]
-        public double coefficientOfPerformance { private get; set; }
+        public double coefficientOfPerformance { get; set; }
+
+        [NumericConfigurationParameter("Nominal Atmospheric Temperature", "22", "double", false)]
+        public double NominalTemperature { get; set; }
 
 
 
@@ -76,7 +79,7 @@ namespace LunarNumericSimulator.Modules
 
         protected override void update(ulong clock)
         {
-            var result = pidAtmosphere.update(getAirState().Temperature - 25, 1);
+            var result = pidAtmosphere.update(getAirState().Temperature - NominalTemperature, 1);
 
             if (result > 0)
             {

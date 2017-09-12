@@ -5,9 +5,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Script.Serialization;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using static LunarNumericSimulator.Module;
@@ -344,9 +346,10 @@ namespace SimulatorGUI
             layout.ColumnCount = 2;
             Label textLabel = new Label();
             NumericUpDown entryField = new NumericUpDown();
+            entryField.Maximum = 1e10M;
             switch (attr.ParameterType.Name)
             {
-                case "Integer":
+                case "Int32":
                     textLabel.Text = attr.friendlyName;
                     if (!attr.AllowNegative)
                         entryField.Minimum = 0;
@@ -414,6 +417,29 @@ namespace SimulatorGUI
             public AttributePanel(): base()
             {
                 
+            }
+        }
+
+        private void openButton_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                var jss = new JavaScriptSerializer();
+                var serializedState = File.ReadAllText(dialog.FileName);
+            }
+        }
+
+        private void SaveButton_Click(object sender, EventArgs e)
+        {
+            JavaScriptSerializer jss = new JavaScriptSerializer();
+            var state = simulation.getModules();
+            var serializedState = jss.Serialize(state);
+            SaveFileDialog dialog = new SaveFileDialog();
+            dialog.Filter = "json files (*.json)|*.json";
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                File.WriteAllText(dialog.FileName, serializedState);
             }
         }
     }

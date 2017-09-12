@@ -8,10 +8,15 @@ namespace LunarParametricNumeric.Modules
 {
     public class Science : Module
     {
-        [NumericConfigurationParameter("Startup Time", "36000", "integer", false)]
-        public double StartupTime { private get; set; }
-        [NumericConfigurationParameter("Shutdown Time", "80000", "integer", false)]
-        public double ShutdownTime { private get; set; }
+        [NumericConfigurationParameter("Startup Time (hour < 24)", "0.5", "double", false)]
+        public double StartupTime { get; set; }
+        [NumericConfigurationParameter("Shutdown Time (hour <= 24)", "3", "double", false)]
+        public double ShutdownTime { get; set; }
+
+        [NumericConfigurationParameter("Power Consumption (kW)", "5", "double", false)]
+        public double PowerConsumption { get; set; }
+        [NumericConfigurationParameter("Thermal Efficiency", "0.78", "double", false)]
+        public double ThermalEfficiency { get; set; }
 
 
 
@@ -29,7 +34,6 @@ namespace LunarParametricNumeric.Modules
 
         public override void ModuleReady()
         {
-
         }
 
         /*  This value comes from "The Lunar Base Handbook"
@@ -61,21 +65,18 @@ namespace LunarParametricNumeric.Modules
 
         protected override void update(UInt64 clock)
         {
-            /*	If the time during the simulation is between
-            Midnight and 6AM then charge the rover. If
-            we assume a 120 Ah battery and a charge current
-            of 20 A then it takes six hours to charge the
-            battery fully. The voltage of charging is the 
-            basewide voltage, assumed here to be 36V. */
-            if ((double)clock / 86400 > 0.0 && (double)clock / 86400 < 21600)
-            {
-                float voltage = 36; //[V]
-                float current = 20; //[A]
+            if (ThermalEfficiency > 1 || ThermalEfficiency < 0)
+                throw new Exception("Thermal Efficiency cannot be greater than 1 or less than 0!");
+            if (StartupTime < 0 || StartupTime >= 24)
+                throw new Exception("Invalid startup time!");
+            if (ShutdownTime <= 0 || ShutdownTime > 24)
+                throw new Exception("Invalid shutdown time!");
 
-                float energyConsumed = voltage * current * 1 / 1000; //[kJ]
-
-                consumePower(energyConsumed);
-            }
+            var startupTimeSeconds = StartupTime * 60 * 60;
+            var shutdownTimeSeconds = ShutdownTime * 60 * 60;
+            var result = (1 / (1 + Math.Exp(-0.05 * (clock - startupTimeSeconds)))) * (1 / (1 + Math.Exp(0.05 * (clock - shutdownTimeSeconds))));
+            consumePower(PowerConsumption*result);
+            produceResource(Resources.Heat, PowerConsumption * result * (1-ThermalEfficiency));
 
         }
 
