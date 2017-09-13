@@ -108,7 +108,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(835, 362);
+            this.tabPage2.Size = new System.Drawing.Size(835, 367);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "tabPage2";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -185,14 +185,14 @@
             // openButton
             // 
             this.openButton.Name = "openButton";
-            this.openButton.Size = new System.Drawing.Size(152, 22);
+            this.openButton.Size = new System.Drawing.Size(103, 22);
             this.openButton.Text = "Open";
             this.openButton.Click += new System.EventHandler(this.openButton_Click);
             // 
             // SaveButton
             // 
             this.SaveButton.Name = "SaveButton";
-            this.SaveButton.Size = new System.Drawing.Size(152, 22);
+            this.SaveButton.Size = new System.Drawing.Size(103, 22);
             this.SaveButton.Text = "Save";
             this.SaveButton.Click += new System.EventHandler(this.SaveButton_Click);
             // 
@@ -211,7 +211,7 @@
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "SimulationGUI";
-            this.Text = "Form1";
+            this.Text = "Lunar Base Simulator";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.GraphTabs.ResumeLayout(false);
             this.StatusBox.ResumeLayout(false);
