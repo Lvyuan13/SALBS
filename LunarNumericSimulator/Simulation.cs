@@ -267,6 +267,11 @@ namespace LunarNumericSimulator {
             return false;
         }
 
+        public void deregisterAllModules()
+        {
+            loadedModules.Clear();
+        }
+
         public List<Module> getModules(){
             return loadedModules;
         }
