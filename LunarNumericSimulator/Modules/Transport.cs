@@ -13,13 +13,13 @@ namespace LunarParametricNumeric.Modules
 		 */
 
         [NumericConfigurationParameter("Rover Battery Voltage [V]", "36.0", "double", false)]
-        public double batteryVoltage { private get; set; }
+        public double batteryVoltage { get; set; }
         [NumericConfigurationParameter("Rover Batter AmpHours [Amp-hrs]", "120.0", "double", false)]
-        public double batteryAmpHrs { private get; set; }
+        public double batteryAmpHrs { get; set; }
         [NumericConfigurationParameter("Rover Charging Start Time [hr]", "02.0", "double", false)]
-        public double StartupTime { private get; set; }
+        public double StartupTime { get; set; }
         [NumericConfigurationParameter("Rover Charging End Time [hr]", "05.0", "double", false)]
-        public double ShutdownTime { private get; set; }
+        public double ShutdownTime { get; set; }
 
 
         public override double getModuleVolume()

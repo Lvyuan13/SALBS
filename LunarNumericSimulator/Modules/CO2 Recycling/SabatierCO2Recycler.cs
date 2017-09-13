@@ -60,23 +60,20 @@ namespace LunarNumericSimulator.Modules
 
         public override List<string> requiresTanks()
         {
-            return new List<string> { "SabatierMethane", "ActiveThermalLoop" };
+            return new List<string> { "SabatierMethane", "ActiveThermalLoop", "ExtractedCO2" };
         }
 
         protected override void update(UInt64 clock)
         {
             // update the PID
-            double CO2Level = getAtmosphericMolarFraction(Resources.CO2);
-            double CO2mass = getResourceLevel(Resources.CO2);
-
-            var result = pid.update(CO2Level - DesiredCO2Level, 1); // check for acceptable CO2 level
+            double CO2TankLevel = getTank("ExtractedCO2").getLevel();
+            var result = pid.update(CO2TankLevel - DesiredCO2Level, 1); // check for acceptable CO2 level
 
             if (result < 0)
             {
                 pid.removeWindup();
                 return;
             }
-                
 
 
             // Bosch reactor figures obtained from:
@@ -105,10 +102,10 @@ namespace LunarNumericSimulator.Modules
             // 22041 (kj/kg) = 0.05 / 0.00000226851
             double sabatierPower = 22041 * Math.Abs(result);                               // [kJ]
             double sabatierHeatGeneration = 118061 * Math.Abs(result);                     // [kJ]
-
+            
 
             // Consume and produce all resources
-            consumeResource(Resources.CO2, sabatierCO2Consumed);
+            getTank("ExtractedCO2").consumeResource(sabatierCO2Consumed);
             consumeResource(Resources.H, sabatierH2Consumed);
             consumePower(sabatierPower);
 

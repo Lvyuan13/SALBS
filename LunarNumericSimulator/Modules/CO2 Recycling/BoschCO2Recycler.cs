@@ -61,19 +61,20 @@ namespace LunarNumericSimulator.Modules
 
         public override List<string> requiresTanks()
         {
-            return new List<string> { "BoschCarbon", "ActiveThermalLoop" };
+            return new List<string> { "BoschCarbon", "ActiveThermalLoop", "ExtractedCO2" };
         }
 
         protected override void update(UInt64 clock)
         {
             // update the PID
-            double CO2Level = getAtmosphericMolarFraction(Resources.CO2);
-            double CO2mass = getResourceLevel(Resources.CO2);
-
-            var result = pid.update(CO2Level - 0.004, 1); // check for acceptable CO2 level
+            double CO2TankLevel = getTank("ExtractedCO2").getLevel();
+            var result = pid.update(CO2TankLevel - DesiredCO2Level, 1); // check for acceptable CO2 level
 
             if (result < 0)
+            {
+                pid.removeWindup();
                 return;
+            }
 
 
             // Bosch reactor figures obtained from:
@@ -106,7 +107,7 @@ namespace LunarNumericSimulator.Modules
             double boschHeatGeneration = result * (0.313 / 0.00000167824);                          // [kW]
 
             // Consume and produce all resources
-            consumeResource(Resources.CO2, boschCO2Consumed);
+            getTank("ExtractedCO2").consumeResource(boschCO2Consumed);
             consumeResource(Resources.H, boschH2Consumed);
             consumeResource(Resources.N, boschN2Consumed);
             consumePower(boschPower); // convert kW to Joules in 1 second
