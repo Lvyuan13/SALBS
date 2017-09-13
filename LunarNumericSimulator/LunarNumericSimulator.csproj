@@ -83,6 +83,7 @@
     <Compile Include="CoolProp\SWIGTYPE_p_std__vectorT_CoolProp__CriticalState_t.cs" />
     <Compile Include="CoolProp\VectorOfDoubleVector.cs" />
     <Compile Include="CoolProp\VectorOfStringVector.cs" />
+    <Compile Include="Modules\CO2 Recycling\FBMSCO2Extractor.cs" />
     <Compile Include="Modules\CO2 Recycling\BoschCO2Recycler.cs" />
     <Compile Include="Modules\H2O Management\MFBWaterProcessor.cs" />
     <Compile Include="Modules\H2O Management\VCDUrineProcessor.cs" />
