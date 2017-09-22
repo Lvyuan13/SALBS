@@ -140,7 +140,6 @@ namespace LunarNumericSimulator.ResourceManagers
                 "V",
                 "C"
             });
-            double tmp2 = CoolProp.Props1SI(FluidName, "P_REDUCING");
             DoubleVector temps = new DoubleVector(new double[] { tmp + 273.15 });
             DoubleVector dmass = new DoubleVector(new double[] { dens });
             double[] result = CoolProp.PropsSImulti(outputs, "T", temps, "D", dmass, propsDatabase, new StringVector(new string[] { FluidName }), new DoubleVector(new double[] { 1 }))[0].ToArray();

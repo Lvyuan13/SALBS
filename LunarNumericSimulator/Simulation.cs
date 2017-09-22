@@ -21,6 +21,7 @@ namespace LunarNumericSimulator {
                 {"atmospheric_O_start", 0.216F},
                 {"atmospheric_N_start", 0.78F},
                 {"atmospheric_CH4_start", 0.001F},
+                {"atmospheric_relative_humidity", 0.5 },
                 {"starting_Pressure", 101.4F},
                 {"starting_Temp", 25}
             };
@@ -66,6 +67,7 @@ namespace LunarNumericSimulator {
             atmosphericResourceManagers.Add(new AtmosphericResourceManager(Resources.CO2, "CarbonDioxide"));
             atmosphericResourceManagers.Add(new AtmosphericResourceManager(Resources.N, "Nitrogen"));
             atmosphericResourceManagers.Add(new AtmosphericResourceManager(Resources.O, "Oxygen"));
+            atmosphericResourceManagers.Add(new AtmosphericResourceManager(Resources.Humidity, "Water"));
 
             storedResourceManagers.Add(new StoredResourceManager(Resources.Food, startFood));
             storedResourceManagers.Add(new StoredResourceManager(Resources.H, startH));
@@ -98,7 +100,8 @@ namespace LunarNumericSimulator {
                 var CO2 = getAtmosphericResourceManagerIndex(Resources.CO2);
                 var O = getAtmosphericResourceManagerIndex(Resources.O);
                 var N = getAtmosphericResourceManagerIndex(Resources.N);
-                ThermoEngine = new ThermodynamicEngine(ref CH4, ref CO2, ref O, ref N, defaultConfig, getSystemVolume());
+                var H2O = getAtmosphericResourceManagerIndex(Resources.Humidity);
+                ThermoEngine = new ThermodynamicEngine(ref CH4, ref H2O, ref CO2, ref O, ref N, defaultConfig, getSystemVolume());
                 assignThermoControllerToResourceManagers();
                 if (getSystemVolume() == 0)
                     throw new Exception("System has no volume!");

@@ -7,7 +7,8 @@ public enum Resources {
     CH4 = 5,
     Heat = 6,
     N = 7,
-    ElecticalEnergy = 8
+    ElecticalEnergy = 8,
+    Humidity = 9
 }
 
 public static class ResourceExtensions
@@ -34,6 +35,8 @@ public static class ResourceExtensions
                 return "N";
             case Resources.ElecticalEnergy:
                 return "ElecticalEnergy";
+            case Resources.Humidity:
+                return "Humidity";
             default:
                 throw new System.Exception("This resource does not exist!");
         }
@@ -61,6 +64,8 @@ public static class ResourceExtensions
                 return true;
             case Resources.ElecticalEnergy:
                 return false;
+            case Resources.Humidity:
+                return true;
             default:
                 throw new System.Exception("This resource does not exist!");
         }

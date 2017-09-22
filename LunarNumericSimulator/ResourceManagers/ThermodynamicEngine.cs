@@ -1,6 +1,7 @@
 using LunarNumericSimulator.ResourceManagers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using static LunarNumericSimulator.ResourceManagers.AtmosphericResourceManager;
 
 namespace LunarNumericSimulator
@@ -12,6 +13,7 @@ namespace LunarNumericSimulator
         public AtmosphericResourceManager co2ResourceManager;
         public AtmosphericResourceManager oResourceManager;
         public AtmosphericResourceManager nResourceManager;
+        public AtmosphericResourceManager h2oResourceManager;
 
         protected double systemVolume;
 
@@ -27,15 +29,16 @@ namespace LunarNumericSimulator
             }
         }
 
-        public ThermodynamicEngine(ref AtmosphericResourceManager CH4RMS, ref AtmosphericResourceManager CO2RMS, ref AtmosphericResourceManager ORMS, ref AtmosphericResourceManager NRMS, Dictionary<string, double> config, double totalVolume)
+        public ThermodynamicEngine(ref AtmosphericResourceManager CH4RMS, ref AtmosphericResourceManager H2ORMS, ref AtmosphericResourceManager CO2RMS, ref AtmosphericResourceManager ORMS, ref AtmosphericResourceManager NRMS, Dictionary<string, double> config, double totalVolume)
         {
             ch4ResourceManager = CH4RMS;
             co2ResourceManager = CO2RMS;
             oResourceManager = ORMS;
             nResourceManager = NRMS;
+            h2oResourceManager = H2ORMS;
 
 
-            double startO, startN, startCO2, initialTemp, initialPressure, startCH4;
+            double startO, startN, startCO2, initialTemp, initialPressure, startCH4, initialRelativeHumidity;
             try
             {
                 config.TryGetValue("starting_Temp", out initialTemp);
@@ -44,6 +47,7 @@ namespace LunarNumericSimulator
                 config.TryGetValue("atmospheric_N_start", out startN);
                 config.TryGetValue("atmospheric_CH4_start", out startCH4);
                 config.TryGetValue("starting_Pressure", out initialPressure);
+                config.TryGetValue("atmospheric_relative_humidity", out initialRelativeHumidity);
             }
             catch (Exception e)
             {
@@ -52,10 +56,10 @@ namespace LunarNumericSimulator
 
             systemVolume = totalVolume;
 
-            setupEnvironment(startCO2, startO, startN, startCH4, initialPressure, initialTemp);
+            setupEnvironment(startCO2, startO, startN, startCH4, initialPressure, initialTemp, initialRelativeHumidity);
         }
 
-        protected void setupEnvironment(double startCO2, double startO, double startN, double startCH4, double startingPressure, double startingTemp)
+        protected void setupEnvironment(double startCO2, double startO, double startN, double startCH4, double startingPressure, double startingTemp, double initialRelativeHumidity)
         {
             double partialPressure = 0;
             ThermoState thermoStateVars;
@@ -88,6 +92,12 @@ namespace LunarNumericSimulator
                 thermoStateVars = nResourceManager.getStateFromTempPres(startingTemp, partialPressure);
                 nResourceManager.initiate(thermoStateVars, systemVolume);
             }
+
+            double T = startingTemp;
+            double eqVapourPressure = 0.61121 * Math.Exp((18.678 - (T / 234.5)) * (T / (257.14 + T))); // Implementation of the Arden Buck Equation
+            partialPressure = initialRelativeHumidity * eqVapourPressure;
+            thermoStateVars = h2oResourceManager.getStateFromTempPres(T, partialPressure);
+            h2oResourceManager.initiate(thermoStateVars, systemVolume);
         }
 
         public override void addResource(double resource)
@@ -102,10 +112,8 @@ namespace LunarNumericSimulator
 
         public override double getLevel()
         {
-            double totalEnthalpy = ch4ResourceManager.getTotalEnthalpy();
-            totalEnthalpy += co2ResourceManager.getTotalEnthalpy();
-            totalEnthalpy += oResourceManager.getTotalEnthalpy();
-            totalEnthalpy += nResourceManager.getTotalEnthalpy();
+            double totalEnthalpy = (from element in getResourceManagers()
+                                    select element.getTotalEnthalpy()).Sum();
             return totalEnthalpy;
         }
 
@@ -114,38 +122,28 @@ namespace LunarNumericSimulator
          * */
         public double getSystemPressure()
         {
-            var CO2 = co2ResourceManager.Pressure;
-            var O = oResourceManager.Pressure;
-            var N = nResourceManager.Pressure;
-            var CH4 = ch4ResourceManager.Pressure;
-            return CO2 + O + N + CH4;
+            return (from element in getResourceManagers()
+                    select element.Pressure).Sum();
         }
 
         public double getSystemMass()
         {
-            double totalMass = ch4ResourceManager.getLevel();
-            totalMass += co2ResourceManager.getLevel();
-            totalMass += oResourceManager.getLevel();
-            totalMass += nResourceManager.getLevel();
-            return totalMass;
+            return (from element in getResourceManagers()
+                    select element.getLevel()).Sum();
         }
 
         public double getSystemEnthalpy()
         {
-            var CO2 = co2ResourceManager.getTotalEnthalpy();
-            var O = oResourceManager.getTotalEnthalpy();
-            var N = nResourceManager.getTotalEnthalpy();
-            var CH4 = ch4ResourceManager.getTotalEnthalpy();
-            return CO2 + O + N + CH4;
+            double totalEnthalpy = (from element in getResourceManagers()
+                                    select element.getTotalEnthalpy()).Sum();
+            return totalEnthalpy;
         }
 
         public double getSystemInternalEnergy()
         {
-            var CO2 = co2ResourceManager.getTotalInternalEnergy();
-            var O = oResourceManager.getTotalInternalEnergy();
-            var N = nResourceManager.getTotalInternalEnergy();
-            var CH4 = ch4ResourceManager.getTotalInternalEnergy();
-            return CO2 + O + N + CH4;
+            double total = (from element in getResourceManagers()
+                                    select element.getTotalInternalEnergy()).Sum();
+            return total;
         }
 
 
@@ -377,6 +375,18 @@ namespace LunarNumericSimulator
         protected double calculateMolarMassFromMassFraction(double molarWeight, double massFraction)
         {
             return massFraction * (getSystemAverageMolarWeight() / molarWeight);
+        }
+
+        protected AtmosphericResourceManager[] getResourceManagers()
+        {
+            return new AtmosphericResourceManager[]
+            {
+                nResourceManager,
+                oResourceManager,
+                co2ResourceManager,
+                ch4ResourceManager,
+                h2oResourceManager
+            };
         }
     }
 
