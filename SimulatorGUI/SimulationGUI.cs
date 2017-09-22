@@ -162,35 +162,46 @@ namespace SimulatorGUI
         {
             var panel = new AtmospherePanel();
             panel.Dock = DockStyle.Fill;
+
             GraphTabs.TabPages[tabid].Controls.Add(panel);
             Module m = (from element in simulation.getModules()
                         where element.ModuleID == Convert.ToInt32(tabid)
                         select element).First();
-            var configProperties = from element in m.GetType().GetProperties()
+            var configProperties = (from element in m.GetType().GetProperties()
                                    where element.GetCustomAttribute<NumericConfigurationParameter>() != null
-                                   select new { prop= element, attr=  element.GetCustomAttribute<NumericConfigurationParameter>() };
-            TableLayoutPanel parameterTable = (TableLayoutPanel)panel.Controls["ParameterPanel"];
-            int row =0, col = 0;
-            parameterTable.RowCount = 2;
-            parameterTable.ColumnCount = 4;
-            foreach (var param in configProperties) {
-                Label lab = new Label();
-                lab.Font = new Font(lab.Font.Name, 12, FontStyle.Bold);
-                lab.Dock = DockStyle.Fill;
-                lab.Text = param.attr.friendlyName + ": " + param.prop.GetValue(m);
-                parameterTable.Controls.Add(lab, col, row);
-                if (row > 1)
+                                   select new { prop= element, attr=  element.GetCustomAttribute<NumericConfigurationParameter>() }).ToList();
+            if (configProperties.Count > 0)
+            {
+                TableLayoutPanel parameterTable = (TableLayoutPanel)panel.Controls["ConfigPanel"].Controls["ParameterPanel"];
+                int row = 0, col = 0;
+                parameterTable.RowCount = 2;
+                parameterTable.ColumnCount = 3;
+                foreach (var param in configProperties)
                 {
-                    row = 0;
-                    col++;
-                } else
-                {
-                    row++;
+                    Label lab = new Label();
+                    lab.Font = new Font(lab.Font.Name, 12, FontStyle.Bold);
+                    lab.Dock = DockStyle.Fill;
+                    lab.Text = param.attr.friendlyName + ": " + param.prop.GetValue(m);
+                    parameterTable.Controls.Add(lab, col, row);
+                    if (row > 1)
+                    {
+                        row = 0;
+                        col++;
+                    }
+                    else
+                    {
+                        row++;
+                    }
                 }
-            }
+            } else
+            {
+                Panel parameterTable = (Panel)panel.Controls["ConfigPanel"];
+                panel.Controls.Remove(parameterTable);
+                panel.Controls["AtmosphereChart"].Dock = DockStyle.Fill;
 
+            }
             Chart chart = (Chart)panel.Controls["AtmosphereChart"];
-            foreach(var gas in m.getRegisteredResources()) {
+            foreach (var gas in m.getRegisteredResources()) {
                 setupSeries(gas, chart);
             }
         }
