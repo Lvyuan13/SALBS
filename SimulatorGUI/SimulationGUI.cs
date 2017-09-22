@@ -86,7 +86,6 @@ namespace SimulatorGUI
                 updateModuleOverviewTab(report);
                 foreach (Module m in simulation.getModules())
                 {
-
                     var state = (from element in report.ModuleStates
                                  where element.getID() == m.ModuleID
                                  select element).First();
