@@ -169,5 +169,14 @@ namespace LunarNumericSimulator.ResourceManagers
             public double SpecificHeat;
         }
 
+        public class AirThermoState : ThermoState
+        {
+            public AirThermoState(double temp, double press, double enth, double den, double intener, double thermcond, double visc, double speche, double relativehum) : base(temp, press, enth, den, intener, thermcond, visc, speche)
+            {
+                RelativeHumidity = relativehum;
+            }
+            public double RelativeHumidity;
+        }
+
     }
 }

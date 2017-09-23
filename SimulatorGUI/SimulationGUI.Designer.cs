@@ -43,6 +43,7 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openButton = new System.Windows.Forms.ToolStripMenuItem();
             this.SaveButton = new System.Windows.Forms.ToolStripMenuItem();
+            this.RelativeHumidity = new System.Windows.Forms.Label();
             this.GraphTabs.SuspendLayout();
             this.StatusBox.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -172,6 +173,7 @@
             this.menuStrip1.Size = new System.Drawing.Size(1004, 24);
             this.menuStrip1.TabIndex = 7;
             this.menuStrip1.Text = "menuStrip1";
+            this.menuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuStrip1_ItemClicked);
             // 
             // fileToolStripMenuItem
             // 
@@ -196,11 +198,22 @@
             this.SaveButton.Text = "Save";
             this.SaveButton.Click += new System.EventHandler(this.SaveButton_Click);
             // 
+            // RelativeHumidity
+            // 
+            this.RelativeHumidity.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.RelativeHumidity.AutoSize = true;
+            this.RelativeHumidity.Location = new System.Drawing.Point(153, 427);
+            this.RelativeHumidity.Name = "RelativeHumidity";
+            this.RelativeHumidity.Size = new System.Drawing.Size(0, 13);
+            this.RelativeHumidity.TabIndex = 8;
+            this.RelativeHumidity.Click += new System.EventHandler(this.label1_Click);
+            // 
             // SimulationGUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1004, 494);
+            this.Controls.Add(this.RelativeHumidity);
             this.Controls.Add(this.ModuleNameBox);
             this.Controls.Add(this.StatusBox);
             this.Controls.Add(this.StartButton);
@@ -240,6 +253,7 @@
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openButton;
         private System.Windows.Forms.ToolStripMenuItem SaveButton;
+        private System.Windows.Forms.Label RelativeHumidity;
     }
 }
 

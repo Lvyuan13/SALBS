@@ -19,6 +19,7 @@ namespace LunarNumericSimulator.Reporting
             public double Temperature;
             public double TotalMass;
             public double TotalEnthalpy;
+            public double RelativeHumdiity;
         }
 
         public class Storage: List<StoredResource>

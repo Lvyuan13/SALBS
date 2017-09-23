@@ -142,6 +142,7 @@ namespace LunarNumericSimulator {
             state.Atmospheric = new EnvironmentState.Atmosphere();
             var airState = ThermoEngine.getAverageAirState();
             state.Atmospheric.TotalPressure = airState.Pressure;
+            state.Atmospheric.RelativeHumdiity = airState.RelativeHumidity;
             state.Atmospheric.Temperature = airState.Temperature;
             state.Atmospheric.TotalMass = ThermoEngine.getSystemMass();
             state.Atmospheric.TotalEnthalpy = ThermoEngine.getSystemEnthalpy();

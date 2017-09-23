@@ -76,7 +76,6 @@
             this.ParameterPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33334F));
             this.ParameterPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33334F));
             this.ParameterPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ParameterPanel.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.FixedSize;
             this.ParameterPanel.Location = new System.Drawing.Point(0, 0);
             this.ParameterPanel.Name = "ParameterPanel";
             this.ParameterPanel.RowCount = 2;

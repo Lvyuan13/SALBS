@@ -196,7 +196,7 @@ namespace LunarNumericSimulator {
             throw new Exception("Resource not found!");
         }
 
-        protected ThermoState getAirState()
+        protected AirThermoState getAirState()
         {
             foreach (ResourceManager<double> rm in Environment.getAllResourceManagers())
                 if (rm.managedResource == Resources.Heat)

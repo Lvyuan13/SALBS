@@ -93,11 +93,15 @@ namespace LunarNumericSimulator
                 nResourceManager.initiate(thermoStateVars, systemVolume);
             }
 
-            double T = startingTemp;
-            double eqVapourPressure = 0.61121 * Math.Exp((18.678 - (T / 234.5)) * (T / (257.14 + T))); // Implementation of the Arden Buck Equation
+            double eqVapourPressure = ArdenBuckEquation(startingTemp);
             partialPressure = initialRelativeHumidity * eqVapourPressure;
-            thermoStateVars = h2oResourceManager.getStateFromTempPres(T, partialPressure);
+            thermoStateVars = h2oResourceManager.getStateFromTempPres(startingTemp, partialPressure);
             h2oResourceManager.initiate(thermoStateVars, systemVolume);
+        }
+
+        private double ArdenBuckEquation(double T)
+        {
+            return 0.61121 * Math.Exp((18.678 - (T / 234.5)) * (T / (257.14 + T))); // Implementation of the Arden Buck Equation, which estimates the equilibrium vapour pressure.
         }
 
         public override void addResource(double resource)
@@ -147,13 +151,14 @@ namespace LunarNumericSimulator
         }
 
 
-        public ThermoState getAverageAirState()
+        public AirThermoState getAverageAirState()
         {
-            double CO2, O, N, CH4, systemMass = getSystemMass();
+            double CO2, O, N, CH4, H2O, systemMass = getSystemMass();
             CO2 = co2ResourceManager.getLevel() / systemMass;
             O = oResourceManager.getLevel() / systemMass;
             N = nResourceManager.getLevel() / systemMass;
             CH4 = ch4ResourceManager.getLevel() / systemMass;
+            H2O = h2oResourceManager.getLevel() / systemMass;
 
             double averageMolarWeight = getSystemAverageMolarWeight();
 
@@ -161,45 +166,55 @@ namespace LunarNumericSimulator
             double molarFractionCH4 = CH4 * (averageMolarWeight / ch4ResourceManager.molarWeight);
             double molarFractionO = O * (averageMolarWeight / oResourceManager.molarWeight);
             double molarFractionN = N * (averageMolarWeight / nResourceManager.molarWeight);
+            double molarFractionH2O = H2O * (averageMolarWeight / h2oResourceManager.molarWeight);
 
             var systemPressure = getSystemPressure();
 
             var weightedAverageSpecHeat = molarFractionCO2 * co2ResourceManager.SpecificHeat +
                 molarFractionCH4 * ch4ResourceManager.SpecificHeat +
                 molarFractionO * oResourceManager.SpecificHeat +
-                molarFractionN * nResourceManager.SpecificHeat;
+                molarFractionN * nResourceManager.SpecificHeat +
+                molarFractionH2O * h2oResourceManager.SpecificHeat;
 
             var weightedAverageInternalEnergy = molarFractionCO2 * co2ResourceManager.InternalEnergy +
                 molarFractionCH4 * ch4ResourceManager.InternalEnergy +
                 molarFractionO * oResourceManager.InternalEnergy +
-                molarFractionN * nResourceManager.InternalEnergy;
+                molarFractionN * nResourceManager.InternalEnergy +
+                molarFractionH2O * h2oResourceManager.InternalEnergy;
 
             var weightedAverageEnthalpy = molarFractionCO2 * co2ResourceManager.EnthalpyPerUnitMass +
                 molarFractionCH4 * ch4ResourceManager.EnthalpyPerUnitMass +
                 molarFractionO * oResourceManager.EnthalpyPerUnitMass +
-                molarFractionN * nResourceManager.EnthalpyPerUnitMass;
+                molarFractionN * nResourceManager.EnthalpyPerUnitMass +
+                molarFractionH2O * h2oResourceManager.EnthalpyPerUnitMass;
 
             var weightedAverageCond = molarFractionCO2 * co2ResourceManager.ThermalConductivity +
                 molarFractionCH4 * ch4ResourceManager.ThermalConductivity +
                 molarFractionO * oResourceManager.ThermalConductivity +
-                molarFractionN * nResourceManager.ThermalConductivity;
+                molarFractionN * nResourceManager.ThermalConductivity +
+                molarFractionH2O * h2oResourceManager.ThermalConductivity;
 
             var weightedAverageVisc = molarFractionCO2 * co2ResourceManager.Viscosity +
                 molarFractionCH4 * ch4ResourceManager.Viscosity +
                 molarFractionO * oResourceManager.Viscosity +
-                molarFractionN * nResourceManager.Viscosity;
+                molarFractionN * nResourceManager.Viscosity +
+                molarFractionH2O * h2oResourceManager.Viscosity;
 
             var weightedAverageDens = molarFractionCO2 * co2ResourceManager.Density +
                 molarFractionCH4 * ch4ResourceManager.Density +
                 molarFractionO * oResourceManager.Density +
-                molarFractionN * nResourceManager.Density;
+                molarFractionN * nResourceManager.Density +
+                molarFractionH2O * h2oResourceManager.Density;
 
             var weightedAverageTemp = molarFractionCO2 * co2ResourceManager.Temperature +
                 molarFractionCH4 * ch4ResourceManager.Temperature +
                 molarFractionO * oResourceManager.Temperature +
-                molarFractionN * nResourceManager.Temperature;
+                molarFractionN * nResourceManager.Temperature +
+                molarFractionH2O * h2oResourceManager.Temperature;
 
-            return new ThermoState(weightedAverageTemp, systemPressure, weightedAverageEnthalpy, weightedAverageDens, weightedAverageInternalEnergy, weightedAverageCond, weightedAverageVisc, weightedAverageSpecHeat);
+            double relativeHumidity = h2oResourceManager.Pressure / ArdenBuckEquation(h2oResourceManager.Temperature);
+
+            return new AirThermoState(weightedAverageTemp, systemPressure, weightedAverageEnthalpy, weightedAverageDens, weightedAverageInternalEnergy, weightedAverageCond, weightedAverageVisc, weightedAverageSpecHeat, relativeHumidity);
         }
 
 
@@ -211,11 +226,12 @@ namespace LunarNumericSimulator
         * */
         public void updateAtmosphere()
         {
-            double CO2, O, N, CH4;
+            double CO2, O, N, CH4, H2O;
             CO2 = co2ResourceManager.getLevel() / systemVolume;
             O = oResourceManager.getLevel() / systemVolume;
             N = nResourceManager.getLevel() / systemVolume;
             CH4 = ch4ResourceManager.getLevel() / systemVolume;
+            H2O = h2oResourceManager.getLevel() / systemVolume;
 
             double temp = 0;
             ThermoState thermoStateVars;
@@ -247,6 +263,13 @@ namespace LunarNumericSimulator
                 nResourceManager.setState(thermoStateVars, systemVolume);
             }
 
+            if (H2O != 0)
+            {
+                temp = h2oResourceManager.Temperature; // This is an isothermal density adjustment
+                thermoStateVars = h2oResourceManager.getStateFromTempDensity(temp,H2O);
+                h2oResourceManager.setState(thermoStateVars, systemVolume);
+            }
+
         }
 
         /* 
@@ -259,11 +282,12 @@ namespace LunarNumericSimulator
         public void addHeat(double quantity)
         {
             double totalInternalEnergyInSystem = getSystemInternalEnergy();
-            double CO2, O, N, CH4, systemMass = getSystemMass();
+            double CO2, O, N, CH4, H2O, systemMass = getSystemMass();
             CO2 = co2ResourceManager.getLevel() / systemMass;
             O = oResourceManager.getLevel() / systemMass;
             N = nResourceManager.getLevel() / systemMass;
             CH4 = ch4ResourceManager.getLevel() / systemMass;
+            H2O = h2oResourceManager.getLevel() / systemMass;
 
             double averageMolarWeight = getSystemAverageMolarWeight();
 
@@ -307,6 +331,15 @@ namespace LunarNumericSimulator
                 nResourceManager.setState(thermoStateVars, systemVolume);
             }
 
+            if (H2O != 0)
+            {
+                density = h2oResourceManager.Density; // This is an isochoric heat addition (density is constant)
+                molarFraction = H2O * (averageMolarWeight / h2oResourceManager.molarWeight);
+                internalenergy = (molarFraction * (quantity) / h2oResourceManager.getLevel()) + h2oResourceManager.InternalEnergy;
+                thermoStateVars = h2oResourceManager.getStateFromInternDensity(internalenergy, density);
+                h2oResourceManager.setState(thermoStateVars, systemVolume);
+            }
+
         }
 
         protected double getSystemAverageMolarWeight()
@@ -316,21 +349,24 @@ namespace LunarNumericSimulator
             double massFractionCH4 = ch4ResourceManager.getLevel() / systemMass;
             double massFractionO = oResourceManager.getLevel() / systemMass;
             double massFractionN = nResourceManager.getLevel() / systemMass;
+            double massFractionH2O = h2oResourceManager.getLevel() / systemMass;
 
             double averageMolarWeight = (massFractionCO2 * co2ResourceManager.molarWeight);
             averageMolarWeight += (massFractionO * oResourceManager.molarWeight);
             averageMolarWeight += (massFractionN * nResourceManager.molarWeight);
             averageMolarWeight += (massFractionCH4 * ch4ResourceManager.molarWeight);
+            averageMolarWeight += (massFractionH2O * h2oResourceManager.molarWeight);
             return averageMolarWeight;
         }
 
         public double getMassFraction(Resources res)
         {
-            double CO2, O, N, CH4, systemMass = getSystemMass();
+            double CO2, O, N, CH4, H2O, systemMass = getSystemMass();
             CO2 = co2ResourceManager.getLevel() / systemMass;
             O = oResourceManager.getLevel() / systemMass;
             N = nResourceManager.getLevel() / systemMass;
             CH4 = ch4ResourceManager.getLevel() / systemMass;
+            H2O = h2oResourceManager.getLevel() / systemMass;
 
             switch (res)
             {
@@ -342,6 +378,8 @@ namespace LunarNumericSimulator
                     return N;
                 case Resources.CH4:
                     return CH4;
+                case Resources.Humidity:
+                    return H2O;
                 default:
                     throw new Exception("Resource is not an atomospheric resource");
             }
@@ -349,11 +387,12 @@ namespace LunarNumericSimulator
 
         public double getMolarFraction(Resources res)
         {
-            double CO2, O, N, CH4, systemMass = getSystemMass();
+            double CO2, O, N, CH4, H2O, systemMass = getSystemMass();
             CO2 = co2ResourceManager.getLevel() / systemMass;
             O = oResourceManager.getLevel() / systemMass;
             N = nResourceManager.getLevel() / systemMass;
             CH4 = ch4ResourceManager.getLevel() / systemMass;
+            H2O = h2oResourceManager.getLevel() / systemMass;
 
             double averageMolarWeight = getSystemAverageMolarWeight();
 
@@ -367,6 +406,8 @@ namespace LunarNumericSimulator
                     return N * (averageMolarWeight / nResourceManager.molarWeight);
                 case Resources.CH4:
                     return CH4 * (averageMolarWeight / ch4ResourceManager.molarWeight);
+                case Resources.H2O:
+                    return H2O * (averageMolarWeight / h2oResourceManager.molarWeight);
                 default:
                     throw new Exception("Resource is not an atomospheric resource");
             }

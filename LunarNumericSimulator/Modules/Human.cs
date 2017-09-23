@@ -121,7 +121,8 @@ namespace LunarNumericSimulator.Modules
                 Resources.Heat,
                 Resources.O,
                 Resources.Food,
-                Resources.N
+                Resources.N,
+                Resources.Humidity
             };
         } 
 
@@ -190,8 +191,12 @@ namespace LunarNumericSimulator.Modules
             }
 
             double heatRelease = 118 * Math.Pow(10,-3); // Humans release heat at 118W, converting to kJ
-            produceResource(Resources.Heat, heatRelease); 
-            
+            produceResource(Resources.Heat, heatRelease);
+
+            double sweatReleasedPerSecond = 1.388888888888889e-4;
+            produceResourceLitres(Resources.Humidity, sweatReleasedPerSecond);
+
+
             if (getRandom().Next((int)secondsIn24Hours / 8) == 1) // There is an 8 in 86400 (24 hours) chance that flatulence will occur, since average person has flatulence 8 times per day
                 flatulence();
 

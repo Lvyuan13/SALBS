@@ -107,6 +107,8 @@ namespace SimulatorGUI
             environmentChart.Series["BaseLoad"].Points.AddXY(report.GlobalState.clock, report.PowerLoad);
             environmentChart.Series["BaseLoad"].BorderWidth = 4;
 
+            RelativeHumidity.Text = "Relative Humdity: " + Math.Round(report.GlobalState.Atmospheric.RelativeHumdiity,2);
+
             if (updateTimer % 50 == 0)
             {
 
@@ -175,7 +177,7 @@ namespace SimulatorGUI
                 TableLayoutPanel parameterTable = (TableLayoutPanel)panel.Controls["ConfigPanel"].Controls["ParameterPanel"];
                 int row = 0, col = 0;
                 parameterTable.RowCount = 2;
-                parameterTable.ColumnCount = 3;
+                parameterTable.ColumnCount = 4;
                 foreach (var param in configProperties)
                 {
                     Label lab = new Label();
@@ -223,6 +225,13 @@ namespace SimulatorGUI
                     chart.Series[res.ToString()].ChartType = SeriesChartType.FastLine;
                     chart.Series[res.ToString()].BorderWidth = 4;
                     chart.Series[res.ToString()].BorderColor = Color.Azure;
+                    break;
+                case Resources.Humidity:
+                    chart.Series.Add(new Series(res.ToString()));
+                    chart.Series[res.ToString()].ChartArea = "Top";
+                    chart.Series[res.ToString()].ChartType = SeriesChartType.FastLine;
+                    chart.Series[res.ToString()].BorderWidth = 4;
+                    chart.Series[res.ToString()].BorderColor = Color.DeepPink;
                     break;
                 case Resources.N:
                     chart.Series.Add(new Series(res.ToString()));
@@ -498,6 +507,16 @@ namespace SimulatorGUI
             {
                 File.WriteAllText(dialog.FileName, serializedState);
             }
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
         }
     }
 }

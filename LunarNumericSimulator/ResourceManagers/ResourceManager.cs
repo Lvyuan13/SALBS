@@ -24,6 +24,9 @@ namespace LunarNumericSimulator {
                 case Resources.CH4:
                     MW = CoolProp.PropsSI("M", "", 0, "", 0, "Methane");
                     return MW;
+                case Resources.Humidity:
+                    MW = CoolProp.PropsSI("M", "", 0, "", 0, "Water");
+                    return MW;
                 default:
                     throw new Exception("Cannot get molar weight for unknown resource");
             }
