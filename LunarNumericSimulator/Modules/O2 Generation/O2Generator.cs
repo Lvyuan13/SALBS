@@ -32,7 +32,7 @@ namespace LunarNumericSimulator.Modules.O2_Generation
                 Resources.H2O,
                 Resources.ElecticalEnergy,
                 Resources.H,
-                Resources.O,
+                Resources.O2,
             };
         }
 
@@ -65,8 +65,8 @@ namespace LunarNumericSimulator.Modules.O2_Generation
         protected override void update(UInt64 clock)
         {
             // update the PID
-            double O2Level = getAtmosphericMolarFraction(Resources.O);
-            double O2Mass = getResourceLevel(Resources.O);
+            double O2Level = getAtmosphericMolarFraction(Resources.O2);
+            double O2Mass = getResourceLevel(Resources.O2);
 
             var result = pid.update(DesiredO2Level - O2Level, 1);
 
@@ -107,7 +107,7 @@ namespace LunarNumericSimulator.Modules.O2_Generation
             Console.WriteLine("power used = " + powerUsed);
             consumeResource(Resources.H2O, inflowAdjusted);
             consumePower(powerUsed);
-            produceResource(Resources.O, O2Produced);
+            produceResource(Resources.O2, O2Produced);
             produceResource(Resources.H, H2Produced);
             // TODO find theoretical values for heat produced if any
 

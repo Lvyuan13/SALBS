@@ -372,9 +372,9 @@ namespace LunarNumericSimulator
             {
                 case Resources.CO2:
                     return CO2;
-                case Resources.O:
+                case Resources.O2:
                     return O;
-                case Resources.N:
+                case Resources.N2:
                     return N;
                 case Resources.CH4:
                     return CH4;
@@ -400,9 +400,9 @@ namespace LunarNumericSimulator
             {
                 case Resources.CO2:
                     return CO2 * (averageMolarWeight / co2ResourceManager.molarWeight);
-                case Resources.O:
+                case Resources.O2:
                     return O * (averageMolarWeight / oResourceManager.molarWeight);
-                case Resources.N:
+                case Resources.N2:
                     return N * (averageMolarWeight / nResourceManager.molarWeight);
                 case Resources.CH4:
                     return CH4 * (averageMolarWeight / ch4ResourceManager.molarWeight);

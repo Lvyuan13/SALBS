@@ -122,13 +122,13 @@ namespace SimulatorGUI
                            select element.Quantity).FirstOrDefault();
                 environmentChart.Series["Gas Distribution"].Points.AddXY(Resources.CH4.ToString(), ch4);
                 var O = (from element in report.GlobalState.Atmospheric
-                         where element.Resource == Resources.O
+                         where element.Resource == Resources.O2
                          select element.Quantity).FirstOrDefault();
-                environmentChart.Series["Gas Distribution"].Points.AddXY(Resources.O.ToString(), O);
+                environmentChart.Series["Gas Distribution"].Points.AddXY(Resources.O2.ToString(), O);
                 var N = (from element in report.GlobalState.Atmospheric
-                         where element.Resource == Resources.N
+                         where element.Resource == Resources.N2
                          select element.Quantity).FirstOrDefault();
-                environmentChart.Series["Gas Distribution"].Points.AddXY(Resources.N.ToString(), N);
+                environmentChart.Series["Gas Distribution"].Points.AddXY(Resources.N2.ToString(), N);
             }
             
         }
@@ -219,7 +219,7 @@ namespace SimulatorGUI
                     chart.Series[res.ToString()].BorderWidth = 4;
                     chart.Series[res.ToString()].BorderColor = Color.GreenYellow;
                     break;
-                case Resources.O:
+                case Resources.O2:
                     chart.Series.Add(new Series(res.ToString()));
                     chart.Series[res.ToString()].ChartArea = "Top";
                     chart.Series[res.ToString()].ChartType = SeriesChartType.FastLine;
@@ -233,7 +233,7 @@ namespace SimulatorGUI
                     chart.Series[res.ToString()].BorderWidth = 4;
                     chart.Series[res.ToString()].BorderColor = Color.DeepPink;
                     break;
-                case Resources.N:
+                case Resources.N2:
                     chart.Series.Add(new Series(res.ToString()));
                     chart.Series[res.ToString()].ChartArea = "Top";
                     chart.Series[res.ToString()].ChartType = SeriesChartType.FastLine;

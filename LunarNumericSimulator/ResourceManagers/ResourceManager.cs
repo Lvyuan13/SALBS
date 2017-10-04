@@ -15,10 +15,10 @@ namespace LunarNumericSimulator {
                 case Resources.CO2:
                     MW = CoolProp.PropsSI("M", "", 0, "", 0, "CO2");
                     return MW;
-                case Resources.O:
+                case Resources.O2:
                     MW = CoolProp.PropsSI("M", "", 0, "", 0, "Oxygen");
                     return MW;
-                case Resources.N:
+                case Resources.N2:
                     MW = CoolProp.PropsSI("M", "", 0, "", 0, "Nitrogen");
                     return MW;
                 case Resources.CH4:

@@ -2,11 +2,11 @@ public enum Resources {
     CO2 = 0,
     H2O = 1,
     H = 2,
-    O = 3,
+    O2 = 3,
     Food = 4,
     CH4 = 5,
     Heat = 6,
-    N = 7,
+    N2 = 7,
     ElecticalEnergy = 8,
     Humidity = 9
 }
@@ -25,13 +25,13 @@ public static class ResourceExtensions
                 return "H2O";
             case Resources.H:
                 return "H";
-            case Resources.O:
+            case Resources.O2:
                 return "O";
             case Resources.Food:
                 return "Food";
             case Resources.Heat:
                 return "Heat";
-            case Resources.N:
+            case Resources.N2:
                 return "N";
             case Resources.ElecticalEnergy:
                 return "ElecticalEnergy";
@@ -54,13 +54,13 @@ public static class ResourceExtensions
                 return false;
             case Resources.H:
                 return false;
-            case Resources.O:
+            case Resources.O2:
                 return true;
             case Resources.Food:
                 return false;
             case Resources.Heat:
                 return false;
-            case Resources.N:
+            case Resources.N2:
                 return true;
             case Resources.ElecticalEnergy:
                 return false;

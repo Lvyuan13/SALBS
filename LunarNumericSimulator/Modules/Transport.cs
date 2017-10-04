@@ -11,7 +11,7 @@ namespace LunarParametricNumeric.Modules
         /*	The transport is just being modelled as a battery that
 			will be recharged whenever it is back at the base.
 		 */
-
+        
         [NumericConfigurationParameter("Rover Battery Voltage [V]", "36.0", "double", false)]
         public double batteryVoltage { get; set; }
         [NumericConfigurationParameter("Rover Batter AmpHours [Amp-hrs]", "120.0", "double", false)]

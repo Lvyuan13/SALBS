@@ -65,8 +65,8 @@ namespace LunarNumericSimulator {
 
             atmosphericResourceManagers.Add(new AtmosphericResourceManager(Resources.CH4, "Methane"));
             atmosphericResourceManagers.Add(new AtmosphericResourceManager(Resources.CO2, "CarbonDioxide"));
-            atmosphericResourceManagers.Add(new AtmosphericResourceManager(Resources.N, "Nitrogen"));
-            atmosphericResourceManagers.Add(new AtmosphericResourceManager(Resources.O, "Oxygen"));
+            atmosphericResourceManagers.Add(new AtmosphericResourceManager(Resources.N2, "Nitrogen"));
+            atmosphericResourceManagers.Add(new AtmosphericResourceManager(Resources.O2, "Oxygen"));
             atmosphericResourceManagers.Add(new AtmosphericResourceManager(Resources.Humidity, "Water"));
 
             storedResourceManagers.Add(new StoredResourceManager(Resources.Food, startFood));
@@ -98,8 +98,8 @@ namespace LunarNumericSimulator {
             {
                 var CH4 = getAtmosphericResourceManagerIndex(Resources.CH4);
                 var CO2 = getAtmosphericResourceManagerIndex(Resources.CO2);
-                var O = getAtmosphericResourceManagerIndex(Resources.O);
-                var N = getAtmosphericResourceManagerIndex(Resources.N);
+                var O = getAtmosphericResourceManagerIndex(Resources.O2);
+                var N = getAtmosphericResourceManagerIndex(Resources.N2);
                 var H2O = getAtmosphericResourceManagerIndex(Resources.Humidity);
                 ThermoEngine = new ThermodynamicEngine(ref CH4, ref H2O, ref CO2, ref O, ref N, defaultConfig, getSystemVolume());
                 assignThermoControllerToResourceManagers();

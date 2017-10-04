@@ -16,7 +16,7 @@ namespace LunarNumericSimulator {
         //protected const UInt64 secondsHumanDayStart = 25200;
         //protected const UInt64 secondsHumanDayEnd = 75600;
         protected const UInt64 secondsHumanDayStart = 1;
-        protected const UInt64 secondsHumanDayEnd = 5000;
+        protected const UInt64 secondsHumanDayEnd = 50400;
 
         protected static Dictionary<string, TankResourceManager> tanks = new Dictionary<string, TankResourceManager>();
 

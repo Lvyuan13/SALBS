@@ -33,7 +33,7 @@ namespace LunarNumericSimulator.Modules
                 Resources.H,
                 Resources.H2O,
                 Resources.CH4,
-                Resources.N,
+                Resources.N2,
                 Resources.ElecticalEnergy,
                 Resources.Heat
             };
@@ -109,11 +109,11 @@ namespace LunarNumericSimulator.Modules
             // Consume and produce all resources
             getTank("ExtractedCO2").consumeResource(boschCO2Consumed);
             consumeResource(Resources.H, boschH2Consumed);
-            consumeResource(Resources.N, boschN2Consumed);
+            consumeResource(Resources.N2, boschN2Consumed);
             consumePower(boschPower); // convert kW to Joules in 1 second
 
             produceResource(Resources.H2O, boschH2OProduced);
-            produceResource(Resources.N, boschN2Produced);
+            produceResource(Resources.N2, boschN2Produced);
             produceResource(Resources.Heat, boschHeatGeneration * 0.05);
             getTank("ActiveThermalLoop").addResource(boschHeatGeneration * 0.95);
             getTank("BoschCarbon").addResource(boschCProduced);
