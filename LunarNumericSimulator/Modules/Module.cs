@@ -16,7 +16,10 @@ namespace LunarNumericSimulator {
         //protected const UInt64 secondsHumanDayStart = 25200;
         //protected const UInt64 secondsHumanDayEnd = 75600;
         protected const UInt64 secondsHumanDayStart = 1;
-        protected const UInt64 secondsHumanDayEnd = 50400;
+        protected const UInt64 secondsHumanDayEnd = 3601;
+        protected UInt64 secondsInHumanDayTime;
+        protected UInt64 secondsInHumanNightTime;
+        protected UInt64 secondsInHumanDayCycle;
 
         protected static Dictionary<string, TankResourceManager> tanks = new Dictionary<string, TankResourceManager>();
 
@@ -37,6 +40,14 @@ namespace LunarNumericSimulator {
                 createTank(s);
 
             resourceReceipts = new double[resourceCount];
+
+            // initialise day and night information
+            UInt64 secondsInHumanDayTime = (secondsHumanDayEnd - secondsHumanDayStart);
+            //assuming a day is 24 hours long
+            //UInt64 secondsInHumanNightTime = secondsIn24Hours - secondsInHumanDayTime;
+            // TODO remove this, its set at 5400 seconds (1.5hrs ) for testing.
+            secondsInHumanNightTime = 5401 - secondsInHumanDayTime;
+            secondsInHumanDayCycle = secondsInHumanDayTime + secondsInHumanNightTime;
         }
 
         abstract public void ModuleReady();
@@ -253,7 +264,11 @@ namespace LunarNumericSimulator {
             // assumes that human is active/working between 07:00 and 21:00 (14 hours)
             // assumes that the human sleeps/inactive from 21:00 to 07:00 (10 hours)
             UInt64 lowestDayValue = currentTime;
-            UInt64 secondsInHumanDayCycle = 86400;
+
+
+            //Console.WriteLine("seconds in a day = " + secondsInHumanDayTime + " (hours = ) " + ((double)secondsInHumanDayTime/3600) );
+            //Console.WriteLine("seconds in a night = " + secondsInHumanNightTime + " (hours = ) " + ((double)secondsInHumanNightTime / 3600));
+            //Console.WriteLine("seconds in a whole cycle = " + secondsInHumanDayCycle + " (hours = ) " + ((double)secondsInHumanDayCycle / 3600));
 
             while (lowestDayValue >= secondsInHumanDayCycle)
             {

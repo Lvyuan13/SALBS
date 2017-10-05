@@ -104,7 +104,6 @@ namespace LunarNumericSimulator.Modules.O2_Generation
             double powerUsed = powerRequired * result;
 
 
-            Console.WriteLine("power used = " + powerUsed);
             consumeResource(Resources.H2O, inflowAdjusted);
             consumePower(powerUsed);
             produceResource(Resources.O2, O2Produced);

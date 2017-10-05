@@ -14,7 +14,9 @@ namespace LunarNumericSimulator.Modules
 
         // variables for setting time of day to day activities
         private uint clothesWashTime;
+        private bool hasWashedClothes;
         private uint dishWashTime;
+        private bool hasWashedDishes;
         private uint showerTime;
         private bool hasShowered;
         private uint urinationFrequency;
@@ -26,7 +28,10 @@ namespace LunarNumericSimulator.Modules
         private uint[] drinkTimes;
         private uint drinkFrequency;
         private uint drinksCount;
-        private bool needNewTaskList;
+        // the "jobs" array is a list of jobs carried out by the human, provided by the user at input.
+        // the format is [duration, occurance]
+        // "needNewJobList" is set to turn on every time the human day starts
+        private bool needNewJobList;
         int[,] jobs;
 
         //metabolic rates for different activities in [W/m^2]
@@ -79,25 +84,24 @@ namespace LunarNumericSimulator.Modules
         [NumericConfigurationParameter("Weight [kg]", "80", "double", false)]
         public double weight { get; set; } // time doing resting  [hrs]
 
-        [NumericConfigurationParameter("Total time spent resting during day [hrs]", "1", "double", false)]
+        [NumericConfigurationParameter("Total time spent resting during day [hrs]", "0.0", "double", false)]
         public double tRestWorkDuration { get; set; } // time doing resting  [hrs]
-        [NumericConfigurationParameter("Occurance of resting [frequency]", "1", "int", false)]
+        [NumericConfigurationParameter("Occurance of resting [frequency]", "0", "int", false)]
         public int tRestWorkOccurances { get; set; } // time doing resting  [hrs]
 
-        [NumericConfigurationParameter("Total time spent doing light work during day [hrs]", "10", "double", false)]
+        [NumericConfigurationParameter("Total time spent doing light work during day [hrs]", "0.5", "double", false)]
         public double tLightWorkDuration { get; set; } // time doing light work [hrs]
         [NumericConfigurationParameter("Occurance of light work [frequency]", "4", "int", false)]
         public int tLightWorkOccurances { get; set; } // time doing light work [hrs]
 
-
-        [NumericConfigurationParameter("Total time spent doing moderate work during day [hrs]", "2.5", "double", false)]
+        [NumericConfigurationParameter("Total time spent doing moderate work during day [hrs]", "0.25", "double", false)]
         public double tModerateWorkDuration { get; set; } // time doing moderate work [hrs]
-        [NumericConfigurationParameter("Occurance of moderate work [frequency]", "1", "int", false)]
+        [NumericConfigurationParameter("Occurance of moderate work [frequency]", "2", "int", false)]
         public int tModerateWorkOccurances { get; set; } // time doing moderate work [hrs]
 
-        [NumericConfigurationParameter("Total time spent doing heavy work during day [hrs]", "0.5", "double", false)]
+        [NumericConfigurationParameter("Total time spent doing heavy work during day [hrs]", "0.25", "double", false)]
         public double tHeavyWorkDuration { get; set; } // time doing heavy work [hrs]
-        [NumericConfigurationParameter("Occurance of heavy work [frequency]", "1", "int", false)]
+        [NumericConfigurationParameter("Occurance of heavy work [frequency]", "3", "int", false)]
         public int tHeavyWorkOccurances { get; set; } // time doing heavy work [hrs]
 
 
@@ -115,41 +119,43 @@ namespace LunarNumericSimulator.Modules
             randomPhaseShift = getRandom().NextDouble() * Math.PI; // random number between 0.0 and PI
 
             // set time to wash clothes
-            // TODO: this probably needs randomising
-            clothesWashTime = 17 * 60 * 60;
+            // TODO: this probably needs better randomising
+            clothesWashTime = generateRandomUintForDay();
+            hasWashedClothes = false;
             // set time to wash dishes
-            dishWashTime = 18 * 60 * 60;
-            // set random time for this human to shower daily
-            showerTime = (uint)getRandom().Next((int)secondsHumanDayStart, (int)secondsHumanDayEnd);
+            // TODO: this probably needs better randomising
+            dishWashTime = generateRandomUintForDay();
+            hasWashedDishes = false;
+            // set random time for this human to shower 
+            showerTime = generateRandomUintForDay();
+            hasShowered = false;
 
-            // initialise urination properties
+            // initialise random times to urinate through the day time
             urinationCount = 0;
             urinationFrequency = 4;
-            urinationTimes = new uint[4];
+            urinationTimes = createRandomArrayForDay(urinationFrequency, getRandom());
+            Array.Sort(urinationTimes);
+            
+
 
             // set excretion variables
-            excretionTime = (uint)getRandom().Next((int)secondsHumanDayStart, (int)secondsHumanDayEnd);
+            excretionTime = generateRandomUintForDay();
             excretionFrequency = 1;
             hasExcreted = false;
 
-            // initialise random times to urinate through the day time
-            for (int i = 0; i < urinationFrequency; i++)
-            {
-                urinationTimes[i] = (uint)getRandom().Next((int)secondsHumanDayStart, (int)secondsHumanDayEnd);
-            }
-
-            // initialise water drinking properties
+            // initialise some random drinking times
             drinksCount = 0;
             drinkFrequency = 4;
-            drinkTimes = new uint[4];
-            // initialise some random drinking times
-            for (int i = 0; i < urinationFrequency; i++)
-            {
-                drinkTimes[i] = (uint)getRandom().Next((int)secondsHumanDayStart, (int)secondsHumanDayEnd);
-            }
+            drinkTimes = createRandomArrayForDay(drinkFrequency, getRandom());
+            Array.Sort(drinkTimes);
 
-            // as we start the simulator, we need to indicate that a task order needs to be generated.
-            needNewTaskList = true;
+
+            // as we start the simulator, we need to indicate that a job order needs to be generated.
+            // NOTE, they MUST be generated during update() due to the parameters given by the user
+            needNewJobList = true;
+
+
+
 
         }
 
@@ -199,47 +205,27 @@ namespace LunarNumericSimulator.Modules
 
         protected override void update(UInt64 clock)
         {
-            if (needNewTaskList)
+
+            // if we need to create the list of jobs for the day
+            if (needNewJobList)
             {
                 jobs = generateJobList();
-                needNewTaskList = false;
+                needNewJobList = false;
             }
-            
+
             int currentMetabolicRate = getCurrentMetabolicRate(clock);
 
-            double areaDubois = 0.202 * Math.Pow(weight, 0.425) * Math.Pow(height / 100, 0.725);
-
-            // volume of 02 required for this human in [L / day]
-            double volumeO2Required = (currentMetabolicRate * areaDubois / EE) * 24;
-
-            //  determine proportion of metablic rate and multiply it by the dubois area, then convert to kW
-            double heatGeneration = (currentMetabolicRate * areaDubois) / 1000;
-
-            // mass of oxygen required in [kg] over 24hrs. /1000 converts L to m^3
-            double massO2ConsumedPerDay = (volumeO2Required / 1000) * densityO2;
-
-            // RQ = Respiratory quotient = volumeCO2Produced / volumeO2Required 
-            double RQ = ((EE / 5.88) - 0.78) / 0.23;
-
-            // volume of 02 required for this human in 24hrs
-            double volumeCO2ProducedPerDay = RQ * volumeO2Required;
-
-            // mass of CarbonDioxide produced in [kg] over 24hrs. /1000 converts L to m^3
-            double massCO2ProducedPerDay = (volumeCO2ProducedPerDay / 1000) * densityCO2;
-            double massCO2ProducedPerSecond = massCO2ProducedPerDay / (60 * 60 * 24);
-            double massO2ConsumedPerSecond = massO2ConsumedPerDay / (60 * 60 * 24);
-
+            // calculate the changes in heat and the mass of CO2 and O2 to change
+            double heatGeneration, massCO2ProducedPerSecond, massO2ConsumedPerSecond;
+            calcResourceChangePerSec(currentMetabolicRate, out heatGeneration, out massCO2ProducedPerSecond, out massO2ConsumedPerSecond);
 
             produceResource(Resources.CO2, massCO2ProducedPerSecond);
+            produceResource(Resources.Heat, heatGeneration);
             consumeResource(Resources.O2, massO2ConsumedPerSecond);
 
-
-
-            double heatRelease = 118 * Math.Pow(10, -3); // Humans release heat at 118W, converting to kJ
-            produceResource(Resources.Heat, heatRelease);
-
-            double sweatReleasedPerSecond = 1.388888888888889e-4;
-            produceResourceLitres(Resources.Humidity, sweatReleasedPerSecond);
+            // assuming that 1kg is always approximately equal to 1L
+            double waterReleasedPerSec = (respAndPerspH2OProduced / (60 * 60));
+            produceResourceLitres(Resources.Humidity, waterReleasedPerSec);
 
 
             if (getRandom().Next((int)secondsIn24Hours / 8) == 1) // There is an 8 in 86400 (24 hours) chance that flatulence will occur, since average person has flatulence 8 times per day
@@ -248,55 +234,64 @@ namespace LunarNumericSimulator.Modules
             // if day has just ended
             if (clock % secondsHumanDayEnd == 0)
             {
+
+
+                hasWashedClothes = false;
+                clothesWashTime = generateRandomUintForDay();
+
+                // set time to wash dishes
+                hasWashedDishes = false;
+                dishWashTime = generateRandomUintForDay();
+
                 // tell human they should shower the next day and generate a new random time to shower
                 hasShowered = false;
-                Random random = new Random();
-                showerTime = (uint)random.Next((int)secondsHumanDayStart, (int)secondsHumanDayEnd);
+                showerTime = generateRandomUintForDay();
 
-                // initialise random times to urinate through the day time
-                urinationCount = 0;
-                for (int i = 0; i < urinationFrequency; i++)
-                {
-                    urinationTimes[i] = (uint)random.Next((int)secondsHumanDayStart, (int)secondsHumanDayEnd);
-                }
-
-                // reset excretion time 
-                excretionTime = (uint)random.Next((int)secondsHumanDayStart, (int)secondsHumanDayEnd);
+                // set excretion variables
+                excretionTime = generateRandomUintForDay();
                 hasExcreted = false;
+                
+                // reset urination values 
+                urinationCount = 0;
+                urinationTimes = createRandomArrayForDay(urinationFrequency, getRandom());
+                Array.Sort(urinationTimes);
 
-                // reset drinking times 
+                // reset some random drinking times
                 drinksCount = 0;
-                for (int i = 0; i < drinkFrequency; i++)
-                {
-                    drinkTimes[i] = (uint)random.Next((int)secondsHumanDayStart, (int)secondsHumanDayEnd);
-                }
+                drinkTimes = createRandomArrayForDay(drinkFrequency, getRandom());
+                Array.Sort(drinkTimes);
 
                 // reorganise the jobs for the next day
-                needNewTaskList = true;
+                needNewJobList = true;
             }
+
+
 
             // Day time / working activities only
             if (isHumanDay(clock))
             {
-
                 if (getRandom().Next((int)secondsIn12Hours / 4) == 1) // There is an 4 in 43200 chance that eating will occur, since a person has 4 meals in a day
                     eat();
 
 
                 // if its time to wash clothes
-                if (clock % clothesWashTime == 0)
+                if (clock % clothesWashTime == 0 && hasWashedClothes == false)
                 {
                     // TODO does it use power to wash clothes?
                     consumeResource(Resources.H2O, clothesWashH2OConsumed);
                     getTank("WasteWaterStorage").addResource(clothesWashH2OProduced);
+                    hasWashedClothes = true;
+
                 }
 
                 // if its time to wash dishes
-                if (clock % dishWashTime == 0)
+                if (clock % dishWashTime == 0 && hasWashedDishes == false)
                 {
-                    // TODO does it use power to wash clothes?
+                    // TODO does it use power to wash dishes?
                     consumeResource(Resources.H2O, dishWashH2OConsumed);
                     getTank("WasteWaterStorage").addResource(dishWashH2OConsumed);
+                    hasWashedDishes = true;
+
                 }
 
                 // if its time to shower
@@ -305,6 +300,7 @@ namespace LunarNumericSimulator.Modules
                     consumeResource(Resources.H2O, showerH2OConsumed);
                     getTank("WasteWaterStorage").addResource(showerH2OConsumed);
                     hasShowered = true;
+
                 }
 
                 // if human still has daily urinations remaining
@@ -314,6 +310,7 @@ namespace LunarNumericSimulator.Modules
                     if (clock % urinationTimes[urinationCount] == 0)
                     {
                         urinate();
+
                     }
                 }
 
@@ -331,17 +328,45 @@ namespace LunarNumericSimulator.Modules
                 if (clock % excretionTime == 0 && hasExcreted == false)
                 {
                     excrete();
+ 
                 }
 
             }
             // Night time / resting activites only
             else
             {
-                // TODO lower metabolism whilst sleeping and resting
 
             }
 
 
+        }
+
+        private void calcResourceChangePerSec(int currentMetabolicRate, out double heatGeneration, out double massCO2ProducedPerSecond, out double massO2ConsumedPerSecond)
+        {
+            double areaDubois = 0.202 * Math.Pow(weight, 0.425) * Math.Pow(height / 100, 0.725);
+
+            // volume of 02 required for this human in [L / day]
+            double volumeO2Required = (currentMetabolicRate * areaDubois / EE) * 24;
+
+            //  determine proportion of metablic rate and multiply it by the dubois area, then convert to kW
+            heatGeneration = (currentMetabolicRate * areaDubois) / 1000;
+
+            // mass of oxygen required in [kg] over 24hrs. /1000 converts L to m^3
+            double massO2ConsumedPerDay = (volumeO2Required / 1000) * densityO2;
+
+            // RQ = Respiratory quotient = volumeCO2Produced / volumeO2Required 
+            double RQ = ((EE / 5.88) - 0.78) / 0.23;
+
+            // volume of 02 required for this human in 24hrs
+            double volumeCO2ProducedPerDay = RQ * volumeO2Required;
+
+
+            // mass of CarbonDioxide produced in [kg] over 24hrs. /1000 converts L to m^3
+            double massCO2ProducedPerDay = (volumeCO2ProducedPerDay / 1000) * densityCO2;
+
+
+            massCO2ProducedPerSecond = massCO2ProducedPerDay / (60 * 60 * 24);
+            massO2ConsumedPerSecond = massO2ConsumedPerDay / (60 * 60 * 24);
         }
 
         protected void flatulence()
@@ -381,6 +406,9 @@ namespace LunarNumericSimulator.Modules
             drinksCount++;
         }
 
+
+
+
         int getCurrentMetabolicRate(ulong currentTime)
         {
 
@@ -392,13 +420,20 @@ namespace LunarNumericSimulator.Modules
                 runningSum = runningSum + jobs[i, 0];
             }
 
+            UInt64 lowestDayValue = currentTime;
+
+            while (lowestDayValue >= secondsInHumanDayCycle)
+            {
+                lowestDayValue = lowestDayValue - secondsInHumanDayCycle;
+            }
 
             ulong lowerBoundary = secondsHumanDayStart;
             for (int i = 0; i < taskTimes.Length; i++)
             {
+                uint[] newArray = Array.ConvertAll(taskTimes, item => (uint)item);
 
                 // if current time is greater than lower bounds AND less than current task time
-                if ((currentTime >= lowerBoundary) && ((int)currentTime <= taskTimes[i]))
+                if ((lowestDayValue >= lowerBoundary) && ((int)lowestDayValue <= taskTimes[i]))
                 {
                     return jobs[i, 1];
                 }
@@ -415,6 +450,10 @@ namespace LunarNumericSimulator.Modules
             int totalJobs = (int)(tRestWorkOccurances + tLightWorkOccurances + tModerateWorkOccurances + tHeavyWorkOccurances + tVeryHeavyWorkOccurances);
 
             // TODO: total jobs MUST NOT be larger than the number of daytime hours available
+            if (!(totalHoursWorked*3600).Equals( (secondsHumanDayEnd - secondsHumanDayStart) ))
+            {
+                exit(1);
+            }
 
 
             int[,] jobArray = new int[totalJobs, 2];     // arrayFormat is [job duration, metabolic rate]
@@ -463,8 +502,42 @@ namespace LunarNumericSimulator.Modules
                 shuffledJobArray[i, 1] = jobArray[sequence[i], 1];
             }
 
+
             return shuffledJobArray;
 
+        }
+
+        private void exit(int v)
+        {
+            throw new NotImplementedException();
+        }
+
+        void printArray(string name, uint[] array)
+        {
+            Console.WriteLine(name + ": ");
+            for (int i = 0; i < array.Length; i++)
+            {
+                Console.Write(array[i] + ", ");
+            }
+            Console.WriteLine("");
+        }
+
+        uint generateRandomUintForDay()
+        {
+            return (uint) getRandom().Next((int) secondsHumanDayStart, (int) secondsHumanDayEnd);
+        }
+        
+
+
+        uint[] createRandomArrayForDay(uint length, Random random)
+        {
+            uint[] array = new uint[length];
+
+            for (int i = 0; i < length; i++)
+            {
+                array[i] = (uint)random.Next((int)secondsHumanDayStart, (int)secondsHumanDayEnd);
+            }
+            return array;
         }
 
 
