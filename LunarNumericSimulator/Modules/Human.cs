@@ -33,6 +33,9 @@ namespace LunarNumericSimulator.Modules
         // "needNewJobList" is set to turn on every time the human day starts
         private bool needNewJobList;
         int[,] jobs;
+        uint currentJobIndex;
+        int[] taskTimeLine;
+        int dayCount;
 
         //metabolic rates for different activities in [W/m^2]
         const int M1 = 65;             //resting
@@ -117,7 +120,7 @@ namespace LunarNumericSimulator.Modules
         public Human(Simulation sim, int moduleid) : base(sim, moduleid)
         {
             randomPhaseShift = getRandom().NextDouble() * Math.PI; // random number between 0.0 and PI
-
+            dayCount = 0;
             // set time to wash clothes
             // TODO: this probably needs better randomising
             clothesWashTime = generateRandomUintForDay();
@@ -152,10 +155,8 @@ namespace LunarNumericSimulator.Modules
 
             // as we start the simulator, we need to indicate that a job order needs to be generated.
             // NOTE, they MUST be generated during update() due to the parameters given by the user
+            currentJobIndex = 0;
             needNewJobList = true;
-
-
-
 
         }
 
@@ -219,9 +220,10 @@ namespace LunarNumericSimulator.Modules
             double heatGeneration, massCO2ProducedPerSecond, massO2ConsumedPerSecond;
             calcResourceChangePerSec(currentMetabolicRate, out heatGeneration, out massCO2ProducedPerSecond, out massO2ConsumedPerSecond);
 
-            produceResource(Resources.CO2, massCO2ProducedPerSecond);
-            produceResource(Resources.Heat, heatGeneration);
-            consumeResource(Resources.O2, massO2ConsumedPerSecond);
+
+            produceResource(Resources.CO2, massCO2ProducedPerSecond );
+            produceResource(Resources.Heat, heatGeneration );
+            consumeResource(Resources.O2, massO2ConsumedPerSecond );
 
             // assuming that 1kg is always approximately equal to 1L
             double waterReleasedPerSec = (respAndPerspH2OProduced / (60 * 60));
@@ -234,8 +236,8 @@ namespace LunarNumericSimulator.Modules
             // if day has just ended
             if (clock % secondsHumanDayEnd == 0)
             {
-
-
+                dayCount++;
+                Console.WriteLine("day number = " + dayCount);
                 hasWashedClothes = false;
                 clothesWashTime = generateRandomUintForDay();
 
@@ -367,6 +369,7 @@ namespace LunarNumericSimulator.Modules
 
             massCO2ProducedPerSecond = massCO2ProducedPerDay / (60 * 60 * 24);
             massO2ConsumedPerSecond = massO2ConsumedPerDay / (60 * 60 * 24);
+
         }
 
         protected void flatulence()
@@ -412,11 +415,14 @@ namespace LunarNumericSimulator.Modules
         int getCurrentMetabolicRate(ulong currentTime)
         {
 
-            int[] taskTimes = new int[jobs.GetLength(0)];
+            taskTimeLine = new int[jobs.GetLength(0)];
+
+
+
             int runningSum = (int)secondsHumanDayStart;
             for (int i = 0; i < jobs.GetLength(0); i++)
             {
-                taskTimes[i] = jobs[i, 0] + runningSum;
+                taskTimeLine[i] = jobs[i, 0] + runningSum;
                 runningSum = runningSum + jobs[i, 0];
             }
 
@@ -428,18 +434,21 @@ namespace LunarNumericSimulator.Modules
             }
 
             ulong lowerBoundary = secondsHumanDayStart;
-            for (int i = 0; i < taskTimes.Length; i++)
+            for (int i = 0; i < taskTimeLine.Length; i++)
             {
-                uint[] newArray = Array.ConvertAll(taskTimes, item => (uint)item);
+                uint[] newArray = Array.ConvertAll(taskTimeLine, item => (uint)item);
 
                 // if current time is greater than lower bounds AND less than current task time
-                if ((lowestDayValue >= lowerBoundary) && ((int)lowestDayValue <= taskTimes[i]))
+                if ((lowestDayValue >= lowerBoundary) && ((int)lowestDayValue <= taskTimeLine[i]))
                 {
+                    currentJobIndex = (uint)i;
                     return jobs[i, 1];
+                    
                 }
-                lowerBoundary = (ulong)taskTimes[i];
+                lowerBoundary = (ulong)taskTimeLine[i];
             }
 
+            currentJobIndex = 0;
             return M1;
         }
 
