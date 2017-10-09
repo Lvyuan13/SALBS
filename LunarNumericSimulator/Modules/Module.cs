@@ -13,6 +13,7 @@ namespace LunarNumericSimulator {
         // useful values for child classes to refer to
         protected const uint secondsIn12Hours = 43200;
         protected const uint secondsIn24Hours = 86400;
+        protected const uint secondsInCompleteCycle = 5401;
         //protected const UInt64 secondsHumanDayStart = 25200;
         //protected const UInt64 secondsHumanDayEnd = 75600;
         protected const UInt64 secondsHumanDayStart = 1;
@@ -44,9 +45,9 @@ namespace LunarNumericSimulator {
             // initialise day and night information
             UInt64 secondsInHumanDayTime = (secondsHumanDayEnd - secondsHumanDayStart);
             //assuming a day is 24 hours long
-            //UInt64 secondsInHumanNightTime = secondsIn24Hours - secondsInHumanDayTime;
+            UInt64 secondsInHumanNightTime = secondsInCompleteCycle - secondsInHumanDayTime;
             // TODO remove this, its set at 5400 seconds (1.5hrs ) for testing.
-            secondsInHumanNightTime = 5401 - secondsInHumanDayTime;
+            //secondsInHumanNightTime = 5401 - secondsInHumanDayTime;
             secondsInHumanDayCycle = secondsInHumanDayTime + secondsInHumanNightTime;
         }
 

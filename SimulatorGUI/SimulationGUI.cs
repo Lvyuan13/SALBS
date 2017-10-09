@@ -82,6 +82,14 @@ namespace SimulatorGUI
                 SimulationProgressReport report = (SimulationProgressReport)e.UserState;
                 CurrentTimeLabel.Text = "Current Time: " + report.GlobalState.clock;
                 BaseLoad.Text = "Base Load: " + Math.Round(report.PowerLoad) + " kW";
+
+
+
+                //using (StreamWriter sw = File.AppendText(@"C:\Users\Addy360\Downloads\Uni\FYP\runThroughData\powerData.txt"))
+                //{
+                //    sw.WriteLine(report.GlobalState.clock + "," + report.PowerLoad);
+                //}
+
                 updateEnvironmentTab(report);
                 updateModuleOverviewTab(report);
                 foreach (Module m in simulation.getModules())

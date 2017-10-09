@@ -35,6 +35,7 @@ namespace LunarNumericSimulator.Modules
         int[,] jobs;
         uint currentJobIndex;
         int[] taskTimeLine;
+        int[] metabolicTimeLine;
         int dayCount;
 
         //metabolic rates for different activities in [W/m^2]
@@ -87,28 +88,29 @@ namespace LunarNumericSimulator.Modules
         [NumericConfigurationParameter("Weight [kg]", "80", "double", false)]
         public double weight { get; set; } // time doing resting  [hrs]
 
-        [NumericConfigurationParameter("Total time spent resting during day [hrs]", "0.0", "double", false)]
+        [NumericConfigurationParameter("Time spent resting during day [hrs]", "0.0", "double", false)]
         public double tRestWorkDuration { get; set; } // time doing resting  [hrs]
         [NumericConfigurationParameter("Occurance of resting [frequency]", "0", "int", false)]
         public int tRestWorkOccurances { get; set; } // time doing resting  [hrs]
 
-        [NumericConfigurationParameter("Total time spent doing light work during day [hrs]", "0.5", "double", false)]
+        [NumericConfigurationParameter("Time spent doing light work during day [hrs]", "0.5", "double", false)]
         public double tLightWorkDuration { get; set; } // time doing light work [hrs]
-        [NumericConfigurationParameter("Occurance of light work [frequency]", "4", "int", false)]
+        [NumericConfigurationParameter("Occurance of light work [frequency]", "3", "int", false)]
         public int tLightWorkOccurances { get; set; } // time doing light work [hrs]
 
-        [NumericConfigurationParameter("Total time spent doing moderate work during day [hrs]", "0.25", "double", false)]
+
+        [NumericConfigurationParameter("Time spent doing moderate work during day [hrs]", "0.25", "double", false)]
         public double tModerateWorkDuration { get; set; } // time doing moderate work [hrs]
-        [NumericConfigurationParameter("Occurance of moderate work [frequency]", "2", "int", false)]
+        [NumericConfigurationParameter("Occurance of moderate work [frequency]", "6", "int", false)]
         public int tModerateWorkOccurances { get; set; } // time doing moderate work [hrs]
 
-        [NumericConfigurationParameter("Total time spent doing heavy work during day [hrs]", "0.25", "double", false)]
+        [NumericConfigurationParameter("Time spent doing heavy work during day [hrs]", "0.25", "double", false)]
         public double tHeavyWorkDuration { get; set; } // time doing heavy work [hrs]
-        [NumericConfigurationParameter("Occurance of heavy work [frequency]", "3", "int", false)]
+        [NumericConfigurationParameter("Occurance of heavy work [frequency]", "2", "int", false)]
         public int tHeavyWorkOccurances { get; set; } // time doing heavy work [hrs]
 
 
-        [NumericConfigurationParameter("Total time spent doing very heavy work during day [hrs]", "0.0", "double", false)]
+        [NumericConfigurationParameter("Time spent doing very heavy work during day [hrs]", "0.0", "double", false)]
         public double tVeryHeavyWorkDuration { get; set; } // time doing very heavy work [hrs]
         [NumericConfigurationParameter("Occurance of very heavy work [frequency]", "0", "int", false)]
         public int tVeryHeavyWorkOccurances { get; set; } // time doing very heavy work [hrs]
@@ -206,6 +208,7 @@ namespace LunarNumericSimulator.Modules
 
         protected override void update(UInt64 clock)
         {
+           
 
             // if we need to create the list of jobs for the day
             if (needNewJobList)
@@ -214,13 +217,84 @@ namespace LunarNumericSimulator.Modules
                 needNewJobList = false;
             }
 
-            int currentMetabolicRate = getCurrentMetabolicRate(clock);
 
+            int currentMetabolicRate = getCurrentMetabolicRate(clock);
+            
+
+            int nextMetabolicRate = M1;
+            if ((currentJobIndex + 1) < (metabolicTimeLine.GetLength(0)))
+            {
+                nextMetabolicRate = metabolicTimeLine[currentJobIndex + 1];
+            }
+            if (!isHumanDay(clock))
+            {
+                currentMetabolicRate = M1;
+                nextMetabolicRate = metabolicTimeLine[currentJobIndex];
+            }
+
+            //Console.WriteLine("currentMetabolicRate = " + currentMetabolicRate + ", the next is = " + nextMetabolicRate);
+
+
+            int convertedClock = (int)clock;
+            while (convertedClock >= (int)secondsInHumanDayCycle)
+            {
+                convertedClock = (int)convertedClock - (int)secondsInHumanDayCycle;
+            }
+
+
+            int currentJobStart = taskTimeLine[currentJobIndex];
+            int currentJobEnd = (int)secondsInCompleteCycle;
+
+            if ((currentJobIndex + 1) < (taskTimeLine.GetLength(0)))
+            {
+                currentJobEnd = taskTimeLine[currentJobIndex];
+            }
+            if (currentJobIndex == 0)
+            {
+
+                currentJobStart = 0;
+                currentJobEnd = taskTimeLine[currentJobIndex];
+            }
+            else
+            {
+                currentJobStart = taskTimeLine[currentJobIndex - 1];
+                currentJobEnd = taskTimeLine[currentJobIndex];
+            }
+            if (!isHumanDay(clock))
+            {
+                currentJobEnd = (int)secondsInCompleteCycle;
+            }
+            
+
+
+            int timeAfterJobStart = (int)convertedClock - currentJobStart;
+            int timeToNextJob = (currentJobEnd - (int)convertedClock);
+            
+
+            //uint[] newArray = Array.ConvertAll(taskTimeLine, item => (uint)item);
+
+            double newRate = currentMetabolicRate;
+            double stretchFactor = 120;
+            if (timeToNextJob < stretchFactor)
+            {
+                double adjustedTime = (stretchFactor - (double)timeToNextJob) / stretchFactor;
+                double sigmoidValue = (1 / (1 + Math.Exp(-6 * (2 * (adjustedTime) - 1))));
+                newRate = newRate + sigmoidValue * (nextMetabolicRate - currentMetabolicRate);
+            }
+
+            // this equality isn't working.
+            // at t = 5401, timeToNextJob = 5401 for some reason
+            int x1 = Convert.ToInt32(convertedClock);
+            int x2 = Convert.ToInt32(secondsInCompleteCycle);
+            if (convertedClock == 0)
+            {
+                newRate = metabolicTimeLine[currentJobIndex];
+            }
             // calculate the changes in heat and the mass of CO2 and O2 to change
             double heatGeneration, massCO2ProducedPerSecond, massO2ConsumedPerSecond;
-            calcResourceChangePerSec(currentMetabolicRate, out heatGeneration, out massCO2ProducedPerSecond, out massO2ConsumedPerSecond);
+            calcResourceChangePerSec(newRate, out heatGeneration, out massCO2ProducedPerSecond, out massO2ConsumedPerSecond);
 
-
+            
             produceResource(Resources.CO2, massCO2ProducedPerSecond );
             produceResource(Resources.Heat, heatGeneration );
             consumeResource(Resources.O2, massO2ConsumedPerSecond );
@@ -237,7 +311,6 @@ namespace LunarNumericSimulator.Modules
             if (clock % secondsHumanDayEnd == 0)
             {
                 dayCount++;
-                Console.WriteLine("day number = " + dayCount);
                 hasWashedClothes = false;
                 clothesWashTime = generateRandomUintForDay();
 
@@ -343,7 +416,7 @@ namespace LunarNumericSimulator.Modules
 
         }
 
-        private void calcResourceChangePerSec(int currentMetabolicRate, out double heatGeneration, out double massCO2ProducedPerSecond, out double massO2ConsumedPerSecond)
+        private void calcResourceChangePerSec(double currentMetabolicRate, out double heatGeneration, out double massCO2ProducedPerSecond, out double massO2ConsumedPerSecond)
         {
             double areaDubois = 0.202 * Math.Pow(weight, 0.425) * Math.Pow(height / 100, 0.725);
 
@@ -410,19 +483,19 @@ namespace LunarNumericSimulator.Modules
         }
 
 
-
-
         int getCurrentMetabolicRate(ulong currentTime)
         {
 
             taskTimeLine = new int[jobs.GetLength(0)];
-
+            metabolicTimeLine = new int[jobs.GetLength(0)];
 
 
             int runningSum = (int)secondsHumanDayStart;
             for (int i = 0; i < jobs.GetLength(0); i++)
             {
                 taskTimeLine[i] = jobs[i, 0] + runningSum;
+                metabolicTimeLine[i] = jobs[i, 1];
+
                 runningSum = runningSum + jobs[i, 0];
             }
 
@@ -436,7 +509,6 @@ namespace LunarNumericSimulator.Modules
             ulong lowerBoundary = secondsHumanDayStart;
             for (int i = 0; i < taskTimeLine.Length; i++)
             {
-                uint[] newArray = Array.ConvertAll(taskTimeLine, item => (uint)item);
 
                 // if current time is greater than lower bounds AND less than current task time
                 if ((lowestDayValue >= lowerBoundary) && ((int)lowestDayValue <= taskTimeLine[i]))
@@ -461,6 +533,7 @@ namespace LunarNumericSimulator.Modules
             // TODO: total jobs MUST NOT be larger than the number of daytime hours available
             if (!(totalHoursWorked*3600).Equals( (secondsHumanDayEnd - secondsHumanDayStart) ))
             {
+                Console.WriteLine("HoursGiven ( " + totalHoursWorked*3600 + " ) doesnt equal the day seconds ( " + (secondsHumanDayEnd - secondsHumanDayStart));
                 exit(1);
             }
 
@@ -471,7 +544,7 @@ namespace LunarNumericSimulator.Modules
 
             for (int j = 0; j < (tRestWorkOccurances); j++)
             {
-                jobArray[jobCount, 0] = (int)((tRestWorkDuration * 60 * 60) / tRestWorkOccurances);
+                jobArray[jobCount, 0] = (int)((tRestWorkDuration * (double)60 * 60) / tRestWorkOccurances);
                 jobArray[jobCount, 1] = M1;
                 jobCount++;
             }
@@ -501,6 +574,9 @@ namespace LunarNumericSimulator.Modules
             }
 
 
+
+
+
             int[] sequence = GenerateShuffledIndexArray((int)totalJobs);
 
 
@@ -518,6 +594,7 @@ namespace LunarNumericSimulator.Modules
 
         private void exit(int v)
         {
+            // input for human work hours didnt add up properly 
             throw new NotImplementedException();
         }
 
