@@ -84,7 +84,6 @@ namespace SimulatorGUI
                 BaseLoad.Text = "Base Load: " + Math.Round(report.PowerLoad) + " kW";
 
 
-
                 //using (StreamWriter sw = File.AppendText(@"C:\Users\Addy360\Downloads\Uni\FYP\runThroughData\powerData.txt"))
                 //{
                 //    sw.WriteLine(report.GlobalState.clock + "," + report.PowerLoad);
@@ -102,7 +101,7 @@ namespace SimulatorGUI
                 updateTimer++;
             }
         }
-        
+
         protected void updateEnvironmentTab(SimulationProgressReport report)
         {
             Chart environmentChart = (Chart)GraphTabs.TabPages[0].Controls[0].Controls[0];
@@ -115,7 +114,7 @@ namespace SimulatorGUI
             environmentChart.Series["BaseLoad"].Points.AddXY(report.GlobalState.clock, report.PowerLoad);
             environmentChart.Series["BaseLoad"].BorderWidth = 4;
 
-            RelativeHumidity.Text = "Relative Humdity: " + Math.Round(report.GlobalState.Atmospheric.RelativeHumdiity,2);
+            RelativeHumidity.Text = "Relative Humdity: " + Math.Round(report.GlobalState.Atmospheric.RelativeHumdiity, 2);
 
             if (updateTimer % 50 == 0)
             {
@@ -138,7 +137,7 @@ namespace SimulatorGUI
                          select element.Quantity).FirstOrDefault();
                 environmentChart.Series["Gas Distribution"].Points.AddXY(Resources.N2.ToString(), N);
             }
-            
+
         }
 
         protected void updateModuleOverviewTab(SimulationProgressReport report)
@@ -164,7 +163,7 @@ namespace SimulatorGUI
                         continue;
                     moduleOverviewChart.Series["Module Power Usage"].Points.AddXY(module.Name, module.PowerUsage);
                 }
-                
+
             }
         }
 
@@ -178,8 +177,8 @@ namespace SimulatorGUI
                         where element.ModuleID == Convert.ToInt32(tabid)
                         select element).First();
             var configProperties = (from element in m.GetType().GetProperties()
-                                   where element.GetCustomAttribute<NumericConfigurationParameter>() != null
-                                   select new { prop= element, attr=  element.GetCustomAttribute<NumericConfigurationParameter>() }).ToList();
+                                    where element.GetCustomAttribute<NumericConfigurationParameter>() != null
+                                    select new { prop = element, attr = element.GetCustomAttribute<NumericConfigurationParameter>() }).ToList();
             if (configProperties.Count > 0)
             {
                 TableLayoutPanel parameterTable = (TableLayoutPanel)panel.Controls["ConfigPanel"].Controls["ParameterPanel"];
@@ -203,7 +202,8 @@ namespace SimulatorGUI
                         row++;
                     }
                 }
-            } else
+            }
+            else
             {
                 Panel parameterTable = (Panel)panel.Controls["ConfigPanel"];
                 panel.Controls.Remove(parameterTable);
@@ -211,7 +211,8 @@ namespace SimulatorGUI
 
             }
             Chart chart = (Chart)panel.Controls["AtmosphereChart"];
-            foreach (var gas in m.getRegisteredResources()) {
+            foreach (var gas in m.getRegisteredResources())
+            {
                 setupSeries(gas, chart);
             }
         }
@@ -295,10 +296,10 @@ namespace SimulatorGUI
 
         protected void updateTab(UInt64 clock, string tabid, ModuleResourceLevels report)
         {
-            
+
             Chart chart = (Chart)GraphTabs.TabPages[tabid].Controls[0].Controls["AtmosphereChart"];
 
-            foreach(var gas in report.getRegisteredResources())
+            foreach (var gas in report.getRegisteredResources())
             {
                 chart.Series[gas.ToString()].Points.AddXY(clock, report.getResourceLevel(gas));
             }
@@ -345,7 +346,7 @@ namespace SimulatorGUI
             addButton.Click += (obj, eventargs) =>
             {
                 Dictionary<string, object> result = new Dictionary<string, object>();
-                for(int j = 0; j < layout.Controls.Count; j++)
+                for (int j = 0; j < layout.Controls.Count; j++)
                 {
                     if (layout.Controls[j].GetType().Name != "AttributePanel")
                         continue;
@@ -355,7 +356,8 @@ namespace SimulatorGUI
                     if (slider.Increment == 1)
                     {
                         result.Add(propName, Convert.ToInt32(propValue));
-                    } else
+                    }
+                    else
                     {
                         result.Add(propName, Convert.ToDouble(propValue));
                     }
@@ -408,7 +410,7 @@ namespace SimulatorGUI
                     entryField.Increment = 1M;
                     entryField.Value = Convert.ToInt32(attr.defaultValue);
                     pan.propertyName = attr.propertyName;
-                    layout.Controls.Add(textLabel,0,0);
+                    layout.Controls.Add(textLabel, 0, 0);
                     layout.Controls.Add(entryField, 1, 0);
                     layout.Dock = DockStyle.Fill;
                     textLabel.Dock = DockStyle.Fill;
@@ -465,13 +467,13 @@ namespace SimulatorGUI
 
         }
 
-        public class AttributePanel: Panel
+        public class AttributePanel : Panel
         {
             public string propertyName { get; set; }
 
-            public AttributePanel(): base()
+            public AttributePanel() : base()
             {
-                
+
             }
         }
 
@@ -484,14 +486,14 @@ namespace SimulatorGUI
                     simulation.deregisterAllModules();
                 var serializedState = File.ReadAllText(dialog.FileName);
                 var state = JsonConvert.DeserializeObject<List<Dictionary<string, object>>>(serializedState);
-                foreach(var obj in state)
+                foreach (var obj in state)
                 {
                     object moduleNameObj;
                     obj.TryGetValue("moduleName", out moduleNameObj);
                     string moduleName = (string)moduleNameObj;
                     var configurationParameters = simulation.getModuleConfiguration(moduleName);
                     Dictionary<string, object> newConfig = new Dictionary<string, object>();
-                    foreach(var param in configurationParameters)
+                    foreach (var param in configurationParameters)
                     {
                         object value;
                         obj.TryGetValue(param.propertyName, out value);

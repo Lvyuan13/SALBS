@@ -75,6 +75,7 @@ namespace LunarNumericSimulator.Modules.H2O_Management
             if (currentWasteLevel -  result < 0.0)
             {
                 result = currentWasteLevel;
+                pid.removeWindup();
             }
 
             designInflow = result;

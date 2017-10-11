@@ -78,6 +78,7 @@ namespace LunarNumericSimulator.Modules.H2O_Management
             if (currentUrineLevel - result < 0.0)
             {
                 result = currentUrineLevel;
+                pid.removeWindup();
             }
 
             designLiquidInFlow = result;

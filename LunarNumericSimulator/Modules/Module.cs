@@ -13,11 +13,13 @@ namespace LunarNumericSimulator {
         // useful values for child classes to refer to
         protected const uint secondsIn12Hours = 43200;
         protected const uint secondsIn24Hours = 86400;
-        protected const uint secondsInCompleteCycle = 5401;
-        //protected const UInt64 secondsHumanDayStart = 25200;
-        //protected const UInt64 secondsHumanDayEnd = 75600;
-        protected const UInt64 secondsHumanDayStart = 1;
-        protected const UInt64 secondsHumanDayEnd = 3601;
+        protected const uint secondsInCompleteCycle = 86400;
+        protected const UInt64 secondsHumanDayStart = 25200;
+        protected const UInt64 secondsHumanDayEnd = 75600;
+        // shorter day for testing
+        //protected const UInt64 secondsHumanDayStart = 101;
+        //protected const UInt64 secondsHumanDayEnd = 1001;
+        //protected const uint secondsInCompleteCycle = 1901;
         protected UInt64 secondsInHumanDayTime;
         protected UInt64 secondsInHumanNightTime;
         protected UInt64 secondsInHumanDayCycle;

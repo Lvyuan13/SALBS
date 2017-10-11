@@ -88,25 +88,27 @@ namespace LunarNumericSimulator.Modules
         [NumericConfigurationParameter("Weight [kg]", "80", "double", false)]
         public double weight { get; set; } // time doing resting  [hrs]
 
-        [NumericConfigurationParameter("Time spent resting during day [hrs]", "0.0", "double", false)]
+
+        // make sure to add up to 14 hours
+        [NumericConfigurationParameter("Time spent resting during day [hrs]", "6", "double", false)]
         public double tRestWorkDuration { get; set; } // time doing resting  [hrs]
-        [NumericConfigurationParameter("Occurance of resting [frequency]", "0", "int", false)]
+        [NumericConfigurationParameter("Occurance of resting [frequency]", "8", "int", false)]
         public int tRestWorkOccurances { get; set; } // time doing resting  [hrs]
 
-        [NumericConfigurationParameter("Time spent doing light work during day [hrs]", "0.5", "double", false)]
+        [NumericConfigurationParameter("Time spent doing light work during day [hrs]", "6", "double", false)]
         public double tLightWorkDuration { get; set; } // time doing light work [hrs]
-        [NumericConfigurationParameter("Occurance of light work [frequency]", "3", "int", false)]
+        [NumericConfigurationParameter("Occurance of light work [frequency]", "8", "int", false)]
         public int tLightWorkOccurances { get; set; } // time doing light work [hrs]
 
 
-        [NumericConfigurationParameter("Time spent doing moderate work during day [hrs]", "0.25", "double", false)]
+        [NumericConfigurationParameter("Time spent doing moderate work during day [hrs]", "2", "double", false)]
         public double tModerateWorkDuration { get; set; } // time doing moderate work [hrs]
-        [NumericConfigurationParameter("Occurance of moderate work [frequency]", "6", "int", false)]
+        [NumericConfigurationParameter("Occurance of moderate work [frequency]", "3", "int", false)]
         public int tModerateWorkOccurances { get; set; } // time doing moderate work [hrs]
 
-        [NumericConfigurationParameter("Time spent doing heavy work during day [hrs]", "0.25", "double", false)]
+        [NumericConfigurationParameter("Time spent doing heavy work during day [hrs]", "0.0", "double", false)]
         public double tHeavyWorkDuration { get; set; } // time doing heavy work [hrs]
-        [NumericConfigurationParameter("Occurance of heavy work [frequency]", "2", "int", false)]
+        [NumericConfigurationParameter("Occurance of heavy work [frequency]", "0", "int", false)]
         public int tHeavyWorkOccurances { get; set; } // time doing heavy work [hrs]
 
 
@@ -245,14 +247,16 @@ namespace LunarNumericSimulator.Modules
             int currentJobStart = taskTimeLine[currentJobIndex];
             int currentJobEnd = (int)secondsInCompleteCycle;
 
+            // if we are not on the last job
             if ((currentJobIndex + 1) < (taskTimeLine.GetLength(0)))
             {
                 currentJobEnd = taskTimeLine[currentJobIndex];
             }
+            // if we are on the first job
             if (currentJobIndex == 0)
             {
 
-                currentJobStart = 0;
+                currentJobStart = (int)secondsHumanDayStart;
                 currentJobEnd = taskTimeLine[currentJobIndex];
             }
             else
@@ -264,32 +268,41 @@ namespace LunarNumericSimulator.Modules
             {
                 currentJobEnd = (int)secondsInCompleteCycle;
             }
-            
+            bool newDayChange = false;
+            if (convertedClock < taskTimeLine[0] && currentJobIndex == 0 && dayCount > 0)
+            {
+                currentJobStart = 0;
+                currentJobEnd = taskTimeLine[0];
+                newDayChange = true;
+            }
+            if (dayCount == 0 && currentJobIndex == 0 && !isHumanDay(clock))
+            {
+                currentJobStart = 1;
+                currentJobEnd = (int)secondsHumanDayStart;
+            }
 
 
-            int timeAfterJobStart = (int)convertedClock - currentJobStart;
             int timeToNextJob = (currentJobEnd - (int)convertedClock);
-            
 
-            //uint[] newArray = Array.ConvertAll(taskTimeLine, item => (uint)item);
+
+
 
             double newRate = currentMetabolicRate;
-            double stretchFactor = 120;
+
+            if (newDayChange == true)
+            {
+                newRate = metabolicTimeLine[0];
+            }
+
+            double stretchFactor = 60;
             if (timeToNextJob < stretchFactor)
             {
                 double adjustedTime = (stretchFactor - (double)timeToNextJob) / stretchFactor;
                 double sigmoidValue = (1 / (1 + Math.Exp(-6 * (2 * (adjustedTime) - 1))));
                 newRate = newRate + sigmoidValue * (nextMetabolicRate - currentMetabolicRate);
             }
+            
 
-            // this equality isn't working.
-            // at t = 5401, timeToNextJob = 5401 for some reason
-            int x1 = Convert.ToInt32(convertedClock);
-            int x2 = Convert.ToInt32(secondsInCompleteCycle);
-            if (convertedClock == 0)
-            {
-                newRate = metabolicTimeLine[currentJobIndex];
-            }
             // calculate the changes in heat and the mass of CO2 and O2 to change
             double heatGeneration, massCO2ProducedPerSecond, massO2ConsumedPerSecond;
             calcResourceChangePerSec(newRate, out heatGeneration, out massCO2ProducedPerSecond, out massO2ConsumedPerSecond);
@@ -308,7 +321,7 @@ namespace LunarNumericSimulator.Modules
                 flatulence();
 
             // if day has just ended
-            if (clock % secondsHumanDayEnd == 0)
+            if (convertedClock == (int)secondsHumanDayEnd)
             {
                 dayCount++;
                 hasWashedClothes = false;
@@ -350,7 +363,7 @@ namespace LunarNumericSimulator.Modules
 
 
                 // if its time to wash clothes
-                if (clock % clothesWashTime == 0 && hasWashedClothes == false)
+                if (convertedClock == clothesWashTime && hasWashedClothes == false)
                 {
                     // TODO does it use power to wash clothes?
                     consumeResource(Resources.H2O, clothesWashH2OConsumed);
@@ -360,7 +373,7 @@ namespace LunarNumericSimulator.Modules
                 }
 
                 // if its time to wash dishes
-                if (clock % dishWashTime == 0 && hasWashedDishes == false)
+                if (convertedClock == dishWashTime && hasWashedDishes == false)
                 {
                     // TODO does it use power to wash dishes?
                     consumeResource(Resources.H2O, dishWashH2OConsumed);
@@ -370,7 +383,7 @@ namespace LunarNumericSimulator.Modules
                 }
 
                 // if its time to shower
-                if (clock % showerTime == 0 && hasShowered == false)
+                if (convertedClock == showerTime && hasShowered == false)
                 {
                     consumeResource(Resources.H2O, showerH2OConsumed);
                     getTank("WasteWaterStorage").addResource(showerH2OConsumed);
@@ -382,7 +395,7 @@ namespace LunarNumericSimulator.Modules
                 if (urinationCount < urinationFrequency)
                 {
                     // if its time to urinate
-                    if (clock % urinationTimes[urinationCount] == 0)
+                    if (convertedClock == urinationTimes[urinationCount])
                     {
                         urinate();
 
@@ -393,14 +406,14 @@ namespace LunarNumericSimulator.Modules
                 if (drinksCount < drinkFrequency)
                 {
                     // if its time to drink
-                    if (clock % drinkTimes[drinksCount] == 0)
+                    if (convertedClock == drinkTimes[drinksCount])
                     {
                         drink();
                     }
                 }
 
                 // if its time to excrete
-                if (clock % excretionTime == 0 && hasExcreted == false)
+                if (convertedClock == excretionTime && hasExcreted == false)
                 {
                     excrete();
  
