@@ -36,7 +36,7 @@ namespace LunarNumericSimulator.Modules
         uint currentJobIndex;
         int[] taskTimeLine;
         int[] metabolicTimeLine;
-        int dayCount;
+        bool convTimeHasEqualedZero;
 
         //metabolic rates for different activities in [W/m^2]
         const int M1 = 65;             //resting
@@ -90,18 +90,18 @@ namespace LunarNumericSimulator.Modules
 
 
         // make sure to add up to 14 hours
-        [NumericConfigurationParameter("Time spent resting during day [hrs]", "6", "double", false)]
+        [NumericConfigurationParameter("Time spent resting during day [hrs]", "0.0", "double", false)]
         public double tRestWorkDuration { get; set; } // time doing resting  [hrs]
-        [NumericConfigurationParameter("Occurance of resting [frequency]", "8", "int", false)]
+        [NumericConfigurationParameter("Occurance of resting [frequency]", "0", "int", false)]
         public int tRestWorkOccurances { get; set; } // time doing resting  [hrs]
 
-        [NumericConfigurationParameter("Time spent doing light work during day [hrs]", "6", "double", false)]
+        [NumericConfigurationParameter("Time spent doing light work during day [hrs]", "0.125", "double", false)]
         public double tLightWorkDuration { get; set; } // time doing light work [hrs]
-        [NumericConfigurationParameter("Occurance of light work [frequency]", "8", "int", false)]
+        [NumericConfigurationParameter("Occurance of light work [frequency]", "3", "int", false)]
         public int tLightWorkOccurances { get; set; } // time doing light work [hrs]
 
 
-        [NumericConfigurationParameter("Time spent doing moderate work during day [hrs]", "2", "double", false)]
+        [NumericConfigurationParameter("Time spent doing moderate work during day [hrs]", "0.125", "double", false)]
         public double tModerateWorkDuration { get; set; } // time doing moderate work [hrs]
         [NumericConfigurationParameter("Occurance of moderate work [frequency]", "3", "int", false)]
         public int tModerateWorkOccurances { get; set; } // time doing moderate work [hrs]
@@ -123,8 +123,9 @@ namespace LunarNumericSimulator.Modules
 
         public Human(Simulation sim, int moduleid) : base(sim, moduleid)
         {
+            convTimeHasEqualedZero = false;
+
             randomPhaseShift = getRandom().NextDouble() * Math.PI; // random number between 0.0 and PI
-            dayCount = 0;
             // set time to wash clothes
             // TODO: this probably needs better randomising
             clothesWashTime = generateRandomUintForDay();
@@ -220,6 +221,9 @@ namespace LunarNumericSimulator.Modules
             }
 
 
+
+
+
             int currentMetabolicRate = getCurrentMetabolicRate(clock);
             
 
@@ -244,55 +248,95 @@ namespace LunarNumericSimulator.Modules
             }
 
 
-            int currentJobStart = taskTimeLine[currentJobIndex];
-            int currentJobEnd = (int)secondsInCompleteCycle;
+            
+            int currentJobStart = 0;
+            int currentJobEnd = taskTimeLine[currentJobIndex];
 
-            // if we are not on the last job
-            if ((currentJobIndex + 1) < (taskTimeLine.GetLength(0)))
+            // set if zero
+            if (convertedClock == 0)
             {
-                currentJobEnd = taskTimeLine[currentJobIndex];
+                convTimeHasEqualedZero = true;
             }
-            // if we are on the first job
-            if (currentJobIndex == 0)
+            // reset the bool if we passed zero
+            if (convertedClock == (int)secondsHumanDayStart)
             {
+                convTimeHasEqualedZero = false;
+            }
 
-                currentJobStart = (int)secondsHumanDayStart;
-                currentJobEnd = taskTimeLine[currentJobIndex];
-            }
-            else
-            {
-                currentJobStart = taskTimeLine[currentJobIndex - 1];
-                currentJobEnd = taskTimeLine[currentJobIndex];
-            }
+            // if its night time
             if (!isHumanDay(clock))
             {
-                currentJobEnd = (int)secondsInCompleteCycle;
+                // for all days apart from the first
+                if (dayCount > 0 || convertedClock == (int)secondsHumanDayEnd  )
+                {
+                    currentJobEnd = (int)secondsInHumanDayCycle + (int)secondsHumanDayStart;
+                    if (convTimeHasEqualedZero == true)
+                    {
+                        currentJobEnd = (int)secondsHumanDayStart;
+                    }
+                }
+                // for first day
+                else
+                {
+                    currentJobEnd = (int)secondsHumanDayStart;
+                }
+               
             }
-            bool newDayChange = false;
-            if (convertedClock < taskTimeLine[0] && currentJobIndex == 0 && dayCount > 0)
-            {
-                currentJobStart = 0;
-                currentJobEnd = taskTimeLine[0];
-                newDayChange = true;
-            }
-            if (dayCount == 0 && currentJobIndex == 0 && !isHumanDay(clock))
-            {
-                currentJobStart = 1;
-                currentJobEnd = (int)secondsHumanDayStart;
-            }
+
+            /*
+                        // if we are not on the last job
+                        if ((currentJobIndex + 1) < (taskTimeLine.GetLength(0)))
+                        {
+                            currentJobEnd = taskTimeLine[currentJobIndex];
+                        }
+                        // if we are on the first job
+                        if (currentJobIndex == 0 && convertedClock != 0)
+                        {
+
+                            currentJobStart = (int)secondsHumanDayStart;
+                            currentJobEnd = taskTimeLine[currentJobIndex];
+                        }
+                        else if (convertedClock != 0)
+                        {
+                            currentJobStart = taskTimeLine[currentJobIndex - 1];
+                            currentJobEnd = taskTimeLine[currentJobIndex];
+                        }
+                        if (!isHumanDay(clock))
+                        {
+                            currentJobEnd = (int)secondsInCompleteCycle + (int)secondsHumanDayStart;
+                        }
+                        bool newDayChange = false;
+                        if (convertedClock < taskTimeLine[0] && currentJobIndex == 0 && dayCount > 0 && convertedClock != 0)
+                        {
+                            currentJobStart = (int)secondsHumanDayStart;
+                            currentJobEnd = taskTimeLine[0];
+                            newDayChange = true;
+                        }
+                        // if we are before the first day cycle
+                        if (dayCount == 0 && currentJobIndex == 0 && !isHumanDay(clock) && convertedClock != 0)
+                        {
+                            currentJobStart = (int)secondsHumanDayStart;
+                            currentJobEnd = (int)secondsHumanDayStart;
+                        }
+                        */
+
+
+
+            Console.WriteLine("==== Clock = " + clock + ", converted Clock = " + convertedClock + "====");
 
 
             int timeToNextJob = (currentJobEnd - (int)convertedClock);
 
-
+            Console.WriteLine("jobIndex = " + currentJobIndex + ", currentJobStart = " + currentJobStart + ", currentJobEnd = " + currentJobEnd 
+                + ", time2next = " + timeToNextJob);
 
 
             double newRate = currentMetabolicRate;
 
-            if (newDayChange == true)
-            {
-                newRate = metabolicTimeLine[0];
-            }
+            //if (convertedClock == (int)secondsHumanDayEnd)
+            //{
+            //    newRate = M1;
+            //}
 
             double stretchFactor = 60;
             if (timeToNextJob < stretchFactor)
@@ -301,7 +345,8 @@ namespace LunarNumericSimulator.Modules
                 double sigmoidValue = (1 / (1 + Math.Exp(-6 * (2 * (adjustedTime) - 1))));
                 newRate = newRate + sigmoidValue * (nextMetabolicRate - currentMetabolicRate);
             }
-            
+
+            Console.WriteLine("Current metabolic rate = " + newRate);
 
             // calculate the changes in heat and the mass of CO2 and O2 to change
             double heatGeneration, massCO2ProducedPerSecond, massO2ConsumedPerSecond;
@@ -510,6 +555,12 @@ namespace LunarNumericSimulator.Modules
                 metabolicTimeLine[i] = jobs[i, 1];
 
                 runningSum = runningSum + jobs[i, 0];
+            }
+
+            Console.WriteLine("time         rate");
+            for (int i = 0; i < taskTimeLine.Length; i++)
+            {
+                Console.WriteLine(i + ") " + taskTimeLine[i] + "        " + metabolicTimeLine[i]);
             }
 
             UInt64 lowestDayValue = currentTime;

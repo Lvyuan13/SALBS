@@ -80,9 +80,22 @@ namespace SimulatorGUI
             lock (sync)
             {
                 SimulationProgressReport report = (SimulationProgressReport)e.UserState;
-                CurrentTimeLabel.Text = "Current Time: " + report.GlobalState.clock;
-                BaseLoad.Text = "Base Load: " + Math.Round(report.PowerLoad) + " kW";
+                CurrentTimeLabel.Text = "Simulation Time: " + report.GlobalState.clock;
 
+                
+
+                int secondsInHumanDayCycle = (int)simulation.getModules()[0].secondsInHumanDayCycle;
+
+                int convertedClock = (int)report.GlobalState.clock;
+                while (convertedClock >= secondsInHumanDayCycle)
+                {
+                    convertedClock = (int)convertedClock - secondsInHumanDayCycle;
+                }
+
+                ConvertedTimeLabel.Text = "Time Of Day: " + convertedClock + " (" + Math.Round(((double)convertedClock/3600),2) + "hrs)";
+                BaseLoad.Text = "Base Load: " + Math.Round(report.PowerLoad) + " kW";
+                DayTimeLabel.Text = "Day time status: " + simulation.getModules()[0].isHumanDay(report.GlobalState.clock);
+                DayCountLabel.Text = "Day Number: " + simulation.getModules()[0].dayCount;
 
                 //using (StreamWriter sw = File.AppendText(@"C:\Users\Addy360\Downloads\Uni\FYP\runThroughData\powerData.txt"))
                 //{
@@ -463,6 +476,21 @@ namespace SimulatorGUI
         }
 
         private void CurrentTimeLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void DayCountLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ConvertedTimeLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void DayTimeLabel_Click(object sender, EventArgs e)
         {
 
         }

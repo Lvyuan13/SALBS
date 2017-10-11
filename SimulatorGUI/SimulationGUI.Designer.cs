@@ -38,6 +38,9 @@
             this.StatusBox = new System.Windows.Forms.GroupBox();
             this.BaseLoad = new System.Windows.Forms.Label();
             this.CurrentTimeLabel = new System.Windows.Forms.Label();
+            this.DayCountLabel = new System.Windows.Forms.Label();
+            this.DayTimeLabel = new System.Windows.Forms.Label();
+            this.ConvertedTimeLabel = new System.Windows.Forms.Label();
             this.ModuleNameBox = new System.Windows.Forms.TextBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -130,9 +133,12 @@
             this.StatusBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.StatusBox.Controls.Add(this.BaseLoad);
             this.StatusBox.Controls.Add(this.CurrentTimeLabel);
-            this.StatusBox.Location = new System.Drawing.Point(695, 426);
+            this.StatusBox.Controls.Add(this.DayTimeLabel);
+            this.StatusBox.Controls.Add(this.DayCountLabel);
+            this.StatusBox.Controls.Add(this.ConvertedTimeLabel);
+            this.StatusBox.Location = new System.Drawing.Point(500, 420);
             this.StatusBox.Name = "StatusBox";
-            this.StatusBox.Size = new System.Drawing.Size(161, 52);
+            this.StatusBox.Size = new System.Drawing.Size(300, 65);
             this.StatusBox.TabIndex = 5;
             this.StatusBox.TabStop = false;
             this.StatusBox.Text = "Status";
@@ -140,7 +146,7 @@
             // BaseLoad
             // 
             this.BaseLoad.AutoSize = true;
-            this.BaseLoad.Location = new System.Drawing.Point(6, 33);
+            this.BaseLoad.Location = new System.Drawing.Point(7, 33);
             this.BaseLoad.Name = "BaseLoad";
             this.BaseLoad.Size = new System.Drawing.Size(90, 13);
             this.BaseLoad.TabIndex = 1;
@@ -155,6 +161,31 @@
             this.CurrentTimeLabel.TabIndex = 0;
             this.CurrentTimeLabel.Text = "Current Time: 0";
             this.CurrentTimeLabel.Click += new System.EventHandler(this.CurrentTimeLabel_Click);
+
+            this.ConvertedTimeLabel.AutoSize = true;
+            this.ConvertedTimeLabel.Location = new System.Drawing.Point(7, 48);
+            this.ConvertedTimeLabel.Name = "ConvertedTimeLabel";
+            this.ConvertedTimeLabel.Size = new System.Drawing.Size(79, 13);
+            this.ConvertedTimeLabel.TabIndex = 0;
+            this.ConvertedTimeLabel.Text = "Converted Time: 0";
+            this.ConvertedTimeLabel.Click += new System.EventHandler(this.ConvertedTimeLabel_Click);
+
+            this.DayTimeLabel.AutoSize = true;
+            this.DayTimeLabel.Location = new System.Drawing.Point(180, 20);
+            this.DayTimeLabel.Name = "CurrentTimeLabel";
+            this.DayTimeLabel.Size = new System.Drawing.Size(79, 13);
+            this.DayTimeLabel.TabIndex = 0;
+            this.DayTimeLabel.Text = "Day Time Status: False";
+            this.DayTimeLabel.Click += new System.EventHandler(this.DayTimeLabel_Click);
+
+            this.DayCountLabel.AutoSize = true;
+            this.DayCountLabel.Location = new System.Drawing.Point(180, 33);
+            this.DayCountLabel.Name = "DayCountLabel";
+            this.DayCountLabel.Size = new System.Drawing.Size(79, 13);
+            this.DayCountLabel.TabIndex = 0;
+            this.DayCountLabel.Text = "Day Number: 0";
+            this.DayCountLabel.Click += new System.EventHandler(this.DayCountLabel_Click);
+
             // 
             // ModuleNameBox
             // 
@@ -247,6 +278,9 @@
         private System.Windows.Forms.Button StartButton;
         private System.Windows.Forms.GroupBox StatusBox;
         private System.Windows.Forms.Label CurrentTimeLabel;
+        private System.Windows.Forms.Label ConvertedTimeLabel;
+        private System.Windows.Forms.Label DayTimeLabel;
+        private System.Windows.Forms.Label DayCountLabel;
         private System.Windows.Forms.TextBox ModuleNameBox;
         private System.Windows.Forms.Label BaseLoad;
         private System.Windows.Forms.MenuStrip menuStrip1;

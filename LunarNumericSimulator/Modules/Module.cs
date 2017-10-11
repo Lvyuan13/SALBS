@@ -11,18 +11,19 @@ namespace LunarNumericSimulator {
         private Simulation Environment;
         int resourceCount = Enum.GetNames(typeof(Resources)).Length;
         // useful values for child classes to refer to
-        protected const uint secondsIn12Hours = 43200;
-        protected const uint secondsIn24Hours = 86400;
-        protected const uint secondsInCompleteCycle = 86400;
-        protected const UInt64 secondsHumanDayStart = 25200;
-        protected const UInt64 secondsHumanDayEnd = 75600;
+        public const uint secondsIn12Hours = 43200;
+        public const uint secondsIn24Hours = 86400;
+        //protected const uint secondsInCompleteCycle = 86400;
+        //protected const UInt64 secondsHumanDayStart = 25200;
+        //protected const UInt64 secondsHumanDayEnd = 75600;
         // shorter day for testing
-        //protected const UInt64 secondsHumanDayStart = 101;
-        //protected const UInt64 secondsHumanDayEnd = 1001;
-        //protected const uint secondsInCompleteCycle = 1901;
-        protected UInt64 secondsInHumanDayTime;
-        protected UInt64 secondsInHumanNightTime;
-        protected UInt64 secondsInHumanDayCycle;
+        public const UInt64 secondsHumanDayStart = 101;
+        public const UInt64 secondsHumanDayEnd = 1001;
+        public const uint secondsInCompleteCycle = 1901;
+        public UInt64 secondsInHumanDayTime;
+        public UInt64 secondsInHumanNightTime;
+        public UInt64 secondsInHumanDayCycle;
+        public int dayCount;
 
         protected static Dictionary<string, TankResourceManager> tanks = new Dictionary<string, TankResourceManager>();
 
@@ -51,6 +52,7 @@ namespace LunarNumericSimulator {
             // TODO remove this, its set at 5400 seconds (1.5hrs ) for testing.
             //secondsInHumanNightTime = 5401 - secondsInHumanDayTime;
             secondsInHumanDayCycle = secondsInHumanDayTime + secondsInHumanNightTime;
+            dayCount = 0;
         }
 
         abstract public void ModuleReady();
@@ -262,12 +264,9 @@ namespace LunarNumericSimulator {
         }
 
         // return true if time given is human daytime, false if human night time.
-        protected bool isHumanDay(UInt64 currentTime)
+        public bool isHumanDay(UInt64 currentTime)
         {
-            // assumes that human is active/working between 07:00 and 21:00 (14 hours)
-            // assumes that the human sleeps/inactive from 21:00 to 07:00 (10 hours)
             UInt64 lowestDayValue = currentTime;
-
 
             //Console.WriteLine("seconds in a day = " + secondsInHumanDayTime + " (hours = ) " + ((double)secondsInHumanDayTime/3600) );
             //Console.WriteLine("seconds in a night = " + secondsInHumanNightTime + " (hours = ) " + ((double)secondsInHumanNightTime / 3600));
