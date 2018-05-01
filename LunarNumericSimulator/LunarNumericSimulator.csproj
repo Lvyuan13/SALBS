@@ -107,9 +107,7 @@
     <Compile Include="ResourceManagers\ThermodynamicEngine.cs" />
     <Compile Include="Modules\Science.cs" />
     <Compile Include="Simulation.cs" />
-    <Compile Include="Utilities\NormInv.cs" />
     <Compile Include="Utilities\PIDController.cs" />
-    <Compile Include="Utilities\RBF.cs" />
     <Compile Include="Utilities\ThermoEntry.cs" />
   </ItemGroup>
   <ItemGroup>

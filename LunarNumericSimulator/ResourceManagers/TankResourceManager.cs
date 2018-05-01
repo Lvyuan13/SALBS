@@ -16,7 +16,10 @@ namespace LunarNumericSimulator.ResourceManagers {
             totalResource = initialValue;
 		}
 
-        public override Resources managedResource { get => throw new NotImplementedException(); protected set => throw new NotImplementedException(); }
+        public override Resources managedResource { 
+			get { throw new NotImplementedException(); } 
+			protected set { throw new NotImplementedException(); }
+		}
 
         public override void addResource(double resource) {
 			totalResource += resource;

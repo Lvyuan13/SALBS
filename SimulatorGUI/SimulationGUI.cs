@@ -20,7 +20,7 @@ namespace SimulatorGUI
 {
     public partial class SimulationGUI : Form
     {
-        BackgroundWorker worker;
+        BackgroundWorker simulationWorker;
         Simulation simulation;
         List<Module> moduleList;
         protected float updateTimer = 0;
@@ -36,16 +36,46 @@ namespace SimulatorGUI
             simulation = new Simulation();
             simulation.initiate();
 
+            setupModuleList();
+
+            setupBackgroundWorker();
+
+            setupDefaultTabs();
+
+            setupModuleNameAutocomplete();
+
+            //this.AcceptButton = AddButton;
+
+        }
+
+        protected void setupModuleNameAutocomplete()
+        {
+            var loadedModulesNames = simulation.getLoadedModuleNames();
+            var autocomplete = new AutoCompleteStringCollection();
+            autocomplete.AddRange(loadedModulesNames.ToArray());
+            ModuleNameBox.AutoCompleteSource = AutoCompleteSource.CustomSource;
+            ModuleNameBox.AutoCompleteCustomSource = autocomplete;
+            ModuleNameBox.AutoCompleteMode = AutoCompleteMode.Append;
+        }
+
+        protected void setupModuleList()
+        {
             moduleList = simulation.getModules();
             ModuleList.DisplayMember = "moduleFriendlyName";
             ModuleList.ValueMember = "ModuleID";
             updateList();
+        }
 
-            worker = new BackgroundWorker();
-            worker.DoWork += new DoWorkEventHandler(runSimulation);
-            worker.ProgressChanged += Worker_ProgressChanged;
-            worker.WorkerReportsProgress = true;
+        protected void setupBackgroundWorker()
+        {
+            simulationWorker = new BackgroundWorker();
+            simulationWorker.DoWork += new DoWorkEventHandler(runSimulation);
+            simulationWorker.ProgressChanged += simulationWorker_ProgressChanged;
+            simulationWorker.WorkerReportsProgress = true;
+        }
 
+        protected void setupDefaultTabs()
+        {
             GraphTabs.TabPages.Clear();
             GraphTabs.TabPages.Add("Environmental Summary");
             var envPanel = new EnvironmentPanel();
@@ -56,17 +86,6 @@ namespace SimulatorGUI
             var moPanel = new ModuleOverviewPanel();
             moPanel.Dock = DockStyle.Fill;
             GraphTabs.TabPages[1].Controls.Add(moPanel);
-
-
-            var loadedModulesNames = simulation.getLoadedModuleNames();
-            var autocomplete = new AutoCompleteStringCollection();
-            autocomplete.AddRange(loadedModulesNames.ToArray());
-            ModuleNameBox.AutoCompleteSource = AutoCompleteSource.CustomSource;
-            ModuleNameBox.AutoCompleteCustomSource = autocomplete;
-            ModuleNameBox.AutoCompleteMode = AutoCompleteMode.Append;
-
-            this.AcceptButton = AddButton;
-
         }
 
         protected void updateList()
@@ -75,14 +94,12 @@ namespace SimulatorGUI
             ModuleList.Items.AddRange(moduleList.ToArray());
         }
 
-        private void Worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void simulationWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             lock (sync)
             {
                 SimulationProgressReport report = (SimulationProgressReport)e.UserState;
                 CurrentTimeLabel.Text = "Simulation Time: " + report.GlobalState.clock;
-
-                
 
                 int secondsInHumanDayCycle = (int)simulation.getModules()[0].secondsInHumanDayCycle;
 
@@ -96,11 +113,6 @@ namespace SimulatorGUI
                 BaseLoad.Text = "Base Load: " + Math.Round(report.PowerLoad) + " kW";
                 DayTimeLabel.Text = "Day time status: " + simulation.getModules()[0].isHumanDay(report.GlobalState.clock);
                 DayCountLabel.Text = "Day Number: " + simulation.getModules()[0].dayCount;
-
-                //using (StreamWriter sw = File.AppendText(@"C:\Users\Addy360\Downloads\Uni\FYP\runThroughData\powerData.txt"))
-                //{
-                //    sw.WriteLine(report.GlobalState.clock + "," + report.PowerLoad);
-                //}
 
                 updateEnvironmentTab(report);
                 updateModuleOverviewTab(report);
@@ -325,7 +337,7 @@ namespace SimulatorGUI
                 for (int i = 0; i < int.MaxValue; i++)
                 {
                     simulation.step();
-                    worker.ReportProgress(0, simulation.getSimulationState());
+                    simulationWorker.ReportProgress(0, simulation.getSimulationState());
                 }
             }
         }
@@ -472,7 +484,7 @@ namespace SimulatorGUI
                 setupTab(m.ModuleID.ToString());
             }
 
-            worker.RunWorkerAsync();
+            simulationWorker.RunWorkerAsync();
         }
 
         private void CurrentTimeLabel_Click(object sender, EventArgs e)
